@@ -12,7 +12,7 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule): void
     {
-        $schedule->command('email:report-daily-tasks')->hourlyAt('18:00');
+        $schedule->command('email:report-daily-tasks')->everyFiveMinutes();
     }
 
     /**
