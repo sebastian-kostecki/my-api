@@ -58,7 +58,12 @@ class ReportDailyTasksInEmail extends Command
         $dailyTasks = $this->getDailyTasks();
         if (!empty($dailyTasks)) {
             $nextTasks = $this->getNextTasks();
-            Mail::to('sebastian.kostecki@gmail.com')->send(new ReportDailyTasks($dailyTasks, $nextTasks));
+
+            foreach (['sebastian.kostecki@gmail.com', 'sebastian.kostecki.programista@gmail.com'] as $recipient) {
+                Mail::to($recipient)
+                    ->bcc('sebastian.kostecki@panelalpha.com')
+                    ->send(new ReportDailyTasks($dailyTasks, $nextTasks));
+            }
             $this->clearDailyTasksStatus();
         }
     }
