@@ -91,14 +91,13 @@ services:
         networks:
             - sail
     phpmyadmin:
-        image: phpmyadmin/phpmyadmin
+        image: 'phpmyadmin/phpmyadmin'
         ports:
-            - '8080:80'
+            - '${PHPMYADMIN_PORT:-8080}:80'
         environment:
             PMA_HOST: mysql
-            PMA_USER: '${DB_USERNAME}'
-            PMA_PASSWORD: '${DB_PASSWORD}'
             PMA_PORTS: '3306'
+            PMA_ARBITRARY: '0'
         depends_on:
             - mysql
         networks:
