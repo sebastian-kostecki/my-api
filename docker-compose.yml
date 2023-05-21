@@ -103,6 +103,20 @@ services:
             - mysql
         networks:
             - sail
+    cron:
+        build:
+            context: .
+            dockerfile: docker/cron.dockerfile
+        container_name: cron
+        volumes:
+            - .:/var/www/html
+        depends_on:
+            - mysql
+            - redis
+            - meilisearch
+            - mailpit
+        networks:
+            - sail
 networks:
     sail:
         driver: bridge
