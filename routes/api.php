@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AssistantController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -22,5 +23,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/login', function (Request $request) {
         return;
     })->name('login');
+
+    Route::post('/translate', [AssistantController::class, 'translate'])
+        ->name('translate');
 });
 
