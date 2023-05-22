@@ -22,6 +22,8 @@ class AssistantController extends Controller
 
         $translator = new DeepL();
         $translatedText = $translator->translate($request->input('text'));
-        return response()->json($translatedText);
+        return new JsonResponse([
+            'data' => $translatedText
+        ]);
     }
 }
