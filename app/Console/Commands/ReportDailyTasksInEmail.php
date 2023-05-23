@@ -3,6 +3,8 @@
 namespace App\Console\Commands;
 
 use App\Mail\ReportDailyTasks;
+use App\Models\User;
+use App\Notifications\ReportDailyTasks as ReportDailyTasksNotification;
 use FiveamCode\LaravelNotionApi\Exceptions\HandlingException;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Mail;
@@ -11,6 +13,7 @@ use FiveamCode\LaravelNotionApi\Query\Filters\Operators;
 use FiveamCode\LaravelNotionApi\Query\Sorting;
 use FiveamCode\LaravelNotionApi\Entities\Page;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Notification;
 
 class ReportDailyTasksInEmail extends Command
 {
@@ -29,6 +32,13 @@ class ReportDailyTasksInEmail extends Command
     protected $description = 'Report daily tasks in email';
 
     protected string $tableId;
+    protected array $recipients = [
+        'sebastian.kostecki@panelalpha.com',
+        'konrad.keck@panelalpha.com',
+        'pawel.koziol@panelalpha.com'
+    ];
+    protected array $dailyTasks;
+    protected array $nextTasks;
 
     public function __construct()
     {
@@ -42,25 +52,19 @@ class ReportDailyTasksInEmail extends Command
      */
     public function handle(): void
     {
-        $dailyTasks = $this->getDailyTasks();
-        if (!empty($dailyTasks)) {
-            $nextTasks = $this->getNextTasks();
-            foreach ([
-                         'sebastian.kostecki@panelalpha.com',
-                         'konrad.keck@panelalpha.com',
-                         'pawel.koziol@panelalpha.com'
-                     ] as $recipient) {
-                Mail::to($recipient)->send(new ReportDailyTasks($dailyTasks, $nextTasks));
-            }
+        $this->getDailyTasks();
+        $this->getNextTasks();
+        if (!empty($this->dailyTasks)) {
+            $this->sendNotification();
             $this->clearDailyTasksStatus();
         }
     }
 
     /**
-     * @return array
+     * @return void
      * @throws HandlingException
      */
-    protected function getDailyTasks(): array
+    protected function getDailyTasks(): void
     {
         $todayFilter = Filter::rawFilter("Today", [
             "checkbox" => [Operators::EQUALS => true],
@@ -86,14 +90,14 @@ class ReportDailyTasksInEmail extends Command
 
             return '<strong>' . $issueName . '</strong> | ' . $taskName . " " . $taskStatus;
         });
-        return $tasks->toArray();
+        $this->dailyTasks = $tasks->toArray();
     }
 
     /**
-     * @return array
+     * @return void
      * @throws HandlingException
      */
-    protected function getNextTasks(): array
+    protected function getNextTasks(): void
     {
         $statusFilter = Filter::rawFilter("Status", [
             "select" => [Operators::DOES_NOT_EQUAL => 'Done'],
@@ -119,7 +123,22 @@ class ReportDailyTasksInEmail extends Command
             return "<strong>" . $issueName . "</strong> | " . $taskName;
         });
 
-        return $tasks->toArray();
+        $this->nextTasks = $tasks->toArray();
+    }
+
+    /**
+     * @return void
+     */
+    protected function sendNotification(): void
+    {
+        $recipients = collect(array_map(function ($recipient) {
+            $user = new User();
+            $user->id = random_int(1,100);
+            $user->email = $recipient;
+            return $user;
+        }, $this->recipients));
+
+        Notification::send($recipients, new ReportDailyTasksNotification($this->dailyTasks, $this->nextTasks));
     }
 
     /**
