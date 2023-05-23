@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Mail\ReportDailyTasks;
+use App\Models\Recipient;
 use App\Models\User;
 use App\Notifications\ReportDailyTasks as ReportDailyTasksNotification;
 use FiveamCode\LaravelNotionApi\Exceptions\HandlingException;
@@ -32,11 +33,6 @@ class ReportDailyTasksInEmail extends Command
     protected $description = 'Report daily tasks in email';
 
     protected string $tableId;
-    protected array $recipients = [
-        'sebastian.kostecki@panelalpha.com',
-        'konrad.keck@panelalpha.com',
-        'pawel.koziol@panelalpha.com'
-    ];
     protected array $dailyTasks;
     protected array $nextTasks;
 
@@ -131,13 +127,7 @@ class ReportDailyTasksInEmail extends Command
      */
     protected function sendNotification(): void
     {
-        $recipients = collect(array_map(function ($recipient) {
-            $user = new User();
-            $user->id = random_int(1,100);
-            $user->email = $recipient;
-            return $user;
-        }, $this->recipients));
-
+        $recipients = Recipient::where('type', 'report')->get();
         Notification::send($recipients, new ReportDailyTasksNotification($this->dailyTasks, $this->nextTasks));
     }
 
