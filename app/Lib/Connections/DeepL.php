@@ -68,7 +68,7 @@ class DeepL
      */
     protected function translateFromEnglishToPolish(string $text): string
     {
-        $translationResult = $this->translator->translateText($text, 'en-GB', 'pl');
+        $translationResult = $this->translator->translateText($text, null, 'pl');
         return $translationResult->text;
     }
 }
