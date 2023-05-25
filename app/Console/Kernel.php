@@ -13,6 +13,7 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule): void
     {
         $schedule->command('email:report-daily-tasks')->dailyAt('18:00');
+        $schedule->command('email:manage-panel-alpha-mailbox')->daily();
     }
 
     /**
