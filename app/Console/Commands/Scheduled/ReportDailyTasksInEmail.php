@@ -1,18 +1,15 @@
 <?php
 
-namespace App\Console\Commands;
+namespace App\Console\Commands\Scheduled;
 
-use App\Mail\ReportDailyTasks;
 use App\Models\Recipient;
-use App\Models\User;
 use App\Notifications\ReportDailyTasks as ReportDailyTasksNotification;
+use FiveamCode\LaravelNotionApi\Entities\Page;
 use FiveamCode\LaravelNotionApi\Exceptions\HandlingException;
-use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Mail;
 use FiveamCode\LaravelNotionApi\Query\Filters\Filter;
 use FiveamCode\LaravelNotionApi\Query\Filters\Operators;
 use FiveamCode\LaravelNotionApi\Query\Sorting;
-use FiveamCode\LaravelNotionApi\Entities\Page;
+use Illuminate\Console\Command;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Notification;
 
