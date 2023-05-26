@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AssistantController;
+use App\Http\Controllers\TextController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -26,5 +27,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::post('/translate', [AssistantController::class, 'translate'])
         ->name('translate');
+
+    Route::post('/save-text', [TextController::class, 'saveText']);
 });
 
