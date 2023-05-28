@@ -74,7 +74,8 @@ class AssistantController extends Controller
 
     public function chat(Request $request)
     {
-        $data = $request->json()->all();
+        $data = $request->all();
+        return new JsonResponse(['data' => $data]);
 
         // Sprawdź, czy żądanie jest challenge
         if (isset($data['challenge'])) {
