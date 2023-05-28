@@ -32,6 +32,9 @@ Route::post('/login', function (Request $request) {
     return;
 })->name('login');
 
+
+Route::post('/slack/message', [\App\Http\Controllers\AssistantController::class, 'getMessage']);
+
 Route::get('/test', function () {
 //    $response = Http::withHeaders([
 //        'Authorization' => 'Bearer ' . env('SLACK_USER_TOKEN'),

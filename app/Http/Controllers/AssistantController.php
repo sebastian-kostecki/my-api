@@ -75,7 +75,6 @@ class AssistantController extends Controller
     public function chat(Request $request)
     {
         $data = $request->all();
-        return new JsonResponse(['data' => $data]);
 
         // Sprawdź, czy żądanie jest challenge
         if (isset($data['challenge'])) {
@@ -87,6 +86,19 @@ class AssistantController extends Controller
         // Obsługa innych typów eventów
         // ...
 
+        return response('OK');
+    }
+
+    public function getMessage(Request $request)
+    {
+        $data = $request->json()->all();
+
+        // Sprawdź, czy żądanie jest challenge
+        if (isset($data['challenge'])) {
+            $challenge = $data['challenge'];
+            // Odpowiedź z challenge
+            return response()->json(['challenge' => $challenge]);
+        }
         return response('OK');
     }
 }
