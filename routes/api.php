@@ -29,5 +29,7 @@ Route::middleware('auth:sanctum')->group(function () {
         ->name('translate');
 
     Route::post('/save-text', [TextController::class, 'saveText']);
+
+    Route::post('/slack/message', [AssistantController::class, 'chat']);
 });
 

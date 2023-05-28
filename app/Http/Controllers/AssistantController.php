@@ -71,4 +71,9 @@ class AssistantController extends Controller
         $response = $openAI->chat('Na podstawie poniższego kontekstu odpowiedz na pytanie:' . $question . '\n\nContext:\n' . $context);
         echo $response;
     }
+
+    public function chat(Request $request)
+    {
+        dd($request->all());
+    }
 }
