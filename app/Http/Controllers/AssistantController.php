@@ -74,6 +74,18 @@ class AssistantController extends Controller
 
     public function chat(Request $request)
     {
-        dd($request->all());
+        $data = $request->json()->all();
+
+        // Sprawdź, czy żądanie jest challenge
+        if (isset($data['challenge'])) {
+            $challenge = $data['challenge'];
+            // Odpowiedź z challenge
+            return response()->json(['challenge' => $challenge]);
+        }
+
+        // Obsługa innych typów eventów
+        // ...
+
+        return response('OK');
     }
 }
