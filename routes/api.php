@@ -30,6 +30,6 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::post('/save-text', [TextController::class, 'saveText']);
 
-    Route::post('/slack/message', [AssistantController::class, 'chat']);
+    Route::post('/chat', [AssistantController::class, 'chat']);
 });
 

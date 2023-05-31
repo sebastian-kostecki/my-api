@@ -74,6 +74,12 @@ class AssistantController extends Controller
 
     public function chat(Request $request)
     {
-        dd($request->all());
+        $params = $request->validate([
+            'prompt' => 'required|string'
+        ]);
+
+        $openAI = new OpenAI();
+        $response = $openAI->chat($params['prompt']);
+        return new JsonResponse($response);
     }
 }

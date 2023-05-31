@@ -12,6 +12,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Collection;
+use Symfony\Component\HttpFoundation\StreamedResponse;
+use OpenAI\Laravel\Facades\OpenAI as Client;
 
 /*
 |--------------------------------------------------------------------------
@@ -33,80 +35,19 @@ Route::post('/login', function (Request $request) {
 })->name('login');
 
 Route::get('/test', function () {
-//    $response = Http::withHeaders([
-//        'Authorization' => 'Bearer ' . env('SLACK_USER_TOKEN'),
-//    ])->get('https://slack.com/api/users.list');
-//
-//    dd($response->json());
+    $stream = Client::chat()->createStreamed([
+        'model' => 'gpt-3.5-turbo',
+        'messages' => [
+            ['role' => 'user', 'content' => 'Hello!'],
+        ],
+    ]);
 
-    $response = Http::withHeaders([
-        'Authorization' => 'Bearer ' . env('SLACK_USER_TOKEN'),
-    ])->get("https://slack.com/api/conversations.history?channel=C059TQRA5MG&limit=1");
-
-    if ($response->ok()) {
-        $data = $response->json();
-        if ($data['messages'][0]['user'] === 'U0560L191ML') {
-            echo $data['messages'][0]['text'];
+    foreach($stream as $response){
+        dd($response);
+        if ($response->choices[0]->toArray()['finish_reason'] !== 'stop') {
+            echo $response->choices[0]->toArray()['delta']['content'] ?? "";
         }
+        sleep(1);
     }
-    dd($data);
-
-    $userId = 'U0560L191ML';
-
-//    if ($data['ok'] && isset($data['members'])) {
-//        foreach ($data['members'] as $member) {
-//            if ($member['profile']['email'] === 'sebastian.kostecki.programista@gmail.com') {
-//                 dd($member['id'];
-//            }
-//        }
-//    }
-
-
-
-//    $question = "Write me about docker";
-//    if (!$question) {
-//        dd('No query');
-//    }
-//    Conversation::updateSystemPrompt();
-//
-//    $currentConversation = new Conversation();
-//    $currentConversation->saveQuestion($question);
-//
-//    //pobieramy wiadomości z ostatnich 5 minut
-//    $lastConversations = Conversation::where('created_at', '>=', Carbon::now()->subMinutes(5))
-//        ->orWhere('system_prompt', true)
-//        ->get();
-//
-//    //tworzymy jsona - tablica obiektow json
-//    //role: ,content:
-//    $messages = [];
-//    foreach ($lastConversations as $conversation) {
-//        for ($i = 0; $i <=1 ; $i++) {
-//            $i === 0 ? $role = 'user' : $role = 'assistant';
-//            $i === 0 ? $content = $conversation->question : $content = $conversation->answer;
-//            if ($i === 1 && $conversation->answer === null) {
-//                break;
-//            }
-//            $messages[] = [
-//                'role' => $conversation->question === 'SYSTEM' ? 'system' : $role,
-//                'content' => $conversation->question === 'SYSTEM' ? $conversation->answer : $content
-//            ];
-//            if ($conversation->question === 'SYSTEM') {
-//                break;
-//            }
-//        }
-//    }
-//    //dd($messages);
-//    //wysłanie do OpenAI
-//    $openAI = new \App\Lib\Connections\OpenAI();
-//    $response = $openAI->chatConversation($messages);
-//
-//    //aktualizacja tabeli
-//    $currentConversation->saveAnswer($response);
-//
-//    //odpowiedz do bota na slack
-//    $slackConnection = new \App\Lib\Connections\Slack('C059TQRA5MG');
-//    $slackConnection->sendMessage($response);
-
 });
 

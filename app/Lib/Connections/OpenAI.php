@@ -26,12 +26,13 @@ class OpenAI
         return $response->toArray()['data'][0]['embedding'];
     }
 
-    public function chatConversation(array $messages): string
+    public function chatConversation(string $prompt)
     {
-        $response = Client::chat()->create([
+        return Client::chat()->createStreamed([
             'model' => 'gpt-3.5-turbo',
-            'messages' => $messages
+            'messages' => [
+                ['role' => 'user', 'content' => $prompt],
+            ],
         ]);
-        return $response->choices[0]->message->content;
     }
 }
