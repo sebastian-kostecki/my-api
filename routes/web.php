@@ -1,5 +1,6 @@
 <?php
 
+use App\Jobs\TestJob;
 use App\Lib\Connections\DeepL;
 use App\Models\Conversation;
 use Carbon\Carbon;
@@ -14,6 +15,7 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Collection;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use OpenAI\Laravel\Facades\OpenAI as Client;
+use Illuminate\Support\Facades\Redis;
 
 /*
 |--------------------------------------------------------------------------
@@ -30,6 +32,8 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+Route::get('logs', [\Rap2hpoutre\LaravelLogViewer\LogViewerController::class, 'index']);
+
 Route::post('/login', function (Request $request) {
     return;
 })->name('login');
@@ -38,19 +42,8 @@ Route::post('/login', function (Request $request) {
 Route::post('/slack/message', [\App\Http\Controllers\AssistantController::class, 'getMessage']);
 
 Route::get('/test', function () {
-    $stream = Client::chat()->createStreamed([
-        'model' => 'gpt-3.5-turbo',
-        'messages' => [
-            ['role' => 'user', 'content' => 'Hello!'],
-        ],
-    ]);
 
-    foreach($stream as $response){
-        dd($response);
-        if ($response->choices[0]->toArray()['finish_reason'] !== 'stop') {
-            echo $response->choices[0]->toArray()['delta']['content'] ?? "";
-        }
-        sleep(1);
-    }
+
+    dispatch(new TestJob());
 });
 
