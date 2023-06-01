@@ -43,7 +43,5 @@ Route::post('/slack/message', [\App\Http\Controllers\AssistantController::class,
 
 Route::get('/test', function () {
 
-
-    dispatch(new TestJob());
 });
 
