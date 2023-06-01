@@ -17,6 +17,7 @@
         "patrickschur/language-detection": "^5.2",
         "php-imap/php-imap": "^5.0",
         "probots-io/pinecone-php": "^0.0.3",
+        "pusher/pusher-php-server": "^7.2",
         "rap2hpoutre/laravel-log-viewer": "^2.3"
     },
     "require-dev": {
