@@ -42,6 +42,6 @@ Route::post('/login', function (Request $request) {
 Route::post('/slack/message', [\App\Http\Controllers\AssistantController::class, 'getMessage']);
 
 Route::get('/test', function () {
-
+    echo "test";
 });
 

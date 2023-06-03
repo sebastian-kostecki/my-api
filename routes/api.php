@@ -31,5 +31,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/save-text', [TextController::class, 'saveText']);
 
     Route::post('/chat', [AssistantController::class, 'chat']);
+
+    Route::post('/openai/chat', [AssistantController::class, 'assistant']);
 });
 
