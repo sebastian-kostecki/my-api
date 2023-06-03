@@ -116,6 +116,14 @@ services:
             - mailpit
         networks:
             - sail
+    qdrant:
+        image: qdrant/qdrant:latest
+        ports:
+            - '${QDRANT_PORT:-6333}:6333'
+        volumes:
+            - ./storage/qdrant_storage:/qdrant/storage
+        networks:
+            - sail
 networks:
     sail:
         driver: bridge
