@@ -17,7 +17,7 @@ class AssistantController extends Controller
         $lines = explode('.', $text['text']);
 
         foreach ($lines as $line) if ($line) {
-             $note = Note::create(['content' => trim($line)]);
+            $note = Note::create(['content' => trim($line)]);
 
             $openAI = new OpenAI();
             $pinecone = new Pinecone('notes-for-exercises');
@@ -38,7 +38,7 @@ class AssistantController extends Controller
         $response = $pinecone->queryVectors($embedding);
         $ids = array_map(function ($item) {
             return $item['id'];
-        },$response['matches']);
+        }, $response['matches']);
 
         $notes = Note::whereIn('id', $ids)->get();
         $notes = $notes->map(function ($note) {
@@ -48,5 +48,43 @@ class AssistantController extends Controller
 
         $response = $openAI->chat('Na podstawie poniższego kontekstu odpowiedz na pytanie:' . $question . '\n\nContext:\n' . $context);
         echo $response;
+    }
+
+    public function chat(Request $request)
+    {
+        $params = $request->validate([
+            'prompt' => 'required|string'
+        ]);
+
+        $openAI = new OpenAI();
+        $response = $openAI->chat($params['prompt']);
+        return new JsonResponse($response);
+    }
+
+    public function assistant(Request $request)
+    {
+        $params = $request->validate([
+            'prompt' => 'required|string'
+        ]);
+
+        $options = [
+            'max_tokens' => 1500,
+            'temperature' => 0.8,
+            'model' => 'gpt-3.5-turbo'
+        ];
+
+        return new JsonResponse([
+            'messages' => [
+                [
+                    'role' => 'system',
+                    'content' => 'You are helpful assistant named Ed'
+                ],
+                [
+                    'role' => 'user',
+                    'content' => $params['prompt']
+                ]
+            ],
+            'options' => $options
+        ]);
     }
 }

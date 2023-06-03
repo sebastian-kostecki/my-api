@@ -124,6 +124,15 @@ services:
             - ./storage/qdrant_storage:/qdrant/storage
         networks:
             - sail
+    workers:
+        build:
+            context: .
+            dockerfile: docker/workers.dockerfile
+        volumes:
+            - .:/var/www/html
+        depends_on:
+            - mysql
+            - redis
 networks:
     sail:
         driver: bridge
