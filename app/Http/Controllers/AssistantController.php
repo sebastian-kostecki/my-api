@@ -2,35 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Lib\Connections\DeepL;
 use App\Lib\Connections\OpenAI;
 use App\Lib\Connections\Pinecone;
-use App\Models\Note;
-use DeepL\DeepLException;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
+use App\Models\Note;;
 use Illuminate\Support\Facades\Http;
 
 class AssistantController extends Controller
 {
-    /**
-     * @param Request $request
-     * @return JsonResponse
-     * @throws DeepLException
-     */
-    public function translate(Request $request): JsonResponse
-    {
-        $request->validate([
-            'text' => 'string|required'
-        ]);
-
-        $translator = new DeepL();
-        $translatedText = $translator->translate($request->input('text'));
-        return new JsonResponse([
-            'data' => $translatedText
-        ]);
-    }
-
     public function rememberText(string $url)
     {
         $response = Http::get('https://relaxed-boba-bcf830.netlify.app/.netlify/functions/unfluff?url=' . $url);
