@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Lib\Connections;
+namespace App\Lib\Assistant\Shortcuts;
 
 use DeepL\DeepLException;
 use DeepL\Translator;
 use LanguageDetection\Language;
 
-class DeepL
+class Translate
 {
     protected Translator $translator;
 
