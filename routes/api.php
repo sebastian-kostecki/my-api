@@ -33,6 +33,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::post('/chat', [AssistantController::class, 'chat']);
 
-    Route::post('/openai/chat', [AssistantController::class, 'assistant']);
+    Route::post('/assistant/prompt', [AssistantController::class, 'send']);
+    Route::post('/assistant/answer', [AssistantController::class, 'get']);
 });
 
