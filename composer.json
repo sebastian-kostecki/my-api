@@ -13,6 +13,7 @@
         "laravel/framework": "^10.10",
         "laravel/sanctum": "^3.2",
         "laravel/tinker": "^2.8",
+        "m4tthumphrey/php-gitlab-api": "^11.10",
         "openai-php/client": "^0.5.1",
         "openai-php/laravel": "^0.5.2",
         "patrickschur/language-detection": "^5.2",

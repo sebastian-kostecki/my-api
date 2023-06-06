@@ -2,13 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use App\Lib\Connections\DeepL;
+use App\Lib\Assistant\Shortcuts\Translate;
 use DeepL\DeepLException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-class TranslationController extends Controller
+class ShortcutController extends Controller
 {
+    public function __construct(
+        protected Translate $translator
+    ) {}
+
     /**
      * @param Request $request
      * @return JsonResponse
@@ -20,8 +24,7 @@ class TranslationController extends Controller
             'text' => 'string|required'
         ]);
 
-        $translator = new DeepL();
-        $translatedText = $translator->translate($request->input('text'));
+        $translatedText = $this->translator->translate($request->input('text'));
         return new JsonResponse([
             'data' => $translatedText
         ]);

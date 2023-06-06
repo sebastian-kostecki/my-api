@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Lib\Assistant\Assistant;
 use App\Lib\Connections\OpenAI;
 use App\Lib\Connections\Pinecone;
 use App\Models\Note;
@@ -11,6 +12,10 @@ use Illuminate\Support\Facades\Http;
 
 class AssistantController extends Controller
 {
+    public function __construct(
+        protected OpenAI $openAI,
+        protected Assistant $assistant
+    ) {}
 //    public function rememberText(string $url)
 //    {
 //        $response = Http::get('https://relaxed-boba-bcf830.netlify.app/.netlify/functions/unfluff?url=' . $url);
@@ -69,11 +74,15 @@ class AssistantController extends Controller
      * @param Request $request
      * @return JsonResponse
      */
-    public function send(Request $request): JsonResponse
+    public function ask(Request $request): JsonResponse
     {
         $params = $request->validate([
             'prompt' => 'required|string'
         ]);
+
+        $this->assistant->execute($params['prompt']);
+        $response = $this->assistant->getResponse();
+
 
         $options = [
             'max_tokens' => 1500,
@@ -89,7 +98,7 @@ class AssistantController extends Controller
                 ],
                 [
                     'role' => 'user',
-                    'content' => $params['prompt']
+                    'content' => $response
                 ]
             ],
             'options' => $options
