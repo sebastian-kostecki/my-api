@@ -3,6 +3,7 @@
 namespace App\Lib\Connections;
 
 use OpenAI\Laravel\Facades\OpenAI as Client;
+use OpenAI\Responses\Chat\CreateResponse;
 
 class OpenAI
 {
@@ -34,5 +35,41 @@ class OpenAI
                 ['role' => 'user', 'content' => $prompt],
             ],
         ]);
+    }
+
+    public function describeIntention(string $prompt)
+    {
+        $response = Client::chat()->create([
+            'model' => 'gpt-3.5-turbo',
+            'temperature' => 0,
+            'messages' => [
+                [
+                    'role' => 'user',
+                    'content' => "Describe my intention from message below with JSON. Focus on the beginning of it. Always return JSON and nothing more. \ntypes: action|query|memory\nnothing more. types: actionlquerylmemory" .
+                        "Example: Napisz wiadomość. {\"type\": \"action\"} Zapisz notatkę {\"type\": \"action\"} Are you Ed? {\"type\": \"query\"} Remember that I'm programmer. {\"type\": \"memory\"} Dodaj task o fixie do notifications. {\"type\": \"action\"}###message\n{$prompt}"
+                ],
+            ],
+        ]);
+        return $response->choices[0]->message->content;
+    }
+
+
+    /**
+     * @param string $text
+     * @return string
+     */
+    public function getJson(string $text): string
+    {
+        $response = Client::chat()->create([
+            'model' => 'gpt-3.5-turbo',
+            'temperature' => 0,
+            'messages' => [
+                [
+                    'role' => 'user',
+                    'content' => $text
+                ],
+            ],
+        ]);
+        return $response->choices[0]->message->content;
     }
 }

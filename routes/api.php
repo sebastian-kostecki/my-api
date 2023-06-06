@@ -1,7 +1,9 @@
 <?php
 
 use App\Http\Controllers\AssistantController;
+use App\Http\Controllers\ShortcutController;
 use App\Http\Controllers\TextController;
+use App\Http\Controllers\TranslationController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -25,13 +27,16 @@ Route::middleware('auth:sanctum')->group(function () {
         return;
     })->name('login');
 
-    Route::post('/translate', [AssistantController::class, 'translate'])
-        ->name('translate');
+    /**
+     * Shortcuts
+     */
+    Route::post('/shortcut/translate', [ShortcutController::class, 'translate']);
 
     Route::post('/save-text', [TextController::class, 'saveText']);
 
     Route::post('/chat', [AssistantController::class, 'chat']);
 
-    Route::post('/openai/chat', [AssistantController::class, 'assistant']);
+    Route::post('/assistant/prompt', [AssistantController::class, 'ask']);
+    Route::post('/assistant/answer', [AssistantController::class, 'get']);
 });
 

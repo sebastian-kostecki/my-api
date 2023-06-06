@@ -1,21 +1,9 @@
 <?php
 
 use App\Jobs\TestJob;
-use App\Lib\Connections\DeepL;
-use App\Models\Conversation;
-use Carbon\Carbon;
-use FiveamCode\LaravelNotionApi\Entities\Page;
-use FiveamCode\LaravelNotionApi\Query\Filters\Filter;
-use FiveamCode\LaravelNotionApi\Query\Filters\Operators;
-use FiveamCode\LaravelNotionApi\Query\Sorting;
-use Illuminate\Http\JsonResponse;
+use App\Lib\Connections\OpenAI;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Collection;
-use Symfony\Component\HttpFoundation\StreamedResponse;
-use OpenAI\Laravel\Facades\OpenAI as Client;
-use Illuminate\Support\Facades\Redis;
 
 /*
 |--------------------------------------------------------------------------
@@ -42,6 +30,11 @@ Route::post('/login', function (Request $request) {
 Route::post('/slack/message', [\App\Http\Controllers\AssistantController::class, 'getMessage']);
 
 Route::get('/test', function () {
-    echo "test";
+//    $openAI = new \App\Lib\Assistant\Assistant();
+//    $response = $openAI->describeIntention('Dodaj task do panelalpha o zbudowaniu nowego api');
+//    dd(json_decode($response));
+
+    $assistant = new \App\Lib\Assistant\Assistant();
+    $assistant->execute('Dodaj zadanie z pracy o wykonaniu projektu');
 });
 

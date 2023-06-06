@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Console\Commands;
+namespace App\Console\Commands\Sync;
 
 use App\Models\Recipient;
 use Illuminate\Console\Command;
