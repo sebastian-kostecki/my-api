@@ -55,6 +55,8 @@ class Assistant
             case 'action':
                 $action = $this->selectAction();
                 $actionClass = Action::where('slug', $action)->value('type');
+                $action = new $actionClass($this->prompt);
+                $action->execute();
                 break;
             default:
                 //query
@@ -63,7 +65,7 @@ class Assistant
 
     protected function selectAction()
     {
-        $actions = Action::pluck('slug');
+        $actions = Action::pluck('slug')->toArray();
 
         $content = "Describe my intention from message below with JSON";
         $content .= "Focus on the beginning of it. Always return JSON and nothing more. \n";

@@ -2,6 +2,7 @@
 
 use App\Jobs\TestJob;
 use App\Lib\Connections\OpenAI;
+use App\Models\Action;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -34,7 +35,9 @@ Route::get('/test', function () {
 //    $response = $openAI->describeIntention('Dodaj task do panelalpha o zbudowaniu nowego api');
 //    dd(json_decode($response));
 
+    //dd(\App\Lib\Connections\Notion\PanelAlphaIssuesTable::getIssuesList());
+
     $assistant = new \App\Lib\Assistant\Assistant();
-    $assistant->execute('Dodaj zadanie z pracy o wykonaniu projektu');
+    $assistant->execute('Dodaj zadanie z pracy o wykonaniu projektu o wysokim priorytecie i przypisz do issue o konfiguratorze ');
 });
 
