@@ -80,13 +80,8 @@ class AssistantController extends Controller
             'prompt' => 'required|string'
         ]);
 
-        $type = $this->assistant->describeIntention($params['prompt']);
-        $type = json_decode($type);
-
-
-
-
-
+        $this->assistant->execute($params['prompt']);
+        $response = $this->assistant->getResponse();
 
 
         $options = [
@@ -103,7 +98,7 @@ class AssistantController extends Controller
                 ],
                 [
                     'role' => 'user',
-                    'content' => $params['prompt']
+                    'content' => $response
                 ]
             ],
             'options' => $options

@@ -22,12 +22,13 @@ class AddWorkTask
         $this->openAI = new OpenAI();
     }
 
-    public function execute(): void
+    public function execute()
     {
         $this->getIssues();
         $content = $this->getPrompt();
         $this->sendToOpenAI($content);
         PanelAlphaTasksTable::createNewTask($this->response, $this->issues);
+        return "Napisz, że zadanie zostało dodane";
     }
 
     protected function getIssues(): void

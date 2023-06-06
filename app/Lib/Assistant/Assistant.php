@@ -12,19 +12,24 @@ class Assistant
     protected string $type;
 
     protected OpenAI $openAI;
+    protected string $response;
 
     public function __construct()
     {
         $this->openAI = new OpenAI();
     }
 
-    public function execute(string $prompt)
+    public function execute(string $prompt): void
     {
         $this->prompt = $prompt;
         $this->type = $this->describeIntention();
         $this->executeByType();
     }
 
+    public function getResponse(): string
+    {
+        return $this->response;
+    }
 
     /**
      * @param string $prompt
@@ -56,7 +61,7 @@ class Assistant
                 $action = $this->selectAction();
                 $actionClass = Action::where('slug', $action)->value('type');
                 $action = new $actionClass($this->prompt);
-                $action->execute();
+                $this->response = $action->execute();
                 break;
             default:
                 //query
