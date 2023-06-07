@@ -8,11 +8,11 @@ use OpenAI\Laravel\Facades\OpenAI as Client;
 
 class Assistant
 {
-    protected string $prompt;
-    protected string $type;
+    protected string $prompt = "";
+    protected string $type = "";
 
     protected OpenAI $openAI;
-    protected string $response;
+    protected string $response = "";
 
     public function __construct()
     {
