@@ -3,8 +3,14 @@
 namespace App\Lib\Assistant;
 
 use App\Lib\Connections\OpenAI;
+use App\Lib\Connections\Qdrant;
 use App\Models\Action;
+use App\Models\Note;
+use Illuminate\Support\Facades\Log;
+use Mockery\Matcher\Not;
 use OpenAI\Laravel\Facades\OpenAI as Client;
+use Qdrant\Models\Request\SearchRequest;
+use Qdrant\Models\VectorStruct;
 
 class Assistant
 {
@@ -12,30 +18,31 @@ class Assistant
     protected string $type = "";
 
     protected OpenAI $openAI;
+    protected Qdrant $vectorDatabase;
     protected string $response = "";
 
     public function __construct()
     {
         $this->openAI = new OpenAI();
+        $this->vectorDatabase = new Qdrant('test-notes');
     }
 
     public function execute(string $prompt): void
     {
         $this->prompt = $prompt;
-        $this->type = $this->describeIntention();
+        $this->describeIntention();
         $this->executeByType();
     }
 
-    public function getResponse(): string
+    public function getPrompt(): string
     {
         return $this->response;
     }
 
     /**
-     * @param string $prompt
-     * @return string
+     * @return void
      */
-    public function describeIntention(): string
+    public function describeIntention(): void
     {
         $content = "Describe my intention from message below with JSON";
         $content .= "Focus on the beginning of it. Always return JSON and nothing more. \n";
@@ -48,14 +55,17 @@ class Assistant
         $content .= "###message\n{$this->prompt}";
 
         $response = $this->openAI->getJson($content);
-        return json_decode($response)->type;
+        $response = returnJson($response);
+        $this->type = json_decode($response)->type;
     }
 
     protected function executeByType()
     {
         switch ($this->type) {
             case 'memory':
-                //akcja typu memory
+                // zapis do pamięći
+                break;
+            case 'note':
                 break;
             case 'action':
                 $action = $this->selectAction();
@@ -64,7 +74,23 @@ class Assistant
                 $this->response = $action->execute();
                 break;
             default:
-                //query
+                $type = $this->selectQuery();
+                if ($type === 'note') {
+                    $embedding = $this->openAI->createEmbedding($this->prompt);
+                    $response = $this->vectorDatabase->search($embedding);
+                    $context = "Na podstawie poniższego kontekstu odpowiedz na następujące pytanie" . $this->prompt . "\n\n###Kontekst\n";
+                    foreach ($response as $vector) {
+                        $id = $vector['id'];
+                        $notes = Note::whereIn('id', [$id-1, $id, $id+1])->pluck('content')->toArray();
+                        $notes = implode("\n", $notes);
+                        $context .= $notes;
+                    }
+                    $this->response = $context;
+                } else if ($type === 'memory') {
+                    //
+                } else {
+                    $this->response = $this->prompt;
+                }
         }
     }
 
@@ -81,6 +107,23 @@ class Assistant
         $content .= "###message\n{$this->prompt}";
 
         $response = $this->openAI->getJson($content);
+        $response = returnJson($response);
         return json_decode($response)->action;
+    }
+
+    protected function selectQuery()
+    {
+        $content = "Describe my intention from message below with JSON.";
+        $content .= "Focus on the beginning of it. Always return JSON and nothing more. \n";
+        $content .= "Types: note|memory|default\n";
+        $content .= "If you don't recognise the type then assign a default\n";
+        $content .= "Example: Poszukaj w moich notatkach, gdzie leży Lublin? {\"type\": \"note\"}";
+        $content .= "Czy pamiętasz, gdzie pracuję? {\"type\": \"memory\"}";
+        $content .= "Czym jest docker? {\"type\": \"default\"}";
+        $content .= "###message\n{$this->prompt}";
+
+        $response = $this->openAI->getJson($content);
+        $response = returnJson($response);
+        return json_decode($response)->type;
     }
 }

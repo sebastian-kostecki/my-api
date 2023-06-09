@@ -10,6 +10,7 @@
         "deeplcom/deepl-php": "^1.3",
         "fiveam-code/laravel-notion-api": "^1.0",
         "guzzlehttp/guzzle": "^7.2",
+        "hkulekci/qdrant": "^0.1.0",
         "laravel/framework": "^10.10",
         "laravel/sanctum": "^3.2",
         "laravel/tinker": "^2.8",
@@ -36,7 +37,10 @@
             "App\\": "app/",
             "Database\\Factories\\": "database/factories/",
             "Database\\Seeders\\": "database/seeders/"
-        }
+        },
+        "files": [
+            "app/Helpers/MyApiHelpers.php"
+        ]
     },
     "autoload-dev": {
         "psr-4": {

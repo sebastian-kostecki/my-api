@@ -72,4 +72,27 @@ class OpenAI
         ]);
         return $response->choices[0]->message->content;
     }
+
+    /**
+     * @param string $text
+     * @return string
+     */
+    public function translateToPolish(string $text): string
+    {
+        $response = Client::chat()->create([
+            'model' => 'gpt-3.5-turbo',
+            'temperature' => 0.8,
+            'messages' => [
+                [
+                    'role' => 'system',
+                    'content' => 'Translate the following text into Polish, observing all grammatical, stylistic and orthographic regularities appropriate to the type of text:'
+                ],
+                [
+                    'role' => 'user',
+                    'content' => $text
+                ],
+            ],
+        ]);
+        return $response->choices[0]->message->content;
+    }
 }

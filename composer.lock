@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "94e5c197ead6fd24ea9cd83ac5ce8f49",
+    "content-hash": "9c348afa4bfb8ca5a8a0f8d739e65abd",
     "packages": [
         {
             "name": "beyondcode/laravel-websockets",
@@ -1478,6 +1478,59 @@
                 }
             ],
             "time": "2021-10-07T12:57:01+00:00"
+        },
+        {
+            "name": "hkulekci/qdrant",
+            "version": "v0.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/hkulekci/qdrant-php.git",
+                "reference": "1c7979c632ee74a2e2e3e0caf98b902c1dbf3866"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/hkulekci/qdrant-php/zipball/1c7979c632ee74a2e2e3e0caf98b902c1dbf3866",
+                "reference": "1c7979c632ee74a2e2e3e0caf98b902c1dbf3866",
+                "shasum": ""
+            },
+            "require": {
+                "guzzlehttp/guzzle": "^7.5",
+                "guzzlehttp/psr7": "^2.0",
+                "php": "^8.1",
+                "psr/http-client": "^1.0",
+                "psr/http-message": "^1.0",
+                "psr/log": "^1.0|^2.0|^3.0",
+                "webmozart/assert": "^1.11"
+            },
+            "require-dev": {
+                "hkulekci/cohere": "dev-main",
+                "mockery/mockery": "^1.5",
+                "openai-php/client": "^0.3.5",
+                "phpunit/php-code-coverage": "^10.1@dev",
+                "phpunit/phpunit": "^10.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Qdrant\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Haydar Kulekci",
+                    "email": "haydarkulekci@gmail.com"
+                }
+            ],
+            "description": "PHP Client for Qdrant",
+            "support": {
+                "issues": "https://github.com/hkulekci/qdrant-php/issues",
+                "source": "https://github.com/hkulekci/qdrant-php/tree/v0.1"
+            },
+            "time": "2023-04-24T05:58:43+00:00"
         },
         {
             "name": "laravel/framework",

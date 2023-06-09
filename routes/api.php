@@ -27,15 +27,18 @@ Route::middleware('auth:sanctum')->group(function () {
         return;
     })->name('login');
 
+    Route::post('/chat', [AssistantController::class, 'chat']);
+
+
     /**
      * Shortcuts
      */
     Route::post('/shortcut/translate', [ShortcutController::class, 'translate']);
+    Route::post('/shortcut/save-note', [ShortcutController::class, 'saveNote']);
 
-    Route::post('/save-text', [TextController::class, 'saveText']);
-
-    Route::post('/chat', [AssistantController::class, 'chat']);
-
+    /**
+     * Assistant
+     */
     Route::post('/assistant/prompt', [AssistantController::class, 'ask']);
     Route::post('/assistant/answer', [AssistantController::class, 'get']);
 });
