@@ -1,17 +1,21 @@
 <?php
 
-namespace App\Lib\Assistant\Shortcuts;
+namespace App\Lib\Assistant\Actions;
 
 use App\Lib\Connections\OpenAI;
 use App\Lib\Connections\Qdrant;
+use App\Lib\Interfaces\ActionInterface;
 use App\Models\Note;
 use Exception;
-use Qdrant\Exception\InvalidArgumentException;
 
-class SaveNote
+class SaveNote implements ActionInterface
 {
+    public static string $name = 'Note';
+    public static string $slug = 'add-note';
+
     protected OpenAI $openAI;
     protected string $collectionName;
+    protected string $text;
 
     public function __construct(string $collectionName)
     {
@@ -20,13 +24,12 @@ class SaveNote
     }
 
     /**
-     * @param string $text
-     * @return void
+     * @return string
      * @throws Exception
      */
-    public function execute(string $text): void
+    public function execute(): string
     {
-        $lines = explode('.', $text);
+        $lines = explode('.', $this->text);
 
         try {
             foreach ($lines as $line) if ($line) {
@@ -41,9 +44,16 @@ class SaveNote
                     'id' => $note->id,
                     'content' => $note->content
                 ]);
+
             }
+            return "Napisz, że tekst został dodany";
         } catch (Exception $e) {
             throw new Exception($e->getMessage());
         }
+    }
+
+    public function setText(string $text)
+    {
+        $this->text = $text;
     }
 }

@@ -1,11 +1,10 @@
 <?php
 
-namespace App\Console\Commands;
+namespace App\Console\Commands\Sync;
 
 use App\Models\Action;
 use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\Model;
 
 class SyncActions extends Command
 {
@@ -36,7 +35,7 @@ class SyncActions extends Command
         $integrationsInDatabase = Action::get()->keyBy('type');
 
         foreach($integrations as $integrationClass) {
-            $this->output->write($integrationClass::$slug . ": ");
+            $this->output->write($integrationClass::$name . ": ");
 
             if ($this->isIntegrationInDatabase($integrationsInDatabase, $integrationClass)) {
                 continue;
@@ -62,6 +61,7 @@ class SyncActions extends Command
     protected function createIntegration(string $class): void
     {
         Action::create([
+            'name' => $class::$name,
             'slug' => $class::$slug,
             'type' => $class,
         ]);

@@ -5,10 +5,12 @@ namespace App\Lib\Assistant\Actions;
 use App\Lib\Connections\Notion\PanelAlphaIssuesTable;
 use App\Lib\Connections\Notion\PanelAlphaTasksTable;
 use App\Lib\Connections\OpenAI;
+use App\Lib\Interfaces\ActionInterface;
 use Illuminate\Support\Collection;
 
-class AddWorkTask
+class AddWorkTask implements ActionInterface
 {
+    public static string $name = 'New Task';
     public static string $slug = 'add-work-task';
 
     protected string $prompt;
@@ -22,7 +24,10 @@ class AddWorkTask
         $this->openAI = new OpenAI();
     }
 
-    public function execute()
+    /**
+     * @return string
+     */
+    public function execute(): string
     {
         $this->getIssues();
         $content = $this->getPrompt();

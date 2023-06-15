@@ -1,40 +1,48 @@
 <?php
 
-namespace App\Lib\Assistant\Shortcuts;
+namespace App\Lib\Assistant\Actions;
 
+use App\Lib\Interfaces\ActionInterface;
 use DeepL\DeepLException;
 use DeepL\Translator;
 use LanguageDetection\Language;
 
-class Translate
+class Translate implements ActionInterface
 {
-    protected Translator $translator;
+    public static string $name = 'Translate';
+    public static string $slug = 'translate';
 
-    /**
-     * @throws DeepLException
-     */
-    public function __construct()
-    {
-        $this->translator = new Translator(env('DEEPL_TOKEN'));
-    }
+    protected Translator $translator;
+    protected string $text;
+    protected array $options;
 
     /**
      * @param string $text
      * @param array $options
+     * @throws DeepLException
+     */
+    public function __construct(string $text, array $options = [])
+    {
+        $this->translator = new Translator(env('DEEPL_TOKEN'));
+        $this->text = $text;
+        $this->options = $options;
+    }
+
+    /**
      * @return string
      * @throws DeepLException
      */
-    public function translate(string $text, array $options = []): string
+    public function execute(): string
     {
         if (empty($options['sourceLang'])) {
-            $sourceLang = $this->detectLanguage($text);
+            $sourceLang = $this->detectLanguage($this->text);
         } else {
             $sourceLang = $options['sourceLang'];
         }
         if ($sourceLang === 'pl' ) {
-            $translatedText = $this->translateFromPolishToEnglish($text);
+            $translatedText = $this->translateFromPolishToEnglish($this->text);
         } else {
-            $translatedText = $this->translateFromEnglishToPolish($text);
+            $translatedText = $this->translateFromEnglishToPolish($this->text);
         }
         return $translatedText;
     }

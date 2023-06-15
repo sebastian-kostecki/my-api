@@ -2,18 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Lib\Assistant\Shortcuts\SaveNote;
-use App\Lib\Assistant\Shortcuts\Translate;
+use App\Lib\Assistant\Actions\SaveNote;
+use App\Lib\Assistant\Actions\Translate;
 use DeepL\DeepLException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class ShortcutController extends Controller
 {
-    public function __construct(
-        protected Translate $translator,
-    ) {}
-
     /**
      * @param Request $request
      * @return JsonResponse
@@ -25,7 +21,8 @@ class ShortcutController extends Controller
             'text' => 'string|required'
         ]);
 
-        $translatedText = $this->translator->translate($request->input('text'));
+        $translator = new Translate($request->input('text'));
+        $translatedText = $translator->execute();
         return new JsonResponse([
             'data' => $translatedText
         ]);
@@ -42,7 +39,8 @@ class ShortcutController extends Controller
         ]);
         try {
             $client = new SaveNote('test-notes');
-            $client->execute($request->input('text'));
+            $client->setText($request->input('text'));
+            $response = $client->execute();
         } catch (\Exception $e) {
             return new JsonResponse([
                 'success' => false,
@@ -50,7 +48,7 @@ class ShortcutController extends Controller
             ]);
         }
         return new JsonResponse([
-            'success' => true
+            'data' => $response
         ]);
     }
 }

@@ -61,9 +61,9 @@ class Qdrant
      * @param int $id
      * @param array $embedding
      * @param array $payload
-     * @return Response
+     * @return string
      */
-    public function insertVector(int $id, array $embedding, array $payload = []): Response
+    public function insertVector(int $id, array $embedding, array $payload = []): string
     {
         try {
             $points = new PointsStruct();
