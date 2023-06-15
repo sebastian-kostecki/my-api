@@ -12,6 +12,7 @@ class AddWorkTask implements ActionInterface
 {
     public static string $name = 'New Task';
     public static string $slug = 'add-work-task';
+    public static string $icon = 'fa-solid fa-check';
 
     protected string $prompt;
     protected OpenAI $openAI;

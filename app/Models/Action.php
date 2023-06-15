@@ -17,7 +17,8 @@ class Action extends Model
     protected $fillable = [
         'name',
         'slug',
-        'type'
+        'type',
+        'icon'
     ];
 
     public static function scan(): array

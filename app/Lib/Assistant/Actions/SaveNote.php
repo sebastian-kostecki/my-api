@@ -12,6 +12,7 @@ class SaveNote implements ActionInterface
 {
     public static string $name = 'Note';
     public static string $slug = 'add-note';
+    public static string $icon = 'fa-regular fa-note-sticky';
 
     protected OpenAI $openAI;
     protected string $collectionName;

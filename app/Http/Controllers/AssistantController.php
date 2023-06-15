@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Lib\Assistant\Assistant;
 use App\Lib\Connections\OpenAI;
 use App\Lib\Connections\Pinecone;
+use App\Models\Action;
 use App\Models\Note;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -119,6 +120,17 @@ class AssistantController extends Controller
 
         return new JsonResponse([
             'data' => $params['answer']
+        ]);
+    }
+
+    /**
+     * @return JsonResponse
+     */
+    public function getActions(): JsonResponse
+    {
+        $actions = Action::all();
+        return new JsonResponse([
+            'data' => $actions
         ]);
     }
 }

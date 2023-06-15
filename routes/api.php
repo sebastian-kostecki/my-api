@@ -28,7 +28,7 @@ Route::middleware('auth:sanctum')->group(function () {
     })->name('login');
 
     Route::post('/chat', [AssistantController::class, 'chat']);
-
+    
 
     /**
      * Shortcuts
@@ -41,5 +41,6 @@ Route::middleware('auth:sanctum')->group(function () {
      */
     Route::post('/assistant/prompt', [AssistantController::class, 'ask']);
     Route::post('/assistant/answer', [AssistantController::class, 'get']);
+    Route::get('/assistant/actions', [AssistantController::class, 'getActions']);
 });
 

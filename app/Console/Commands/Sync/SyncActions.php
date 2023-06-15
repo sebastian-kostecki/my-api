@@ -64,6 +64,7 @@ class SyncActions extends Command
             'name' => $class::$name,
             'slug' => $class::$slug,
             'type' => $class,
+            'icon' => $class::$icon
         ]);
         $this->info("added to database");
     }
