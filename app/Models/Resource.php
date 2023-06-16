@@ -5,6 +5,13 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @property integer $id
+ * @property string $title
+ * @property string $content
+ * @property string $category
+ * @property array $tags
+ */
 class Resource extends Model
 {
     use HasFactory;

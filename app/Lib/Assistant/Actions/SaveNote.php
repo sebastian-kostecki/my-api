@@ -40,7 +40,7 @@ class SaveNote implements ActionInterface
                 }
                 $note = Note::create(['content' => trim($line)]);
                 $embedding = $this->openAI->createEmbedding($note->content);
-                $vectorDatabase = new Qdrant($this->collectionName);
+                $vectorDatabase = new Qdrant();
                 $vectorDatabase->insertVector($note->id, $embedding, [
                     'id' => $note->id,
                     'content' => $note->content

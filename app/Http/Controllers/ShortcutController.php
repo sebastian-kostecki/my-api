@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\SaveResource;
 use App\Lib\Assistant\Actions\SaveNote;
 use App\Lib\Assistant\Actions\Translate;
 use DeepL\DeepLException;
@@ -32,23 +33,23 @@ class ShortcutController extends Controller
      * @param Request $request
      * @return JsonResponse
      */
-    public function saveNote(Request $request): JsonResponse
+    public function saveResource(Request $request): JsonResponse
     {
         $request->validate([
-            'text' => 'string|required'
+            'text' => 'required'
         ]);
-        try {
-            $client = new SaveNote('test-notes');
-            $client->setText($request->input('text'));
-            $response = $client->execute();
-        } catch (\Exception $e) {
-            return new JsonResponse([
-                'success' => false,
-                'message' => $e->getMessage()
-            ]);
+        $text = $request->input('text');
+
+        $lines = explode("\n", $text['text']);
+        $title = $text['title'];
+        $chunkedLines = array_chunk($lines, 1000);
+
+        foreach ($chunkedLines as $chunkedLine) {
+            SaveResource::dispatch($title, $chunkedLine);
         }
+
         return new JsonResponse([
-            'data' => $response
+            'status' => 'started'
         ]);
     }
 }

@@ -95,4 +95,23 @@ class OpenAI
         ]);
         return $response->choices[0]->message->content;
     }
+
+    public function generateTags(string $text)
+    {
+        $response = Client::chat()->create([
+            'model' => 'gpt-3.5-turbo',
+            'temperature' => 0.1,
+            'messages' => [
+                [
+                    'role' => 'system',
+                    'content' => "Based on the text below, generate a list of tags to describe the text with JSON. Always return JSON and nothing more. Example: {\"tags\" [\"HTTP\",\"status code\",\"422\",\"Unprocessable Content\",\"server\", \"content type\",\"request entity\",\"syntax\",\"instructions\"]}"
+                ],
+                [
+                    'role' => 'user',
+                    'content' => $text
+                ],
+            ],
+        ]);
+        return $response->choices[0]->message->content;
+    }
 }
