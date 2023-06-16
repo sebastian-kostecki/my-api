@@ -17,25 +17,6 @@ class AssistantController extends Controller
         protected OpenAI $openAI,
         protected Assistant $assistant
     ) {}
-    public function rememberText(string $url)
-    {
-        $response = Http::get('https://relaxed-boba-bcf830.netlify.app/.netlify/functions/unfluff?url=' . $url);
-        $text = $response->json();
-
-        $lines = explode('.', $text['text']);
-
-        foreach ($lines as $line) if ($line) {
-            $note = Note::create(['content' => trim($line)]);
-
-            $openAI = new OpenAI();
-            $pinecone = new Pinecone('notes-for-exercises');
-
-            $embedding = $openAI->createEmbedding($note->content);
-            $pinecone->upsertVectors($note->id, $embedding, [
-                'tag' => 'notes'
-            ]);
-        }
-    }
 
     public function makeQuestion(string $question)
     {
