@@ -6,6 +6,7 @@ use App\Http\Controllers\TextController;
 use App\Http\Controllers\TranslationController;
 use App\Lib\Connections\Qdrant;
 use App\Models\Resource;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -47,10 +48,11 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::post('/assistant/test', function (Request $request) {
         $params = $request->validate([
-            'query' => 'string|required',
+            'query' => 'string',
             'type' => 'string',
             'group' => 'string',
-            'action' => 'string'
+            'action' => 'string',
+            'record_id' => 'integer'
         ]);
 
         switch ($params['type']) {
@@ -87,13 +89,27 @@ Route::middleware('auth:sanctum')->group(function () {
                     'id' => $resource->id,
                     'tags' => implode(',', $resource->tags)
                 ]);
-                return new \Illuminate\Http\JsonResponse([
+                return new JsonResponse([
                     'data' => 'Dodano'
                 ]);
-
                 break;
             case 'forget':
-                //zapominanie informacji
+                /**
+                 * Zapominanie informacji
+                 *
+                 * usuwamy dane z qdrant
+                 * usuwamy dane z bazy danych
+                 */
+                
+                $resource = Resource::findOrFail($params['record_id']);
+                $resource->delete();
+
+                $vectorDatabase = new Qdrant('test');
+                $vectorDatabase->deleteVector($params['record_id']);
+
+                return new JsonResponse([
+                    'data' => 'Usunięto'
+                ]);
                 break;
         }
     });

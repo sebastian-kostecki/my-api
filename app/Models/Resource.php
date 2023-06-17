@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property string $content
  * @property string $category
  * @property array $tags
+ * @method static findOrFail(mixed $record_id)
  */
 class Resource extends Model
 {

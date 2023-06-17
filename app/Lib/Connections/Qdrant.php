@@ -98,4 +98,26 @@ class Qdrant
         $response = $this->client->collections($this->collectionName)->points()->search($searchRequest);
         return $response['result'];
     }
+
+    /**
+     * @param int $id
+     * @return array
+     * @throws InvalidArgumentException
+     */
+    public function deleteVector(int $id): array
+    {
+        $response = $this->client->collections($this->collectionName)->points()->delete([$id]);
+        return $response['status'];
+    }
+
+    /**
+     * @param int $id
+     * @return array
+     * @throws InvalidArgumentException
+     */
+    public function getPoint(int $id): array
+    {
+        $response = $this->client->collections($this->collectionName)->points()->id($id);
+        return $response['result'];
+    }
 }
