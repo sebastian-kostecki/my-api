@@ -93,7 +93,8 @@ class Qdrant
             ->setParams([
                 'hnsw_ef' => 128,
                 'exact' => false,
-            ]);
+            ])
+            ->setWithPayload(true);
 
         $response = $this->client->collections($this->collectionName)->points()->search($searchRequest);
         return $response['result'];
@@ -119,5 +120,28 @@ class Qdrant
     {
         $response = $this->client->collections($this->collectionName)->points()->id($id);
         return $response['result'];
+    }
+
+    public function getIdsOverAverageScore(array $embedding)
+    {
+        $searchRequest = (new SearchRequest(new VectorStruct($embedding, 'ada')))
+            ->setLimit(3)
+            ->setParams([
+                'hnsw_ef' => 128,
+                'exact' => false,
+            ]);
+
+        $response = $this->client->collections($this->collectionName)->points()->search($searchRequest);
+
+        $scores = array_column($response['result'], 'score');
+        $average = count($scores) > 0 ? array_sum($scores) / count($scores) : 0;
+
+        $filteredResults = array_filter($response['result'], function ($vector) use ($average) {
+            return $vector['score'] > $average;
+        });
+
+        return array_map(function ($vector) {
+            return $vector['id'];
+        }, $filteredResults);
     }
 }

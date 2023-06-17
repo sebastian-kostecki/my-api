@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property string $category
  * @property array $tags
  * @method static findOrFail(mixed $record_id)
+ * @method static where(string $column, string $category)
  */
 class Resource extends Model
 {

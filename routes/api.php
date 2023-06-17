@@ -5,7 +5,9 @@ use App\Http\Controllers\ShortcutController;
 use App\Http\Controllers\TextController;
 use App\Http\Controllers\TranslationController;
 use App\Lib\Connections\Qdrant;
+use App\Models\Conversation;
 use App\Models\Resource;
+use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -57,7 +59,40 @@ Route::middleware('auth:sanctum')->group(function () {
 
         switch ($params['type']) {
             case 'query':
-                //wyszukiwanie informacji
+                /**
+                 * Wyszukiwanie informacji
+                 *
+                 * Zapis nowego pytania
+                 * Prompt klasyfikujący
+                 * Pobranie kontekstu
+                 * Utworzenie promptu systemowego
+                 *
+                 */
+                $qdrant = new Qdrant('test');
+                $openAI = new \App\Lib\Connections\OpenAI();
+
+                $currentConversation = new Conversation();
+                $currentConversation->saveQuestion($params['query']);
+
+                $category = $openAI->categorizeQueryPrompt($params['query']);
+
+                $embedding = $openAI->createEmbedding($params['query']);
+                $resourcesIds = $qdrant->getIdsOverAverageScore($embedding);
+
+                $resources = Resource::where('category', $category)
+                    ->whereIn('id', $resourcesIds)
+                    ->pluck('content')
+                    ->toArray();
+
+
+                Conversation::updateSystemPrompt($resources);
+                $messages = Conversation::getConversationsLastFiveMinutes();
+                $response = $openAI->chat($messages);
+                $currentConversation->saveAnswer($response);
+                return new JsonResponse([
+                    'data' => $response
+                ]);
+
                 break;
             case 'save':
                 /**
@@ -100,7 +135,7 @@ Route::middleware('auth:sanctum')->group(function () {
                  * usuwamy dane z qdrant
                  * usuwamy dane z bazy danych
                  */
-                
+
                 $resource = Resource::findOrFail($params['record_id']);
                 $resource->delete();
 

@@ -2,21 +2,22 @@
 
 namespace App\Lib\Connections;
 
+use Carbon\Carbon;
 use OpenAI\Laravel\Facades\OpenAI as Client;
 use OpenAI\Responses\Chat\CreateResponse;
 
 class OpenAI
 {
-    public function chat(string $prompt): string
-    {
-        $response = Client::chat()->create([
-            'model' => 'gpt-3.5-turbo',
-            'messages' => [
-                ['role' => 'user', 'content' => $prompt],
-            ],
-        ]);
-        return $response->choices[0]->message->content;
-    }
+//    public function chat(string $prompt): string
+//    {
+//        $response = Client::chat()->create([
+//            'model' => 'gpt-3.5-turbo',
+//            'messages' => [
+//                ['role' => 'user', 'content' => $prompt],
+//            ],
+//        ]);
+//        return $response->choices[0]->message->content;
+//    }
 
     public function createEmbedding(string $input)
     {
@@ -114,4 +115,98 @@ class OpenAI
         ]);
         return $response->choices[0]->message->content;
     }
+
+    public function categorizeQueryPrompt(string $query)
+    {
+        $prompt = <<<EOD
+Identify the following query with one Of the categories below.
+
+Query is for AI Assistant who needs to identify parts of a long-term memory to access the most relevant information. Pay special attention to distinguish questions from actions.
+
+If query is a direct action like "Dodaj coś" or "Przetłumacz tekst", classify query as "actions".
+I query is related directly to the assistant or user, classify as "memory"
+If query includes any mention of "notatki", classify as "note"
+If query includes any mention of "wiedza" lub cointains message like "Dodaj do mojej wiedzy", classify as "knowledge"
+If query includes any mention of "linki" lub "link", classify as "links"
+If query doesn't fit to any other category, classify as "all".
+
+Return plain category name and nothing else.
+
+examples```
+Jak się masz?
+all
+Sprawdź moje notatki o kolekjach w Laravelu.
+notes
+Masz linki na temat LLM?
+links
+Sprawdź mój kalendarz.
+actions
+Dodaj zadanie do pracy.
+actions
+Dodaj do mojej wiedzy ten tekst.
+knowledge
+```
+
+query```
+{$query}
+```
+EOD;
+
+        $response = Client::chat()->create([
+            'model' => 'gpt-3.5-turbo',
+            'temperature' => 0.1,
+            'messages' => [
+                [
+                    'role' => 'user',
+                    'content' => $prompt
+                ],
+            ],
+        ]);
+        return $response->choices[0]->message->content;
+    }
+
+    public function updateSystemPrompt(array $context)
+    {
+        $context = implode("\n", $context);
+        $currentDateTime = Carbon::now()->format('Y-m-d H:i');
+        $prompt = <<<EOD
+You're a helpful assistant. Answer questions as short and concise and as truthfully as possible, based on a context.
+
+Please note that context below may include:
+- long-term memory,
+- actions you may take,
+- user's personal notes and/or links you do have access to.
+
+And you should prioritize this knowledge while answering.
+
+If you don't know the answer say "I don't know" or "I have no information about this" in your own words.
+
+context```
+{$context}
+```
+$currentDateTime
+EOD;
+
+        $response = Client::chat()->create([
+            'model' => 'gpt-3.5-turbo',
+            'temperature' => 0.8,
+            'messages' => [
+                [
+                    'role' => 'user',
+                    'content' => $prompt
+                ],
+            ],
+        ]);
+        return $response->choices[0]->message->content;
+    }
+
+    public function chat(array $messages) {
+        $response = Client::chat()->create([
+            'model' => 'gpt-3.5-turbo',
+            'messages' => $messages
+        ]);
+        return $response->choices[0]->message->content;
+    }
+
+
 }
