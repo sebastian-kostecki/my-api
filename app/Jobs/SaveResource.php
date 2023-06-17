@@ -50,7 +50,7 @@ class SaveResource implements ShouldQueue
                 $resource = new Resource();
                 $resource->title = $this->title;
                 $resource->content = $line;
-                $resource->category = 'resource';
+                $resource->category = 'knowledge';
                 $resource->tags = $tags->tags;
                 $resource->save();
 

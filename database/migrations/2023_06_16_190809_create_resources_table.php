@@ -18,7 +18,8 @@ return new class extends Migration
             $table->enum('category', [
                 'memory',
                 'note',
-                'resource'
+                'knowledge',
+                'links'
             ]);
             $table->json('tags');
             $table->timestamps();
