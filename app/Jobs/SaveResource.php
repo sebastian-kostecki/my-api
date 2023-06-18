@@ -40,7 +40,7 @@ class SaveResource implements ShouldQueue
         try {
             Log::channel('jobs')->info('Job ' . __CLASS__ . ' started');
 
-            foreach ($this->lines as $line) if (trim($line, ".,:")) {
+            foreach ($this->lines as $line) if (trim($line, ".,:") || str_word_count($line) > 1) {
                 $language = detectLanguage($line);
                 if ($language !== 'pl') {
                     $line = $this->openAI->translateToPolish($line);
