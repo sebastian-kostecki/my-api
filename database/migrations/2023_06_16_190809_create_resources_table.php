@@ -15,9 +15,10 @@ return new class extends Migration
             $table->id();
             $table->string('title')->nullable();
             $table->text('content');
+            $table->string('url')->nullable();
             $table->enum('category', [
-                'memory',
-                'note',
+                'memories',
+                'notes',
                 'knowledge',
                 'links'
             ]);

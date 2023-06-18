@@ -124,8 +124,8 @@ Identify the following query with one Of the categories below.
 Query is for AI Assistant who needs to identify parts of a long-term memory to access the most relevant information. Pay special attention to distinguish questions from actions.
 
 If query is a direct action like "Dodaj coś" or "Przetłumacz tekst", classify query as "actions".
-I query is related directly to the assistant or user, classify as "memory"
-If query includes any mention of "notatki", classify as "note"
+I query is related directly to the assistant or user, classify as "memories"
+If query includes any mention of "notatki", classify as "notes"
 If query includes any mention of "wiedza" lub cointains message like "Dodaj do mojej wiedzy", classify as "knowledge"
 If query includes any mention of "linki" lub "link", classify as "links"
 If query doesn't fit to any other category, classify as "all".
@@ -135,7 +135,7 @@ Return plain category name and nothing else.
 examples```
 Jak się masz?
 all
-Sprawdź moje notatki o kolekjach w Laravelu.
+Sprawdź moje notatki o poprzednim spotkaniu.
 notes
 Masz linki na temat LLM?
 links
@@ -144,6 +144,8 @@ actions
 Dodaj zadanie do pracy.
 actions
 Dodaj do mojej wiedzy ten tekst.
+knowledge
+Sprawdź w mojej wiedzy co wiesz o Laravelu?
 knowledge
 ```
 

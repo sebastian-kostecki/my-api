@@ -10,6 +10,7 @@ use App\Models\Resource;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -32,7 +33,7 @@ Route::middleware('auth:sanctum')->group(function () {
         return;
     })->name('login');
 
-    Route::post('/chat', [AssistantController::class, 'chat']);
+//    Route::post('/chat', [AssistantController::class, 'chat']);
 
 
     /**
@@ -44,15 +45,14 @@ Route::middleware('auth:sanctum')->group(function () {
     /**
      * Assistant
      */
-    Route::post('/assistant/prompt', [AssistantController::class, 'ask']);
-    Route::post('/assistant/answer', [AssistantController::class, 'get']);
+//    Route::post('/assistant/prompt', [AssistantController::class, 'ask']);
+//    Route::post('/assistant/answer', [AssistantController::class, 'get']);
     Route::get('/assistant/actions', [AssistantController::class, 'getActions']);
-
-    Route::post('/assistant/test', function (Request $request) {
+    Route::post('/assistant/chat', function (Request $request) {
         $params = $request->validate([
             'query' => 'string',
             'type' => 'string',
-            'group' => 'string',
+            'group' => 'string|nullable',
             'action' => 'string',
             'record_id' => 'integer'
         ]);
@@ -74,19 +74,37 @@ Route::middleware('auth:sanctum')->group(function () {
                 $currentConversation = new Conversation();
                 $currentConversation->saveQuestion($params['query']);
 
-                $category = $openAI->categorizeQueryPrompt($params['query']);
+                if ($params['group']) {
+                    $category = $params['group'];
+                } else {
+                    $category = $openAI->categorizeQueryPrompt($params['query']);
+                }
+                Log::debug('Category', [$category]);
 
                 $embedding = $openAI->createEmbedding($params['query']);
                 $resourcesIds = $qdrant->getIdsOverAverageScore($embedding);
 
+                if ($params['group'] === 'knowledge') {
+                    $resourcesIds = collect($resourcesIds)->flatMap(function ($id) {
+                        if ($id > 0) {
+                            return [$id - 1, $id, $id + 1];
+                        }
+                        return [$id, $id + 1];
+                    })->all();
+                }
                 $resources = Resource::where('category', $category)
                     ->whereIn('id', $resourcesIds)
                     ->pluck('content')
                     ->toArray();
 
 
+                Log::debug('Resources', [$resources]);
+
                 Conversation::updateSystemPrompt($resources);
                 $messages = Conversation::getConversationsLastFiveMinutes();
+
+                Log::debug('Messages', [$messages]);
+
                 $response = $openAI->chat($messages);
                 $currentConversation->saveAnswer($response);
                 return new JsonResponse([

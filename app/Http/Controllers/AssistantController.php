@@ -18,91 +18,59 @@ class AssistantController extends Controller
         protected Assistant $assistant
     ) {}
 
-    public function makeQuestion(string $question)
-    {
-        $openAI = new OpenAI();
-        $pinecone = new Pinecone('notes-for-exercises');
-
-        $embedding = $openAI->createEmbedding($question);
-        $response = $pinecone->queryVectors($embedding);
-        $ids = array_map(function ($item) {
-            return $item['id'];
-        }, $response['matches']);
-
-        $notes = Note::whereIn('id', $ids)->get();
-        $notes = $notes->map(function ($note) {
-            return $note->content;
-        })->toArray();
-        $context = implode('/n', $notes);
-
-        $response = $openAI->chat('Na podstawie poniższego kontekstu odpowiedz na pytanie:' . $question . '\n\nContext:\n' . $context);
-        echo $response;
-    }
-//
-//    public function chat(Request $request)
+//    /**
+//     * Send prompt to OpenAI
+//     *
+//     * @param Request $request
+//     * @return JsonResponse
+//     */
+//    public function ask(Request $request): JsonResponse
 //    {
 //        $params = $request->validate([
 //            'prompt' => 'required|string'
 //        ]);
 //
-//        $openAI = new OpenAI();
-//        $response = $openAI->chat($params['prompt']);
-//        return new JsonResponse($response);
+//        $this->assistant->execute($params['prompt']);
+//        $response = $this->assistant->getPrompt();
+//
+//
+//        $options = [
+//            'max_tokens' => 1500,
+//            'temperature' => 0.8,
+//            'model' => 'gpt-3.5-turbo'
+//        ];
+//
+//        return new JsonResponse([
+//            'messages' => [
+//                [
+//                    'role' => 'system',
+//                    'content' => 'You are helpful assistant named Ed'
+//                ],
+//                [
+//                    'role' => 'user',
+//                    'content' => $response
+//                ]
+//            ],
+//            'options' => $options
+//        ]);
 //    }
 
-    /**
-     * Send prompt to OpenAI
-     *
-     * @param Request $request
-     * @return JsonResponse
-     */
-    public function ask(Request $request): JsonResponse
-    {
-        $params = $request->validate([
-            'prompt' => 'required|string'
-        ]);
-
-        $this->assistant->execute($params['prompt']);
-        $response = $this->assistant->getPrompt();
-
-
-        $options = [
-            'max_tokens' => 1500,
-            'temperature' => 0.8,
-            'model' => 'gpt-3.5-turbo'
-        ];
-
-        return new JsonResponse([
-            'messages' => [
-                [
-                    'role' => 'system',
-                    'content' => 'You are helpful assistant named Ed'
-                ],
-                [
-                    'role' => 'user',
-                    'content' => $response
-                ]
-            ],
-            'options' => $options
-        ]);
-    }
-
-    /**
-     * Process answer from OpenAI
-     *
-     * @param Request $request
-     * @return JsonResponse
-     */
-    public function get(Request $request): JsonResponse
-    {
-        $params = $request->validate([
-            'answer' => 'required|string'
-        ]);
-
-        return new JsonResponse([
-            'data' => $params['answer']
-        ]);
-    }
+//    /**
+//     * Process answer from OpenAI
+//     *
+//     * @param Request $request
+//     * @return JsonResponse
+//     */
+//    public function get(Request $request): JsonResponse
+//    {
+//        $params = $request->validate([
+//            'answer' => 'required|string'
+//        ]);
+//
+//        return new JsonResponse([
+//            'data' => $params['answer']
+//        ]);
+//    }
 
     /**
      * @return JsonResponse
