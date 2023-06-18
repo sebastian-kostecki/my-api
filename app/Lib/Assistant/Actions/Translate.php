@@ -15,18 +15,15 @@ class Translate implements ActionInterface
 
     protected Translator $translator;
     protected string $text;
-    protected array $options;
 
     /**
      * @param string $text
-     * @param array $options
      * @throws DeepLException
      */
-    public function __construct(string $text, array $options = [])
+    public function __construct(string $text)
     {
         $this->translator = new Translator(env('DEEPL_TOKEN'));
         $this->text = $text;
-        $this->options = $options;
     }
 
     /**
@@ -35,12 +32,8 @@ class Translate implements ActionInterface
      */
     public function execute(): string
     {
-        if (empty($options['sourceLang'])) {
-            $sourceLang = $this->detectLanguage($this->text);
-        } else {
-            $sourceLang = $options['sourceLang'];
-        }
-        if ($sourceLang === 'pl' ) {
+        $sourceLang = $this->detectLanguage($this->text);
+        if ($sourceLang === 'pl') {
             $translatedText = $this->translateFromPolishToEnglish($this->text);
         } else {
             $translatedText = $this->translateFromEnglishToPolish($this->text);

@@ -53,8 +53,7 @@ Route::middleware('auth:sanctum')->group(function () {
             'query' => 'string',
             'type' => 'string',
             'group' => 'string|nullable',
-            'action' => 'string',
-            'record_id' => 'integer'
+            'action' => 'string|nullable'
         ]);
 
         switch ($params['type']) {
@@ -110,8 +109,6 @@ Route::middleware('auth:sanctum')->group(function () {
                 return new JsonResponse([
                     'data' => $response
                 ]);
-
-                break;
             case 'save':
                 /**
                  * Zapisywanie danych
@@ -144,8 +141,7 @@ Route::middleware('auth:sanctum')->group(function () {
                 ]);
                 return new JsonResponse([
                     'data' => 'Dodano'
-                ]);
-                break;
+                ]);;
             case 'forget':
                 /**
                  * Zapominanie informacji
@@ -163,7 +159,12 @@ Route::middleware('auth:sanctum')->group(function () {
                 return new JsonResponse([
                     'data' => 'Usunięto'
                 ]);
-                break;
+            case 'action':
+                $action = new $params['action']($params['query']);
+                $response = $action->execute();
+                return new JsonResponse([
+                    'data' => $response
+                ]);
         }
     });
 });

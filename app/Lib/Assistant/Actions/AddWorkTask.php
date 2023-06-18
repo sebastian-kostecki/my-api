@@ -34,7 +34,7 @@ class AddWorkTask implements ActionInterface
         $content = $this->getPrompt();
         $this->sendToOpenAI($content);
         PanelAlphaTasksTable::createNewTask($this->response, $this->issues);
-        return "Napisz, że zadanie zostało dodane";
+        return "Zadanie zostało dodane";
     }
 
     protected function getIssues(): void

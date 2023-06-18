@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Jobs\SaveResource;
-use App\Lib\Assistant\Actions\SaveNote;
 use App\Lib\Assistant\Actions\Translate;
 use DeepL\DeepLException;
 use Illuminate\Http\JsonResponse;

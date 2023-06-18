@@ -5,23 +5,22 @@ namespace App\Lib\Assistant\Actions;
 use App\Lib\Connections\OpenAI;
 use App\Lib\Connections\Qdrant;
 use App\Lib\Interfaces\ActionInterface;
-use App\Models\Note;
+use App\Models\Resource;
 use Exception;
 
 class SaveNote implements ActionInterface
 {
-    public static string $name = 'Note';
+    public static string $name = 'Add Note';
     public static string $slug = 'add-note';
     public static string $icon = 'fa-regular fa-note-sticky';
 
     protected OpenAI $openAI;
-    protected string $collectionName;
-    protected string $text;
+    protected string $prompt;
 
-    public function __construct(string $collectionName)
+    public function __construct(string $prompt)
     {
         $this->openAI = new OpenAI();
-        $this->collectionName = $collectionName;
+        $this->prompt = $prompt;
     }
 
     /**
@@ -30,31 +29,31 @@ class SaveNote implements ActionInterface
      */
     public function execute(): string
     {
-        $lines = explode('.', $this->text);
-
         try {
-            foreach ($lines as $line) if ($line) {
-                $language = detectLanguage($line);
-                if ($language !== 'pl') {
-                    $line = $this->openAI->translateToPolish($line);
-                }
-                $note = Note::create(['content' => trim($line)]);
-                $embedding = $this->openAI->createEmbedding($note->content);
-                $vectorDatabase = new Qdrant();
-                $vectorDatabase->insertVector($note->id, $embedding, [
-                    'id' => $note->id,
-                    'content' => $note->content
-                ]);
-
+            $language = detectLanguage($this->prompt);
+            if ($language !== 'pl') {
+                $this->prompt = $this->openAI->translateToPolish($this->prompt);
             }
-            return "Napisz, że tekst został dodany";
+            $tags = json_decode($this->openAI->generateTags($this->prompt));
+
+            $resource = new Resource();
+            $resource->content = $this->prompt;
+            $resource->category = 'notes';
+            $resource->tags = $tags->tags;
+            $resource->save();
+
+            $text = $resource->content . " " . implode(',', $resource->tags);
+            $embedding = $this->openAI->createEmbedding($text);
+
+            $vectorDatabase = new Qdrant('test');
+            $vectorDatabase->insertVector($resource->id, $embedding, [
+                'id' => $resource->id,
+                'tags' => implode(',', $resource->tags)
+            ]);
+
+            return "Notatka została dodana";
         } catch (Exception $e) {
             throw new Exception($e->getMessage());
         }
-    }
-
-    public function setText(string $text)
-    {
-        $this->text = $text;
     }
 }
