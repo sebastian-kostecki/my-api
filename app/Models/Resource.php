@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property string $content
  * @property string $category
  * @property array $tags
+ * @property mixed|string $url
  * @method static findOrFail(mixed $record_id)
  * @method static where(string $column, string $category)
  */

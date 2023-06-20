@@ -21,7 +21,8 @@ class ShortcutController extends Controller
             'text' => 'string|required'
         ]);
 
-        $translator = new Translate($request->input('text'));
+        $translator = new Translate();
+        $translator->setMessage($request->input('text'));
         $translatedText = $translator->execute();
         return new JsonResponse([
             'data' => $translatedText
@@ -41,7 +42,7 @@ class ShortcutController extends Controller
 
         $lines = explode("\n", $text['text']);
         $title = $text['title'];
-        $chunkedLines = array_chunk($lines, 1000);
+        $chunkedLines = array_chunk($lines, 100);
 
         foreach ($chunkedLines as $chunkedLine) {
             SaveResource::dispatch($title, $chunkedLine);

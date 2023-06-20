@@ -4,10 +4,8 @@ namespace App\Jobs;
 
 use App\Lib\Connections\OpenAI;
 use App\Lib\Connections\Qdrant;
-use App\Models\Note;
 use App\Models\Resource;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
@@ -38,8 +36,6 @@ class SaveResource implements ShouldQueue
     public function handle(): void
     {
         try {
-            Log::channel('jobs')->info('Job ' . __CLASS__ . ' started');
-
             foreach ($this->lines as $line) if (trim($line, ".,:") || str_word_count($line) > 1) {
                 $language = detectLanguage($line);
                 if ($language !== 'pl') {
@@ -63,7 +59,6 @@ class SaveResource implements ShouldQueue
                     'tags' => implode(',', $resource->tags)
                 ]);
             }
-            Log::channel('jobs')->info('Job ' . __CLASS__ . ' finished');
         } catch (\Exception $e) {
             Log::channel('jobs')->error($e->getMessage());
         }

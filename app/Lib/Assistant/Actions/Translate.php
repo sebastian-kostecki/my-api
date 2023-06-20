@@ -17,13 +17,20 @@ class Translate implements ActionInterface
     protected string $text;
 
     /**
-     * @param string $text
      * @throws DeepLException
      */
-    public function __construct(string $text)
+    public function __construct()
     {
         $this->translator = new Translator(env('DEEPL_TOKEN'));
-        $this->text = $text;
+    }
+
+    /**
+     * @param string $prompt
+     * @return void
+     */
+    public function setMessage(string $prompt): void
+    {
+        $this->text = $prompt;
     }
 
     /**

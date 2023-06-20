@@ -17,9 +17,17 @@ class SaveNote implements ActionInterface
     protected OpenAI $openAI;
     protected string $prompt;
 
-    public function __construct(string $prompt)
+    public function __construct()
     {
         $this->openAI = new OpenAI();
+    }
+
+    /**
+     * @param string $prompt
+     * @return void
+     */
+    public function setMessage(string $prompt): void
+    {
         $this->prompt = $prompt;
     }
 

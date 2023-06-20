@@ -19,10 +19,18 @@ class AddWorkTask implements ActionInterface
     protected Collection $issues;
     protected \stdClass $response;
 
-    public function __construct(string $prompt)
+    public function __construct()
+    {
+        $this->openAI = new OpenAI();
+    }
+
+    /**
+     * @param string $prompt
+     * @return void
+     */
+    public function setMessage(string $prompt): void
     {
         $this->prompt = $prompt;
-        $this->openAI = new OpenAI();
     }
 
     /**
