@@ -102,10 +102,10 @@ class Qdrant
 
     /**
      * @param int $id
-     * @return array
+     * @return string
      * @throws InvalidArgumentException
      */
-    public function deleteVector(int $id): array
+    public function deleteVector(int $id): string
     {
         $response = $this->client->collections($this->collectionName)->points()->delete([$id]);
         return $response['status'];
@@ -143,5 +143,18 @@ class Qdrant
         return array_map(function ($vector) {
             return $vector['id'];
         }, $filteredResults);
+    }
+
+    public function findMessage(array $embedding)
+    {
+        $searchRequest = (new SearchRequest(new VectorStruct($embedding, 'ada')))
+            ->setLimit(1)
+            ->setParams([
+                'hnsw_ef' => 128,
+                'exact' => false,
+            ]);
+
+        $response = $this->client->collections($this->collectionName)->points()->search($searchRequest);
+        return $response['result'][0]['id'];
     }
 }

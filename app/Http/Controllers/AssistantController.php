@@ -4,13 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\AssistantRequest;
 use App\Lib\Assistant\Assistant;
-use App\Lib\Connections\OpenAI;
-use App\Lib\Connections\Pinecone;
 use App\Models\Action;
-use App\Models\Note;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Http;
 
 class AssistantController extends Controller
 {
@@ -36,7 +31,7 @@ class AssistantController extends Controller
                 $response = $this->assistant->save($params);
                 break;
             case 'forget':
-                //forget in lib/assistant
+                $response = $this->assistant->forget($params);
                 break;
             case 'action':
                 //action in lib/assistant

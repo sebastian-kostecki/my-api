@@ -11,6 +11,7 @@ use App\Models\Resource;
 use Illuminate\Support\Facades\Log;
 use Mockery\Matcher\Not;
 use OpenAI\Laravel\Facades\OpenAI as Client;
+use Qdrant\Exception\InvalidArgumentException;
 use Qdrant\Models\Request\SearchRequest;
 use Qdrant\Models\VectorStruct;
 
@@ -122,7 +123,27 @@ class Assistant
             'category' => $resource->category,
             'tags' => implode(',', $resource->tags)
         ]);
-        return "Zapisano";
+        return "Notatkę zapisano";
+    }
+
+    /**
+     * @param $params
+     * @return string
+     * @throws InvalidArgumentException
+     */
+    public function forget($params): string
+    {
+        $embedding = $this->openAI->createEmbedding($params['query']);
+        $resourceId = $this->vectorDatabase->findMessage($embedding);
+
+        $resource = Resource::findOrFail($resourceId);
+        Log::debug('forget', [$resource]);
+        $resource->delete();
+
+        $vectorDatabase = new Qdrant('test');
+        $vectorDatabase->deleteVector($resourceId);
+
+        return "Notatkę usunięto";
     }
 
 
