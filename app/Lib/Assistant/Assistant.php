@@ -5,7 +5,9 @@ namespace App\Lib\Assistant;
 use App\Lib\Connections\OpenAI;
 use App\Lib\Connections\Qdrant;
 use App\Models\Action;
+use App\Models\Conversation;
 use App\Models\Note;
+use App\Models\Resource;
 use Illuminate\Support\Facades\Log;
 use Mockery\Matcher\Not;
 use OpenAI\Laravel\Facades\OpenAI as Client;
@@ -63,6 +65,35 @@ class Assistant
         return $response->choices[0]->message->content;
     }
 
+    /**
+     * @param $params
+     * @return string
+     */
+    public function query($params): string
+    {
+        $newConversation = new Conversation();
+        $newConversation->saveQuestion($params['query']);
+
+        if (!$params['group']) {
+            $params['group'] = $this->openAI->categorizeQueryPrompt($params['query']);
+        }
+
+        $embedding = $this->openAI->createEmbedding($params['query']);
+        $resourcesIds = $this->vectorDatabase->getIdsOverAverageScore($embedding);
+
+        $resources = Resource::where('category', $params['group'])
+            ->whereIn('id', $resourcesIds)
+            ->pluck('content')
+            ->toArray();
+
+        Conversation::updateSystemPrompt($resources);
+        $messages = Conversation::getConversationsLastFiveMinutes();
+
+        $response = $this->openAI->chat($messages);
+        $newConversation->saveAnswer($response);
+
+        return $response;
+    }
 
 
 

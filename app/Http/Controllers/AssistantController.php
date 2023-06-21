@@ -28,25 +28,24 @@ class AssistantController extends Controller
             $params['type'] = $this->assistant->selectType($params['query']);
         }
 
-//
-//        switch ($params['type']) {
-//            case 'query':
-//                //query in assistant
-//                break;
-//            case 'save':
-//                //save in lib/assistant
-//                break;
-//            case 'forget':
-//                //forget in lib/assistant
-//                break;
-//            case 'action':
-//                //action in lib/assistant
-//                break;
-//        }
+        switch ($params['type']) {
+            case 'query':
+                $response = $this->assistant->query($params);
+                break;
+            case 'save':
+                //save in lib/assistant
+                break;
+            case 'forget':
+                //forget in lib/assistant
+                break;
+            case 'action':
+                //action in lib/assistant
+                break;
+        }
 
 
         return new JsonResponse([
-            'data' => $params
+            'data' => $response
         ]);
     }
 
