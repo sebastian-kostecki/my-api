@@ -6,6 +6,8 @@ use App\Http\Requests\AssistantRequest;
 use App\Lib\Assistant\Assistant;
 use App\Models\Action;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Log;
+use Qdrant\Exception\InvalidArgumentException;
 
 class AssistantController extends Controller
 {
@@ -15,13 +17,20 @@ class AssistantController extends Controller
     {
     }
 
-    public function chat(AssistantRequest $request)
+    /**
+     * @param AssistantRequest $request
+     * @return JsonResponse
+     * @throws InvalidArgumentException
+     */
+    public function chat(AssistantRequest $request): JsonResponse
     {
         $params = $request->validated();
 
         if (!$params['type']) {
             $params['type'] = $this->assistant->selectType($params['query']);
         }
+
+        Log::debug('type', [$params]);
 
         switch ($params['type']) {
             case 'query':
@@ -34,10 +43,9 @@ class AssistantController extends Controller
                 $response = $this->assistant->forget($params);
                 break;
             case 'action':
-                //action in lib/assistant
+                $response = $this->assistant->action($params);
                 break;
         }
-
 
         return new JsonResponse([
             'data' => $response

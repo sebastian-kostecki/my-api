@@ -6,14 +6,10 @@ use App\Lib\Connections\OpenAI;
 use App\Lib\Connections\Qdrant;
 use App\Models\Action;
 use App\Models\Conversation;
-use App\Models\Note;
 use App\Models\Resource;
 use Illuminate\Support\Facades\Log;
-use Mockery\Matcher\Not;
 use OpenAI\Laravel\Facades\OpenAI as Client;
 use Qdrant\Exception\InvalidArgumentException;
-use Qdrant\Models\Request\SearchRequest;
-use Qdrant\Models\VectorStruct;
 
 class Assistant
 {
@@ -39,18 +35,18 @@ class Assistant
         $content = "Identify the following query with one of the types below.";
         $content .= "Query is for AI Assistant who needs to identify parts of a long-term memory to access the most relevant information. Pay special attention to distinguish questions from actions.";
         $content .= "types: query|save|forget|action\n";
-        $content .= "If query is a direct action like 'Dodaj zadanie' or 'Przetłumacz tekst', classify query as 'action'";
-        $content .= "If query includes any mention of 'zapisz' or 'notatki' or 'pamięć' or 'link', classify as 'save'";
-        $content .= "If query includes any mention of 'zapomnij' or 'usuń', classify as 'forget'";
+        $content .= "If query is a direct action like 'Add task' or 'Translate text', classify query as 'action'";
+        $content .= "If query includes any mention of 'save' or 'notes' or 'memory' or 'link', classify as 'save'";
+        $content .= "If query includes any mention of 'forget' or 'remove', classify as 'forget'";
         $content .= "If query doesn't fit to any other category, classify as 'query'.\n";
         $content .= "Focus on the beginning of it. Return plain category name and nothing else.\n";
-        $content .= "Examples\n: Zapisz wiadomość. 'save'";
-        $content .= "Zapisz notatkę. 'save'";
-        $content .= "Are you Ed? 'query'";
-        $content .= "Co to jest docker? 'query'";
-        $content .= "Zapamiętaj, że jestem programistą. 'query'";
-        $content .= "Zapomnij notatkę o poprzednim spotkaniu. 'forget'";
-        $content .= "Dodaj task o fixie do notifications. 'action'";
+        $content .= "Examples\n: Zapisz wiadomość. \n'save'";
+        $content .= "Zapisz notatkę. \n'save'";
+        $content .= "Are you Ed? \n'query'";
+        $content .= "Co to jest docker? \n'query'";
+        $content .= "Zapamiętaj, że jestem programistą. \n'query'";
+        $content .= "Zapomnij notatkę o poprzednim spotkaniu. \n'forget'";
+        $content .= "Dodaj task o fixie do notifications. \n'action'";
         $content .= "###message\n{$query}";
 
         $response = Client::chat()->create([
@@ -106,6 +102,11 @@ class Assistant
         if ($language !== 'pl') {
             $params['query'] = $this->openAI->translateToPolish($params['query']);
         }
+
+        if (!$params['group']) {
+            $params['group'] = $this->openAI->categorizeQueryPrompt($params['query']);
+        }
+
         $response = $this->openAI->generateTagsAndTitle($params['query']);
 
         $resource = new Resource();
@@ -146,88 +147,23 @@ class Assistant
         return "Notatkę usunięto";
     }
 
-
-
-
-
     /**
-     * Poprzednie akcje
+     * @param array $params
+     * @return string
      */
-
-
-
-    /**
-     * @param string $prompt
-     * @return void
-     */
-    public function execute(string $prompt): void
+    public function action(array $params): string
     {
-        $this->prompt = $prompt;
-        $this->describeIntention();
-        $this->executeByType();
-    }
-
-    public function getPrompt(): string
-    {
-        return $this->response;
-    }
-
-    /**
-     * @return void
-     */
-    public function describeIntention(): void
-    {
-        $content = "Describe my intention from message below with JSON";
-        $content .= "Focus on the beginning of it. Always return JSON and nothing more. \n";
-        $content .= "types: action|query|memory\n";
-        $content .= "Example: Napisz wiadomość. {\"type\": \"action\"}";
-        $content .= "Zapisz notatkę {\"type\": \"action\"}";
-        $content .= "Are you Ed? {\"type\": \"query\"}";
-        $content .= "Remember that I'm programmer. {\"type\": \"memory\"}";
-        $content .= "Dodaj task o fixie do notifications. {\"type\": \"action\"}";
-        $content .= "###message\n{$this->prompt}";
-
-        $response = $this->openAI->getJson($content);
-        $response = returnJson($response);
-        $this->type = json_decode($response)->type;
-    }
-
-    protected function executeByType()
-    {
-        switch ($this->type) {
-            case 'memory':
-                // zapis do pamięći
-                break;
-            case 'note':
-                break;
-            case 'action':
-                $action = $this->selectAction();
-                $actionClass = Action::where('slug', $action)->value('type');
-                $action = new $actionClass($this->prompt);
-                $this->response = $action->execute();
-                break;
-            default:
-                $type = $this->selectQuery();
-                if ($type === 'note') {
-                    $embedding = $this->openAI->createEmbedding($this->prompt);
-                    $response = $this->vectorDatabase->search($embedding);
-                    $context = "Na podstawie poniższego kontekstu odpowiedz na następujące pytanie" . $this->prompt . "\n\n###Kontekst\n";
-                    foreach ($response as $vector) {
-                        $id = $vector['id'];
-                        $notes = Note::whereIn('id', [$id-1, $id, $id+1])->pluck('content')->toArray();
-                        $notes = implode("\n", $notes);
-                        $context .= $notes;
-                    }
-                    $this->response = $context;
-                } else if ($type === 'memory') {
-                    //
-                } else {
-                    $this->response = $this->prompt;
-                }
+        if (!$params['action'] || !isset($params['action'])) {
+            $slug = $this->selectAction($params['query']);
+            $params['action'] = Action::where('slug', $slug)->value('type');
         }
+
+        $action = new $params['action']();
+        $action->setMessage($params['query']);
+        return $action->execute();
     }
 
-    protected function selectAction()
+    protected function selectAction(string $query)
     {
         $actions = Action::pluck('slug')->toArray();
 
@@ -237,28 +173,10 @@ class Assistant
         $content .= "Example: Dodaj zadanie do pracy o zrobieniu nowego wyglądu strony {\"action\": \"add-work-task\"}";
         $content .= "Zadanie o nauczeniu się Vue.js {\"action\": \"add-private-task\"}";
         $content .= "Zapisz to jako email {\"action\": \"save-email\"}";
-        $content .= "###message\n{$this->prompt}";
+        $content .= "###message\n{$$query}";
 
         $response = $this->openAI->getJson($content);
         $response = returnJson($response);
         return json_decode($response)->action;
     }
-
-    protected function selectQuery()
-    {
-        $content = "Describe my intention from message below with JSON.";
-        $content .= "Focus on the beginning of it. Always return JSON and nothing more. \n";
-        $content .= "Types: note|memory|default\n";
-        $content .= "If you don't recognise the type then assign a default\n";
-        $content .= "Example: Poszukaj w moich notatkach, gdzie leży Lublin? {\"type\": \"note\"}";
-        $content .= "Czy pamiętasz, gdzie pracuję? {\"type\": \"memory\"}";
-        $content .= "Czym jest docker? {\"type\": \"default\"}";
-        $content .= "###message\n{$this->prompt}";
-
-        $response = $this->openAI->getJson($content);
-        $response = returnJson($response);
-        return json_decode($response)->type;
-    }
-
-
 }
