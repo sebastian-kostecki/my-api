@@ -33,7 +33,7 @@ class AssistantController extends Controller
                 $response = $this->assistant->query($params);
                 break;
             case 'save':
-                //save in lib/assistant
+                $response = $this->assistant->save($params);
                 break;
             case 'forget':
                 //forget in lib/assistant

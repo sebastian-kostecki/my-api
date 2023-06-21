@@ -66,10 +66,10 @@ class Assistant
     }
 
     /**
-     * @param $params
+     * @param array $params
      * @return string
      */
-    public function query($params): string
+    public function query(array $params): string
     {
         $newConversation = new Conversation();
         $newConversation->saveQuestion($params['query']);
@@ -93,6 +93,36 @@ class Assistant
         $newConversation->saveAnswer($response);
 
         return $response;
+    }
+
+    /**
+     * @param array $params
+     * @return string
+     */
+    public function save(array $params): string
+    {
+        $language = detectLanguage($params['query']);
+        if ($language !== 'pl') {
+            $params['query'] = $this->openAI->translateToPolish($params['query']);
+        }
+        $response = $this->openAI->generateTagsAndTitle($params['query']);
+
+        $resource = new Resource();
+        $resource->title = $response->title;
+        $resource->content = $params['query'];
+        $resource->category = $params['group'];
+        $resource->tags = $response->tags;
+        $resource->save();
+
+        $text = $resource->content . " " . implode(',', $resource->tags);
+        $embedding = $this->openAI->createEmbedding($text);
+
+        $this->vectorDatabase->insertVector($resource->id, $embedding, [
+            'id' => $resource->id,
+            'category' => $resource->category,
+            'tags' => implode(',', $resource->tags)
+        ]);
+        return "Zapisano";
     }
 
 

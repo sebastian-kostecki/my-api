@@ -97,15 +97,21 @@ class OpenAI
         return $response->choices[0]->message->content;
     }
 
-    public function generateTags(string $text)
+    public function generateTagsAndTitle(string $text)
     {
+        $content = "Based on the text below, generate a list of tags and title to describe the text with JSON. Always return JSON and nothing more.";
+        $content .= "Example:\n";
+        $content .= "Zapisz informację o moim spotkaniu z Hubertem: {\"title\": \"Spotkanie z Hubertem\", \"tags\": [\"spotkanie\", \"Hubert\"]}";
+        $content .= "Zapamiętaj, że jestem programistą PHP: {\"title\": \"Programista\", \"tags\": [\"programista\", \"PHP\"]}";
+
+
         $response = Client::chat()->create([
             'model' => 'gpt-3.5-turbo',
             'temperature' => 0.1,
             'messages' => [
                 [
                     'role' => 'system',
-                    'content' => "Based on the text below, generate a list of tags to describe the text with JSON. Always return JSON and nothing more. Example: {\"tags\" [\"HTTP\",\"status code\",\"422\",\"Unprocessable Content\",\"server\", \"content type\",\"request entity\",\"syntax\",\"instructions\"]}"
+                    'content' => $content
                 ],
                 [
                     'role' => 'user',
@@ -113,7 +119,8 @@ class OpenAI
                 ],
             ],
         ]);
-        return $response->choices[0]->message->content;
+        $response = $response->choices[0]->message->content;
+        return json_decode($response);
     }
 
     public function categorizeQueryPrompt(string $query)

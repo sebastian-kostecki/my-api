@@ -42,7 +42,7 @@ class SaveNote implements ActionInterface
             if ($language !== 'pl') {
                 $this->prompt = $this->openAI->translateToPolish($this->prompt);
             }
-            $tags = json_decode($this->openAI->generateTags($this->prompt));
+            $tags = json_decode($this->openAI->generateTagsAndTitle($this->prompt));
 
             $resource = new Resource();
             $resource->content = $this->prompt;

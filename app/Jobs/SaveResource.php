@@ -41,7 +41,7 @@ class SaveResource implements ShouldQueue
                 if ($language !== 'pl') {
                     $line = $this->openAI->translateToPolish($line);
                 }
-                $tags = json_decode($this->openAI->generateTags($line));
+                $tags = json_decode($this->openAI->generateTagsAndTitle($line));
 
                 $resource = new Resource();
                 $resource->title = $this->title;
