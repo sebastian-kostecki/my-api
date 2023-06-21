@@ -1,14 +1,20 @@
 <?php
 
-namespace App\Lib\Assistant\Shortcuts;
+namespace App\Lib\Assistant\Actions;
 
+use App\Lib\Interfaces\ActionInterface;
 use DeepL\DeepLException;
 use DeepL\Translator;
 use LanguageDetection\Language;
 
-class Translate
+class Translate implements ActionInterface
 {
+    public static string $name = 'Translate';
+    public static string $slug = 'translate';
+    public static string $icon = 'fa-solid fa-language';
+
     protected Translator $translator;
+    protected string $text;
 
     /**
      * @throws DeepLException
@@ -19,22 +25,25 @@ class Translate
     }
 
     /**
-     * @param string $text
-     * @param array $options
+     * @param string $prompt
+     * @return void
+     */
+    public function setMessage(string $prompt): void
+    {
+        $this->text = $prompt;
+    }
+
+    /**
      * @return string
      * @throws DeepLException
      */
-    public function translate(string $text, array $options = []): string
+    public function execute(): string
     {
-        if (empty($options['sourceLang'])) {
-            $sourceLang = $this->detectLanguage($text);
+        $sourceLang = $this->detectLanguage($this->text);
+        if ($sourceLang === 'pl') {
+            $translatedText = $this->translateFromPolishToEnglish($this->text);
         } else {
-            $sourceLang = $options['sourceLang'];
-        }
-        if ($sourceLang === 'pl' ) {
-            $translatedText = $this->translateFromPolishToEnglish($text);
-        } else {
-            $translatedText = $this->translateFromEnglishToPolish($text);
+            $translatedText = $this->translateFromEnglishToPolish($this->text);
         }
         return $translatedText;
     }

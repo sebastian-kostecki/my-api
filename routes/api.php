@@ -4,7 +4,13 @@ use App\Http\Controllers\AssistantController;
 use App\Http\Controllers\ShortcutController;
 use App\Http\Controllers\TextController;
 use App\Http\Controllers\TranslationController;
+use App\Lib\Connections\Qdrant;
+use App\Models\Conversation;
+use App\Models\Resource;
+use Carbon\Carbon;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -31,12 +37,10 @@ Route::middleware('auth:sanctum')->group(function () {
      * Shortcuts
      */
     Route::post('/shortcut/translate', [ShortcutController::class, 'translate']);
-
-    Route::post('/save-text', [TextController::class, 'saveText']);
-
-    Route::post('/chat', [AssistantController::class, 'chat']);
-
-    Route::post('/assistant/prompt', [AssistantController::class, 'ask']);
-    Route::post('/assistant/answer', [AssistantController::class, 'get']);
+    Route::post('/shortcut/save-note', [ShortcutController::class, 'saveResource']);/**
+     * Assistant
+     */;
+    Route::post('/assistant/chat', [AssistantController::class, 'chat']);
+    Route::get('/assistant/actions', [AssistantController::class, 'getActions']);
 });
 

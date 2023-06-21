@@ -13,32 +13,24 @@ class CreateApiToken extends Command
      *
      * @var string
      */
-    protected $signature = 'create:api-token';
+    protected $signature = 'user:create-api-token {user}';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Command description';
+    protected $description = 'Create api token form user';
 
     /**
      * Execute the console command.
      */
     public function handle()
     {
-        $name = $this->ask('Enter user name:');
-        $email = $this->ask('Enter user email:');
-        $password = $this->secret('Enter user password:');
+        $userId = $this->argument('user');
+        $user = User::findOrFail($userId);
 
-        $user = User::where('email', $email)->first();
-
-        if (!$user || !Hash::check($password, $user->password)) {
-            $this->error('Invalid credentials. Unable to create API token!');
-            return;
-        }
-
-        $token = $user->createToken($name)->plainTextToken;
+        $token = $user->createToken("Personal")->plainTextToken;
 
         $this->info('API token created successfully!');
         $this->info('Token: '.$token);

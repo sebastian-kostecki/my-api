@@ -2,17 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Lib\Assistant\Shortcuts\Translate;
+use App\Jobs\SaveResource;
+use App\Lib\Assistant\Actions\Translate;
 use DeepL\DeepLException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class ShortcutController extends Controller
 {
-    public function __construct(
-        protected Translate $translator
-    ) {}
-
     /**
      * @param Request $request
      * @return JsonResponse
@@ -24,9 +21,35 @@ class ShortcutController extends Controller
             'text' => 'string|required'
         ]);
 
-        $translatedText = $this->translator->translate($request->input('text'));
+        $translator = new Translate();
+        $translator->setMessage($request->input('text'));
+        $translatedText = $translator->execute();
         return new JsonResponse([
             'data' => $translatedText
+        ]);
+    }
+
+    /**
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function saveResource(Request $request): JsonResponse
+    {
+        $request->validate([
+            'text' => 'required'
+        ]);
+        $text = $request->input('text');
+
+        $lines = explode("\n", $text['text']);
+        $title = $text['title'];
+        $chunkedLines = array_chunk($lines, 100);
+
+        foreach ($chunkedLines as $chunkedLine) {
+            SaveResource::dispatch($title, $chunkedLine);
+        }
+
+        return new JsonResponse([
+            'status' => 'started'
         ]);
     }
 }

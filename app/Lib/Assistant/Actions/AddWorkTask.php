@@ -5,30 +5,44 @@ namespace App\Lib\Assistant\Actions;
 use App\Lib\Connections\Notion\PanelAlphaIssuesTable;
 use App\Lib\Connections\Notion\PanelAlphaTasksTable;
 use App\Lib\Connections\OpenAI;
+use App\Lib\Interfaces\ActionInterface;
 use Illuminate\Support\Collection;
 
-class AddWorkTask
+class AddWorkTask implements ActionInterface
 {
+    public static string $name = 'New Task';
     public static string $slug = 'add-work-task';
+    public static string $icon = 'fa-solid fa-check';
 
     protected string $prompt;
     protected OpenAI $openAI;
     protected Collection $issues;
     protected \stdClass $response;
 
-    public function __construct(string $prompt)
+    public function __construct()
     {
-        $this->prompt = $prompt;
         $this->openAI = new OpenAI();
     }
 
-    public function execute()
+    /**
+     * @param string $prompt
+     * @return void
+     */
+    public function setMessage(string $prompt): void
+    {
+        $this->prompt = $prompt;
+    }
+
+    /**
+     * @return string
+     */
+    public function execute(): string
     {
         $this->getIssues();
         $content = $this->getPrompt();
         $this->sendToOpenAI($content);
         PanelAlphaTasksTable::createNewTask($this->response, $this->issues);
-        return "Napisz, że zadanie zostało dodane";
+        return "Zadanie zostało dodane";
     }
 
     protected function getIssues(): void

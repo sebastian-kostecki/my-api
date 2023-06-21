@@ -15,8 +15,10 @@ class Action extends Model
     use HasFactory;
 
     protected $fillable = [
-      'slug',
-      'type'
+        'name',
+        'slug',
+        'type',
+        'icon'
     ];
 
     public static function scan(): array
