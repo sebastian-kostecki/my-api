@@ -24,9 +24,60 @@ class Assistant
     public function __construct()
     {
         $this->openAI = new OpenAI();
-        $this->vectorDatabase = new Qdrant('test-notes');
+        $this->vectorDatabase = new Qdrant('test');
     }
 
+    /**
+     * @param string $query
+     * @return string
+     */
+    public function selectType(string $query): string
+    {
+        $content = "Identify the following query with one of the types below.";
+        $content .= "Query is for AI Assistant who needs to identify parts of a long-term memory to access the most relevant information. Pay special attention to distinguish questions from actions.";
+        $content .= "types: query|save|forget|action\n";
+        $content .= "If query is a direct action like 'Dodaj zadanie' or 'Przetłumacz tekst', classify query as 'action'";
+        $content .= "If query includes any mention of 'zapisz' or 'notatki' or 'pamięć' or 'link', classify as 'save'";
+        $content .= "If query includes any mention of 'zapomnij' or 'usuń', classify as 'forget'";
+        $content .= "If query doesn't fit to any other category, classify as 'query'.\n";
+        $content .= "Focus on the beginning of it. Return plain category name and nothing else.\n";
+        $content .= "Examples\n: Zapisz wiadomość. 'save'";
+        $content .= "Zapisz notatkę. 'save'";
+        $content .= "Are you Ed? 'query'";
+        $content .= "Co to jest docker? 'query'";
+        $content .= "Zapamiętaj, że jestem programistą. 'query'";
+        $content .= "Zapomnij notatkę o poprzednim spotkaniu. 'forget'";
+        $content .= "Dodaj task o fixie do notifications. 'action'";
+        $content .= "###message\n{$query}";
+
+        $response = Client::chat()->create([
+            'model' => 'gpt-3.5-turbo',
+            'temperature' => 0.1,
+            'messages' => [
+                [
+                    'role' => 'user',
+                    'content' => $content
+                ],
+            ],
+        ]);
+        return $response->choices[0]->message->content;
+    }
+
+
+
+
+
+
+    /**
+     * Poprzednie akcje
+     */
+
+
+
+    /**
+     * @param string $prompt
+     * @return void
+     */
     public function execute(string $prompt): void
     {
         $this->prompt = $prompt;
@@ -126,4 +177,6 @@ class Assistant
         $response = returnJson($response);
         return json_decode($response)->type;
     }
+
+
 }

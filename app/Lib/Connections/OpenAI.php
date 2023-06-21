@@ -119,7 +119,7 @@ class OpenAI
     public function categorizeQueryPrompt(string $query)
     {
         $prompt = <<<EOD
-Identify the following query with one Of the categories below.
+Identify the following query with one of the categories below.
 
 Query is for AI Assistant who needs to identify parts of a long-term memory to access the most relevant information. Pay special attention to distinguish questions from actions.
 
@@ -137,6 +137,8 @@ Jak się masz?
 all
 Sprawdź moje notatki o poprzednim spotkaniu.
 notes
+Jak mam na imię?
+memories
 Masz linki na temat LLM?
 links
 Sprawdź mój kalendarz.
