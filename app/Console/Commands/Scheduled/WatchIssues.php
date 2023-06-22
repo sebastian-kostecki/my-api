@@ -2,6 +2,8 @@
 
 namespace App\Console\Commands\Scheduled;
 
+use FiveamCode\LaravelNotionApi\Entities\Blocks\HeadingOne;
+use FiveamCode\LaravelNotionApi\Entities\Blocks\Paragraph;
 use Illuminate\Console\Command;
 use Gitlab\Client;
 use Illuminate\Support\Collection;
@@ -61,7 +63,8 @@ class WatchIssues extends Command
                 'title' => $item['title'],
                 'issue_id' => $item['iid'],
                 'state' => $item['state'],
-                'url' => $item['web_url']
+                'url' => $item['web_url'],
+                'description' => $item['description']
             ];
         }, $gitlabIssues);
         return collect($gitlabIssues);
@@ -127,7 +130,12 @@ class WatchIssues extends Command
             } else {
                 $page->setSelect('Status', 'Not Started');
             }
-            \Notion::pages()->createInDatabase($this->panelAlphaNotionDatabaseId, $page);
+            $page = \Notion::pages()->createInDatabase($this->panelAlphaNotionDatabaseId, $page);
+            $heading = HeadingOne::create('Description');
+            $headingBlock = \Notion::block($page->getId())->append($heading);
+
+            $newParagraph = Paragraph::create($issue['description']);
+            \Notion::block($headingBlock->getId())->append($newParagraph);
         });
     }
 }
