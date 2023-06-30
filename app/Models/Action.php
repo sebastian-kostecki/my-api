@@ -18,7 +18,13 @@ class Action extends Model
         'name',
         'slug',
         'type',
-        'icon'
+        'icon',
+        'shortcut',
+        'enabled'
+    ];
+
+    protected $casts = [
+      'enabled' => 'boolean'
     ];
 
     public static function scan(): array
