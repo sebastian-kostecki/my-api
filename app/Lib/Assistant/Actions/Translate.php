@@ -12,6 +12,7 @@ class Translate implements ActionInterface
     public static string $name = 'Translate';
     public static string $slug = 'translate';
     public static string $icon = 'fa-solid fa-language';
+    public static string $shortcut = '';
 
     protected Translator $translator;
     protected string $text;
