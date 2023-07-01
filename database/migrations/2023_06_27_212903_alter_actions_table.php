@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::table('actions', function (Blueprint $table) {
             $table->boolean('enabled')->after('icon')->default(1);
-            $table->string('shortcut')->after('icon');
+            $table->string('shortcut')->after('icon')->nullable();
         });
     }
 

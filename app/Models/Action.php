@@ -9,6 +9,7 @@ use Illuminate\Support\Str;
 /**
  * @method static where(string $column, mixed $value)
  * @method static pluck(string $column)
+ * @method static findOrFail(int $id)
  */
 class Action extends Model
 {
