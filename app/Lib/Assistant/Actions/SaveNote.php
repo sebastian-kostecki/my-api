@@ -13,6 +13,7 @@ class SaveNote implements ActionInterface
     public static string $name = 'Add Note';
     public static string $slug = 'add-note';
     public static string $icon = 'fa-regular fa-note-sticky';
+    public static string $shortcut = 'CommandOrControl+Shift+N';
 
     protected OpenAI $openAI;
     protected string $prompt;

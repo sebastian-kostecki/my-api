@@ -9,6 +9,7 @@ use Illuminate\Support\Str;
 /**
  * @method static where(string $column, mixed $value)
  * @method static pluck(string $column)
+ * @method static findOrFail(int $id)
  */
 class Action extends Model
 {
@@ -18,7 +19,13 @@ class Action extends Model
         'name',
         'slug',
         'type',
-        'icon'
+        'icon',
+        'shortcut',
+        'enabled'
+    ];
+
+    protected $casts = [
+      'enabled' => 'boolean'
     ];
 
     public static function scan(): array
