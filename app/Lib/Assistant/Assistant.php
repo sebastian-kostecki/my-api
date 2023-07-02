@@ -173,6 +173,8 @@ class Assistant
         $content .= "Example: Dodaj zadanie do pracy o zrobieniu nowego wyglądu strony {\"action\": \"add-work-task\"}";
         $content .= "Zadanie o nauczeniu się Vue.js {\"action\": \"add-private-task\"}";
         $content .= "Zapisz to jako email {\"action\": \"save-email\"}";
+        $content .= "Napisz metodę w kontrolerze tworzącą nowego użytkownika. {\"action\": \"text-to-php\"}";
+        $content .= "Przetłumacz tekst: I would like to eat some pizza. {\"action\": \"translate\"}";
         $content .= "###message\n{$$query}";
 
         $response = $this->openAI->getJson($content);

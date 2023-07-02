@@ -25,7 +25,7 @@ class Action extends Model
     ];
 
     protected $casts = [
-      'enabled' => 'boolean'
+        'enabled' => 'boolean'
     ];
 
     public static function scan(): array
