@@ -66,8 +66,7 @@ class SyncActions extends Command
             'type' => $class,
             'icon' => $class::$icon,
             'shortcut' => $class::$shortcut,
-            'enabled' => true,
-            'showed' => true
+            'enabled' => true
         ]);
         $this->info("added to database");
     }
