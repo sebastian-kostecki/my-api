@@ -6,6 +6,7 @@ use App\Lib\Interfaces\ActionInterface;
 use DeepL\DeepLException;
 use DeepL\Translator;
 use LanguageDetection\Language;
+use OpenAI\Laravel\Facades\OpenAI as Client;
 
 class Translate implements ActionInterface
 {
@@ -43,6 +44,7 @@ class Translate implements ActionInterface
         $sourceLang = $this->detectLanguage($this->text);
         if ($sourceLang === 'pl') {
             $translatedText = $this->translateFromPolishToEnglish($this->text);
+            $translatedText = $this->improveText($translatedText);
         } else {
             $translatedText = $this->translateFromEnglishToPolish($this->text);
         }
@@ -80,5 +82,27 @@ class Translate implements ActionInterface
     {
         $translationResult = $this->translator->translateText($text, null, 'pl');
         return $translationResult->text;
+    }
+
+    protected function improveText($translatedText)
+    {
+        $prompt = "You are developing an English text improvement system. ";
+        $prompt .= "Given a piece of text written by a non-native English speaker, provide suggestions to enhance the grammar, vocabulary, syntax, and overall clarity of the text. ";
+        $prompt .= "Your system should analyze the text and offer constructive feedback on sentence structure, word choice, grammatical errors, and idiomatic expressions. ";
+        $prompt .= "Consider the recipient's proficiency in English and aim to provide clear explanations and alternative phrasings to aid their understanding. ";
+        $prompt .= "Help the recipient to refine their writing skills by providing specific recommendations that promote more natural and accurate English language usage.";
+        $prompt .= "\n###TEXT\n" . $translatedText;
+
+        $response = Client::chat()->create([
+            'model' => 'gpt-3.5-turbo',
+            'temperature' => 0.8,
+            'messages' => [
+                [
+                    'role' => 'user',
+                    'content' => $prompt
+                ],
+            ],
+        ]);
+        return $response->choices[0]->message->content;
     }
 }
