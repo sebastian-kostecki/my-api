@@ -21,11 +21,14 @@ class Action extends Model
         'type',
         'icon',
         'shortcut',
-        'enabled'
+        'prompt',
+        'enabled',
+        'showed'
     ];
 
     protected $casts = [
-        'enabled' => 'boolean'
+        'enabled' => 'boolean',
+        'showed' => 'boolean'
     ];
 
     public static function scan(): array
