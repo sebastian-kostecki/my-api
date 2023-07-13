@@ -4,6 +4,7 @@ namespace App\Lib\Assistant\Actions;
 
 use App\Lib\Connections\OpenAI;
 use App\Lib\Interfaces\ActionInterface;
+use App\Models\Action;
 use OpenAI\Laravel\Facades\OpenAI as Client;
 
 class Text2PHP implements ActionInterface
@@ -12,6 +13,14 @@ class Text2PHP implements ActionInterface
     public static string $slug = 'text-to-php';
     public static string $icon = 'fa-brands fa-php';
     public static string $shortcut = '';
+    public static string $systemPrompt = <<<END
+You are building a text-to-code conversion system that generates PHP code, specifically targeting the Laravel framework.
+Given a user message that describes a programming task in natural language, generate the corresponding PHP code using Laravel conventions and features.
+The system should be able to handle various types of programming tasks, such as mathematical calculations, string manipulations, file operations, array operations, and database interactions, all within the Laravel framework.
+Develop a PHP code generator that accurately converts user messages into executable Laravel PHP code.
+Ensure that the generated code follows Laravel coding standards and utilizes Laravel-specific functionalities where applicable.
+Return only code without any comments and nothing more.
+END;
 
     protected OpenAI $openAI;
     protected string $prompt;
@@ -53,13 +62,10 @@ class Text2PHP implements ActionInterface
      */
     protected function getSystemPrompt(): string
     {
-        $content = "You are building a text-to-code conversion system that generates PHP code, specifically targeting the Laravel framework. ";
-        $content .= "Given a user message that describes a programming task in natural language, generate the corresponding PHP code using Laravel conventions and features. ";
-        $content .= "The system should be able to handle various types of programming tasks, such as mathematical calculations, string manipulations, file operations, array operations, and database interactions, all within the Laravel framework. ";
-        $content .= "Develop a PHP code generator that accurately converts user messages into executable Laravel PHP code. ";
-        $content .= "Ensure that the generated code follows Laravel coding standards and utilizes Laravel-specific functionalities where applicable. ";
-        $content .= "Return only code without any comments and nothing more. \n";
-        $content .= "### Message\n" . $this->prompt;
+        $action = Action::where('slug', self::$slug)->first();
+
+        $content = $action->prompt;
+        $content .= "\n### Message\n" . $this->prompt;
         return $content;
     }
 }

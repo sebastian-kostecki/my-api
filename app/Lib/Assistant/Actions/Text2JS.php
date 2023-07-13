@@ -4,6 +4,7 @@ namespace App\Lib\Assistant\Actions;
 
 use App\Lib\Connections\OpenAI;
 use App\Lib\Interfaces\ActionInterface;
+use App\Models\Action;
 use OpenAI\Laravel\Facades\OpenAI as Client;
 
 class Text2JS implements ActionInterface
@@ -12,6 +13,15 @@ class Text2JS implements ActionInterface
     public static string $slug = 'text-to-js';
     public static string $icon = 'fa-brands fa-square-js';
     public static string $shortcut = '';
+    public static string $systemPrompt = <<<END
+You are developing a system that generates JavaScript code based on user input.
+Given a user's text description of a programming task or desired functionality, generate high-quality JavaScript code using JavaScript.
+The system should accurately understand the user's requirements and provide code solutions that follow best practices and JavaScript conventions.
+Consider the user's description and provide well-structured, efficient, and maintainable code snippets.
+Help the user achieve their desired functionality in JavaScript by generating code that demonstrates good programming practices, follows standard JavaScript patterns, and adheres to best practices for readability, performance, and maintainability.
+Return only code without any comments and nothing more.
+END;
+
 
     protected OpenAI $openAI;
     protected string $prompt;
@@ -53,13 +63,10 @@ class Text2JS implements ActionInterface
      */
     protected function getSystemPrompt(): string
     {
-        $content = "You are developing a system that generates JavaScript code based on user input. ";
-        $content .= "Given a user's text description of a programming task or desired functionality, generate high-quality JavaScript code using JavaScript.   ";
-        $content .= "The system should accurately understand the user's requirements and provide code solutions that follow best practices and JavaScript conventions. ";
-        $content .= "Consider the user's description and provide well-structured, efficient, and maintainable code snippets. ";
-        $content .= "Help the user achieve their desired functionality in JavaScript by generating code that demonstrates good programming practices, follows standard JavaScript patterns, and adheres to best practices for readability, performance, and maintainability. ";
-        $content .= "Return only code without any comments and nothing more. \n";
-        $content .= "### Message\n" . $this->prompt;
+        $action = Action::where('slug', self::$slug)->first();
+
+        $content = $action->prompt;
+        $content .= "\n### Message\n" . $this->prompt;
         return $content;
     }
 }
