@@ -21,6 +21,7 @@ class Action extends Model
         'type',
         'icon',
         'shortcut',
+        'prompt',
         'enabled'
     ];
 

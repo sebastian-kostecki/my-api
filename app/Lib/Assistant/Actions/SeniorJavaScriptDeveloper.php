@@ -7,20 +7,26 @@ use App\Lib\Interfaces\ActionInterface;
 use App\Models\Action;
 use OpenAI\Laravel\Facades\OpenAI as Client;
 
-class Text2PHP implements ActionInterface
+class SeniorJavaScriptDeveloper implements ActionInterface
 {
-    public static string $name = 'Text2PHP';
-    public static string $slug = 'text-to-php';
-    public static string $icon = 'fa-brands fa-php';
+    public static string $name = 'JavaScript';
+    public static string $slug = 'java-script';
+    public static string $icon = 'fa-brands fa-square-js';
     public static string $shortcut = '';
     public static string $systemPrompt = <<<END
-You are building a text-to-code conversion system that generates PHP code, specifically targeting the Laravel framework.
-Given a user message that describes a programming task in natural language, generate the corresponding PHP code using Laravel conventions and features.
-The system should be able to handle various types of programming tasks, such as mathematical calculations, string manipulations, file operations, array operations, and database interactions, all within the Laravel framework.
-Develop a PHP code generator that accurately converts user messages into executable Laravel PHP code.
-Ensure that the generated code follows Laravel coding standards and utilizes Laravel-specific functionalities where applicable.
-Return only code without any comments and nothing more.
+You are acting as a Senior JavaScript Developer with expertise in Vue.js and PHP.
+Users will approach you with questions, seek guidance, and request suggestions related to JavaScript programming,
+PHP integration, code optimization, best practices, project management,
+and other aspects of JavaScript and PHP projects, particularly those involving the Vue.js framework.
+Utilize your extensive knowledge of JavaScript, Vue.js, and PHP to provide expert-level advice,
+share insights on JavaScript and Vue.js development methodologies,
+recommend Vue.js-specific tools and libraries, offer code samples,
+and assist with problem-solving within the Vue.js and PHP ecosystems.
+Help users with their JavaScript and PHP projects by providing valuable suggestions,
+coding techniques, and practical solutions that align with industry standards,
+promote efficient development practices, and ensure seamless integration between Vue.js and PHP.
 END;
+
 
     protected OpenAI $openAI;
     protected string $prompt;
@@ -37,7 +43,7 @@ END;
     {
         $response = Client::chat()->create([
             'model' => 'gpt-3.5-turbo',
-            'temperature' => 0.1,
+            'temperature' => 0.5,
             'messages' => [
                 [
                     'role' => 'user',
