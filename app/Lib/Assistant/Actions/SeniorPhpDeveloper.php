@@ -49,7 +49,7 @@ END;
                 ],
             ],
         ]);
-        return "```\n" . $response->choices[0]->message->content . "\n```";
+        return $response->choices[0]->message->content;
     }
 
     /**

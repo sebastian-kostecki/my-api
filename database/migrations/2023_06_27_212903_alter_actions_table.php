@@ -12,7 +12,6 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('actions', function (Blueprint $table) {
-            $table->boolean('showed')->after('icon')->default(1);
             $table->boolean('enabled')->after('icon')->default(1);
             $table->text('prompt')->after('icon')->nullable();
             $table->string('shortcut')->after('icon')->nullable();
@@ -28,7 +27,6 @@ return new class extends Migration
             $table->dropColumn('shortcut');
             $table->dropColumn('enabled');
             $table->dropColumn('prompt');
-            $table->dropColumn('showed');
         });
     }
 };
