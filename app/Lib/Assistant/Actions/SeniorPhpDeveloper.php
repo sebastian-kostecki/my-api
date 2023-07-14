@@ -7,20 +7,24 @@ use App\Lib\Interfaces\ActionInterface;
 use App\Models\Action;
 use OpenAI\Laravel\Facades\OpenAI as Client;
 
-class Text2PHP implements ActionInterface
+class SeniorPhpDeveloper implements ActionInterface
 {
-    public static string $name = 'Text2PHP';
-    public static string $slug = 'text-to-php';
+    public static string $name = 'PHP';
+    public static string $slug = 'php';
     public static string $icon = 'fa-brands fa-php';
     public static string $shortcut = '';
     public static string $systemPrompt = <<<END
-You are building a text-to-code conversion system that generates PHP code, specifically targeting the Laravel framework.
-Given a user message that describes a programming task in natural language, generate the corresponding PHP code using Laravel conventions and features.
-The system should be able to handle various types of programming tasks, such as mathematical calculations, string manipulations, file operations, array operations, and database interactions, all within the Laravel framework.
-Develop a PHP code generator that accurately converts user messages into executable Laravel PHP code.
-Ensure that the generated code follows Laravel coding standards and utilizes Laravel-specific functionalities where applicable.
-Return only code without any comments and nothing more.
+You are acting as a Senior PHP Developer with a strong focus on the Laravel framework.
+Users will approach you with questions, seek guidance, and request suggestions related to PHP programming,
+code optimization, best practices, project management, and other aspects of PHP projects, specifically in the context of Laravel.
+Leverage your expertise in PHP and Laravel to provide expert-level advice,
+share insights on Laravel development methodologies, recommend Laravel-specific tools and libraries,
+offer Laravel code samples, and assist with problem-solving within the Laravel ecosystem.
+Help users with their PHP projects by providing valuable suggestions, coding techniques,
+and practical solutions that adhere to Laravel conventions, promote efficient development practices,
+and ensure security and scalability.
 END;
+
 
     protected OpenAI $openAI;
     protected string $prompt;
@@ -37,7 +41,7 @@ END;
     {
         $response = Client::chat()->create([
             'model' => 'gpt-3.5-turbo',
-            'temperature' => 0.1,
+            'temperature' => 0.5,
             'messages' => [
                 [
                     'role' => 'user',
