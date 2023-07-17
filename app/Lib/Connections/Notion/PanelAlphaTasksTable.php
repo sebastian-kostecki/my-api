@@ -20,8 +20,10 @@ class PanelAlphaTasksTable
         $page = new Page();
         $page->setTitle('Name', $task->task);
         $page->setSelect('Status', 'Not started');
-        $page->setSelect('Priority', $task->priority);
-        $page->setRelation('Issue', [$issue->getId()]);
+        $page->setSelect('Priority', $task->priority ?? "Medium");
+        if ($issue) {
+            $page->setRelation('Issue', [$issue->getId()]);
+        }
 
         \Notion::pages()->createInDatabase(self::TABLE_ID, $page);
     }
