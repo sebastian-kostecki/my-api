@@ -7,6 +7,7 @@ use App\Notifications\ReportDailyTasks as ReportDailyTasksNotification;
 use FiveamCode\LaravelNotionApi\Entities\Page;
 use FiveamCode\LaravelNotionApi\Exceptions\HandlingException;
 use FiveamCode\LaravelNotionApi\Query\Filters\Filter;
+use FiveamCode\LaravelNotionApi\Query\Filters\FilterBag;
 use FiveamCode\LaravelNotionApi\Query\Filters\Operators;
 use FiveamCode\LaravelNotionApi\Query\Sorting;
 use Illuminate\Console\Command;
@@ -92,9 +93,17 @@ class ReportDailyTasksInEmail extends Command
      */
     protected function getNextTasks(): void
     {
-        $statusFilter = Filter::rawFilter("Status", [
-            "select" => [Operators::DOES_NOT_EQUAL => 'Done'],
-        ]);
+        $filterBag = new FilterBag(Operators::AND);
+        $filterBag->addFilter(
+            Filter::rawFilter("Status", [
+                "select" => [Operators::DOES_NOT_EQUAL => 'Done'],
+            ])
+        );
+        $filterBag->addFilter(
+            Filter::rawFilter("Status", [
+                "select" => [Operators::DOES_NOT_EQUAL => 'Hidden'],
+            ])
+        );
 
         $sorting = new Collection();
         $sorting->add(Sorting::propertySort("Priority", "descending"));
@@ -102,7 +111,7 @@ class ReportDailyTasksInEmail extends Command
         $sorting->add(Sorting::propertySort("Status", "ascending"));
 
         $result = \Notion::database($this->tableId)
-            ->filterBy($statusFilter)
+            ->filterBy($filterBag)
             ->sortBy($sorting)
             ->limit(3)
             ->query()
