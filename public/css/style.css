@@ -1,3 +1,19 @@
 * {
-    font-family: Nunito, sans-serif;
+    font-family: 'Wix Madefor Display', sans-serif;
+}
+
+.header {
+    background-color: #DA1E37;
+}
+
+.title {
+    font-size: 100px;
+    font-weight: 800;
+    color: white;
+}
+
+.subtitle {
+    font-size: 56px;
+    font-weight: 700;
+    color: white;
 }
