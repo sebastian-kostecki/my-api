@@ -131,7 +131,8 @@
                         <p class="text-center fs-6">Ionic</p>
                     </div>
                     <div class="col-6 d-flex align-items-center">
-                        <p>W pracy wykorzystuję framework <strong>Vue.js</strong> w wersji 2. Obecnie poznaję wersję 3. Tworząc aplikację mobilną wykorzystywałem framework <strong>Ionic</strong>.
+                        <p>W pracy wykorzystuję framework <strong>Vue.js</strong> w wersji 2. Obecnie poznaję wersję 3.
+                            Tworząc aplikację mobilną wykorzystywałem framework <strong>Ionic</strong>.
                         </p>
                     </div>
                 </div>
@@ -185,10 +186,39 @@
                 <div class="bg-black text-white">
                     <div class="container py-5">
                         <h1 id="projects" class="skills-header pb-4">Moje Projekty</h1>
+                        <div class="row">
+                            <div class="col-6">
+                                <div class="card">
+                                    <img src="{{ asset('/img/keep-wallet.png') }}" class="card-img-top" alt="...">
+                                    <div class="card-body">
+                                        <h5 class="card-title text-white fw-bold">Ogarniam Portfel</h5>
+                                        <p class="card-text text-white">Aplikacja internetowa do zarządzania domowym
+                                            budżetem.</p>
+                                        <a href="https://budget.sebastian-kostecki.profesjonalnyprogramista.pl/"
+                                           target="_blank" class="btn btn-danger me-2">Przejdź do strony</a>
+                                        <a href="https://github.com/sebastian-kostecki/keep-wallet" target="_blank"
+                                           class="btn btn-danger">Przejdź do GitHub</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="card">
+                                    <img src="{{ asset('/img/o-nia-o-niego.jpg') }}" class="card-img-top" alt="...">
+                                    <div class="card-body">
+                                        <h5 class="card-title text-white fw-bold">O Nią & O Niego</h5>
+                                        <p class="card-text text-white">Aplikacja mobilna pozwalająca użytkownikowi odmawiać odpowiednią tajemnicę różańcową.</p>
+                                        <a href="https://play.google.com/store/apps/details?id=kostecki.sebastian.oniaoniego"
+                                           target="_blank" class="btn btn-danger me-2">Przejdź do aplikacji</a>
+                                        <a href="https://github.com/sebastian-kostecki/o-nia-o-niego" target="_blank"
+                                           class="btn btn-danger">Przejdź do GitHub</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div class="bg-black text-white">
-                    <div class="container py-5">
+                    <div class="container pt-5 pb-2">
                         <h1 id="contact" class="skills-header text-center">Kontakt ze mną</h1>
                         <h2 class="text-center fs-6">Chcesz współpracować? To świetnie! Oto moje dane kontaktowe:</h2>
                     </div>
