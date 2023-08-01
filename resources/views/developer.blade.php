@@ -39,8 +39,19 @@
             </div>
         </div>
     </div>
-    <div class="container">
-        <h1>Hello, world!</h1>
+    <div class="container about-me py-5">
+        <h1 class="about-me-header">O mnie</h1>
+        <div class="row about-me-content">
+            <div class="col">
+                <p>Cześć! Jestem pasjonatem tworzenia stron internetowych. Specjalizuję się w frameworku Laravel, który
+                    pozwala mi tworzyć niezwykle wydajne i niezawodne aplikacje. Moje umiejętności obejmują głównie
+                    back-end, ale rozwijam również swoją wiedzę z zakresu front-endu.</p>
+            </div>
+            <div class="col">
+                <p>Z pasją podchodzę do swoich zadań. Staram się w pełni zrozumieć oczekiwania klienta, aby następnie
+                    tworzyć wysokiej jakości produkty końcowe. Poza pracą skupiam się głównie na czasie z rodziną oraz rozwoju swoich umiejętności w IT.</p>
+            </div>
+        </div>
     </div>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"

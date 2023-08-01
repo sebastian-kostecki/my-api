@@ -17,3 +17,19 @@
     font-weight: 700;
     color: white;
 }
+
+.about-me {
+    background-color: #FFFFFF;
+}
+
+.about-me-header {
+    color: #E01E37;
+    font-weight: 800;
+    font-size: 48px;
+}
+
+.about-me-content {
+    color: #E01E37;
+    font-size: 20px;
+}
+
