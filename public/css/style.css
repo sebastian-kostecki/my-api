@@ -42,3 +42,13 @@ svg {
     color: white;
 }
 
+.contact-card {
+    background-color: #0D0D0D;
+}
+
+.contact-card-icon {
+    height: 90px;
+    width: 90px;
+}
+
+
