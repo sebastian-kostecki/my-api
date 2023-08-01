@@ -33,3 +33,12 @@
     font-size: 20px;
 }
 
+.skills-header {
+    font-weight: 800;
+    font-size: 48px;
+}
+
+svg {
+    color: white;
+}
+
