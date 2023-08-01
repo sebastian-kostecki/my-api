@@ -64,7 +64,7 @@
         </div>
         <div class="bg-black text-white">
             <div class="container py-5">
-                <h1 id="skills" class="skills-header pb-4">Umiejętności</h1>
+                <h1 id="skills" class="skills-header pb-5">Umiejętności</h1>
                 <div class="row border-bottom border-secondary">
                     <div class="col-2 d-flex flex-column">
                         <svg xmlns="http://www.w3.org/2000/svg" height="64" viewBox="0 0 640 512">
@@ -88,7 +88,9 @@
                         </svg>
                         <p class="text-center fs-6">Laravel 10</p>
                     </div>
-                    <div class="col-8 d-flex align-items-center">
+                    <div class="col-2 d-flex flex-column">
+                    </div>
+                    <div class="col-6 d-flex align-items-center">
                         <p>Pracuję głównie w języku <strong>PHP</strong> korzystając z frameworku
                             <strong>Laravel</strong>.
                             W przyszłości planuję naukę Symfony.</p>
@@ -117,15 +119,25 @@
                         </svg>
                         <p class="text-center fs-6">Vue.js 2 & 3</p>
                     </div>
-                    <div class="col-8 d-flex align-items-center">
-                        <p>W pracy wykorzystuję framework <strong>Vue.js</strong> w wersji 2. Obecnie poznaję wersję 3.
+                    <div class="col-2 d-flex flex-column">
+                        <svg xmlns="http://www.w3.org/2000/svg" height="64" viewBox="0 0 122.89 122.89">
+                            <style>svg {
+                                    fill: #ffffff
+                                }</style>
+
+                            <path class="st0"
+                                  d="M61.44,33.47c-15.45,0-28,12.54-28,28c0,15.47,12.54,28.01,28,28.01c15.47,0,28.01-12.54,28.01-28.01 C89.44,46.01,76.9,33.48,61.44,33.47L61.44,33.47L61.44,33.47z M117.37,36.01l-0.54-1.17l-0.84,0.98c-2.09,2.37-4.74,4.2-7.7,5.3 l-0.84,0.3l0.33,0.84c2.54,6.11,3.85,12.68,3.85,19.28c0,27.73-22.49,50.24-50.23,50.24S11.18,89.27,11.18,61.53 s22.49-50.23,50.23-50.23c7.46,0,14.81,1.66,21.55,4.86l0.78,0.37l0.33-0.84c1.25-2.89,3.21-5.45,5.68-7.42l0.99-0.84l-1.13-0.59 C80.97,2.35,71.34,0,61.58,0c-0.03,0-0.1,0-0.16,0C27.51,0,0,27.51,0,61.44s27.53,61.44,61.44,61.44 c33.94,0,61.44-27.51,61.44-61.44c0-8.8-1.88-17.51-5.54-25.5L117.37,36.01L117.37,36.01z M114.4,23.19 c0-7.04-5.7-12.75-12.75-12.75c-7.04,0-12.75,5.71-12.75,12.75c0,7.06,5.71,12.77,12.75,12.77 C108.71,35.96,114.4,30.24,114.4,23.19L114.4,23.19z"/>
+                        </svg>
+                        <p class="text-center fs-6">Ionic</p>
+                    </div>
+                    <div class="col-6 d-flex align-items-center">
+                        <p>W pracy wykorzystuję framework <strong>Vue.js</strong> w wersji 2. Obecnie poznaję wersję 3. Tworząc aplikację mobilną wykorzystywałem framework <strong>Ionic</strong>.
                         </p>
                     </div>
                 </div>
                 <div class="row border-bottom border-secondary pt-3">
                     <div class="col-2 d-flex flex-column">
                         <svg xmlns="http://www.w3.org/2000/svg" height="64" viewBox="0 0 448 512">
-                            <!--! Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
                             <style>svg {
                                     fill: #ffffff
                                 }</style>
@@ -136,14 +148,15 @@
                     </div>
                     <div class="col-2 d-flex flex-column">
                     </div>
-                    <div class="col-8 d-flex align-items-center">
+                    <div class="col-2 d-flex flex-column">
+                    </div>
+                    <div class="col-6 d-flex align-items-center">
                         <p>Pracuję na bazie danych <strong>MySQL.</strong></p>
                     </div>
                 </div>
                 <div class="row pt-3">
                     <div class="col-2 d-flex flex-column">
                         <svg xmlns="http://www.w3.org/2000/svg" height="64" viewBox="0 0 448 512">
-                            <!--! Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
                             <style>svg {
                                     fill: #ffffff
                                 }</style>
@@ -160,7 +173,9 @@
                         </svg>
                         <p class="text-center fs-6">PHP Storm</p>
                     </div>
-                    <div class="col-8 d-flex align-items-center">
+                    <div class="col-2 d-flex flex-column">
+                    </div>
+                    <div class="col-6 d-flex align-items-center">
                         <p>Posługuję się systemem kontroli wersji <strong>GIT</strong> oraz moim środowiskiem
                             programistycznym jest <strong>PHP Storm</strong>.</p>
                     </div>
@@ -177,9 +192,8 @@
                         <h1 id="contact" class="skills-header text-center">Kontakt ze mną</h1>
                         <h2 class="text-center fs-6">Chcesz współpracować? To świetnie! Oto moje dane kontaktowe:</h2>
                     </div>
-                    <div class="row">
-                        <div
-                            class="col-4">
+                    <div class="row py-5">
+                        <div class="col-4">
                             <div
                                 class="d-flex flex-column contact-card rounded rounded-3 mb-3 p-4 d-flex align-items-center">
                                 <div class="rounded-circle bg-secondary contact-card-icon position-relative">
@@ -239,7 +253,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="py-5">
+                    <div class="py-5s">
                         <h1 class="skills-header mb-4">Czekasz na idealnego developera?</h1>
                         <a class="btn btn-danger me-3" href="#contact" role="button">Skontaktuj się ze mną</a>
                         <a class="btn btn-danger" href="#skills" role="button">Sprawdź moje umiejętności</a>
