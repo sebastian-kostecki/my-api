@@ -295,18 +295,26 @@ img {
     font-size: 12px;
     color: white;
     background-color: green;
-    border-radius: 2px;
-    padding: 1px 4px;
 }
 
 .in-progress {
     font-size: 12px;
     color: white;
     background-color: #3869d4;
-    border-radius: 2px;
-    padding: 1px 4px;
+}
+
+.chip {
+    border-radius: 4px;
+    padding: 2px 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: box-shadow 0.3s ease;
+    cursor: pointer;
+}
+
+.chip:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 li {
-    margin-bottom: 3px;
+    margin-bottom: 4px;
 }
