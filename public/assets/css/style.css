@@ -24,8 +24,6 @@
 
 .about-me-header {
     color: #E01E37;
-    font-weight: 800;
-    font-size: 48px;
 }
 
 .about-me-content {
@@ -33,9 +31,8 @@
     font-size: 20px;
 }
 
-.skills-header {
+.fw-800 {
     font-weight: 800;
-    font-size: 48px;
 }
 
 svg {

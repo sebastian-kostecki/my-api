@@ -18,11 +18,11 @@
     <header class="header h-100">
         <div class="container h-100 position-relative">
             <div class="w-100 position-absolute top-50 start-50 translate-middle">
-                <h1 class="title">SEBASTIAN KOSTECKI</h1>
-                <h2 class="subtitle">Webdeveloper | PHP | Laravel</h2>
+                <h1 class="display-1 fw-800 text-white text-center text-lg-start">SEBASTIAN KOSTECKI</h1>
+                <h2 class="display-5 fw-bold text-white text-center text-lg-start">Webdeveloper | PHP | Laravel</h2>
             </div>
             <div class="position-absolute bottom-0 start-50 translate-middle-x mb-3">
-                <ul class="list-unstyled d-flex">
+                <ul class="list-unstyled d-flex flex-column text-center flex-lg-row">
                     <li class="me-3 fs-5">
                         <a class="link-light link-offset-2 link-underline-opacity-10 link-underline-opacity-100-hover"
                            href="#about-me">O mnie</a>
@@ -45,15 +45,15 @@
     </header>
     <main>
         <div class="container about-me py-5">
-            <h1 id="about-me" class="about-me-header mb-4">O mnie</h1>
+            <h1 id="about-me" class="display-3 fw-800 about-me-header mb-4">O mnie</h1>
             <div class="row about-me-content">
-                <div class="col">
+                <div class="col-12 col-lg-6">
                     <p>Cześć! Jestem pasjonatem tworzenia stron internetowych. Specjalizuję się w frameworku Laravel,
                         który
                         pozwala mi tworzyć niezwykle wydajne i niezawodne aplikacje. Moje umiejętności obejmują głównie
                         back-end, ale rozwijam również swoją wiedzę z zakresu front-endu.</p>
                 </div>
-                <div class="col">
+                <div class="col-12 col-lg-6">
                     <p>Z pasją podchodzę do swoich zadań. Staram się w pełni zrozumieć oczekiwania klienta, aby
                         następnie
                         tworzyć wysokiej jakości produkty końcowe. Poza pracą skupiam się głównie na czasie z rodziną
@@ -64,21 +64,22 @@
         </div>
         <div class="bg-black text-white">
             <div class="container py-5">
-                <h1 id="skills" class="skills-header pb-3">Umiejętności</h1>
+                <h1 id="skills" class="display-3 fw-800 pb-3 text-center text-lg-start">Umiejętności</h1>
                 <div>
                     @foreach($skills as $skill)
                         <div class="row border-bottom border-secondary pt-4">
-                            <div class="col-6 d-flex">
+                            <div class="col-12 col-lg-6 d-flex justify-content-center justify-content-lg-start">
                                 @foreach($skill['item'] as $item)
-                                    <div class="d-flex flex-column me-5">
+                                    <div class="d-flex flex-column mx-2">
                                         <img height="64" src="{{ asset('/assets/icons/' . $item['icon'] . '.svg') }}"
                                              alt="{{ $item['icon'] }}"/>
                                         <p class="text-center fs-6 mt-2">{{ $item['name'] }}</p>
                                     </div>
                                 @endforeach
                             </div>
-                            <div class="col-6 d-flex align-items-center">
-                                <p>{{ $skill['description'] }}</p>
+                            <div
+                                class="col-12 col-lg-6 d-flex align-items-center justify-content-center justify-content-lg-start">
+                                <p class="text-center text-lg-start">{{ $skill['description'] }}</p>
                             </div>
                         </div>
                     @endforeach
@@ -87,7 +88,7 @@
             <div class="container">
                 <div class="bg-black text-white">
                     <div class="container py-5">
-                        <h1 id="projects" class="skills-header pb-4">Moje Projekty</h1>
+                        <h1 id="projects" class="display-3 fw-800 pb-4 text-center text-lg-start">Moje Projekty</h1>
                         <div>
                             <div class="row row-cols-1 row-cols-md-2 g-4">
                                 @foreach($projects as $project)
@@ -98,11 +99,13 @@
                                             <div class="card-body">
                                                 <h5 class="card-title text-white fw-bold">{{ $project['title'] }}</h5>
                                                 <p class="card-text text-white">{{ $project['subtitle'] }}</p>
-                                                @foreach($project['links'] as $link)
-                                                    <a href="{{ $link['link'] }}"
-                                                       target="_blank"
-                                                       class="btn btn-danger me-2">{{ $link['title'] }}</a>
-                                                @endforeach
+                                                <div class="d-grid gap-2 d-md-block">
+                                                    @foreach($project['links'] as $link)
+                                                        <a href="{{ $link['link'] }}"
+                                                           target="_blank"
+                                                           class="btn btn-danger">{{ $link['title'] }}</a>
+                                                    @endforeach
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -113,11 +116,11 @@
                 </div>
                 <div class="bg-black text-white">
                     <div class="container pt-5 pb-2">
-                        <h1 id="contact" class="skills-header text-center">Kontakt ze mną</h1>
+                        <h1 id="contact" class="display-3 fw-800 text-center">Kontakt ze mną</h1>
                         <h2 class="text-center fs-6">Chcesz współpracować? To świetnie! Oto moje dane kontaktowe:</h2>
                     </div>
                     <div class="row py-5">
-                        <div class="col-4">
+                        <div class="col-12 col-lg-4">
                             <div
                                 class="d-flex flex-column contact-card rounded rounded-3 mb-3 p-4 d-flex align-items-center">
                                 <div class="rounded-circle bg-secondary contact-card-icon position-relative">
@@ -132,7 +135,7 @@
                                 </p>
                             </div>
                         </div>
-                        <div class="col-4">
+                        <div class="col-12 col-lg-4">
                             <div
                                 class="d-flex flex-column contact-card rounded rounded-3 mb-3 p-4 d-flex align-items-center">
                                 <div class="rounded-circle bg-secondary contact-card-icon position-relative">
@@ -144,7 +147,7 @@
                                 <p>+48 502 321 934</p>
                             </div>
                         </div>
-                        <div class="col-4">
+                        <div class="col-12 col-lg-4">
                             <div
                                 class="d-flex flex-column contact-card rounded rounded-3 mb-3 p-4 d-flex align-items-center">
                                 <div class="rounded-circle bg-secondary contact-card-icon position-relative">
@@ -161,9 +164,12 @@
                         </div>
                     </div>
                     <div class="py-5">
-                        <h1 class="skills-header mb-4">Czekasz na idealnego developera?</h1>
-                        <a class="btn btn-danger me-3" href="#contact" role="button">Skontaktuj się ze mną</a>
-                        <a class="btn btn-danger" href="#skills" role="button">Sprawdź moje umiejętności</a>
+                        <h1 class="display-5 fw-800 mb-4 text-center text-lg-start">Czekasz na idealnego
+                            developera?</h1>
+                        <div class="d-grid gap-2 d-md-block">
+                            <a class="btn btn-danger" href="#contact" role="button">Skontaktuj się ze mną</a>
+                            <a class="btn btn-danger" href="#skills" role="button">Sprawdź moje umiejętności</a>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -172,15 +178,15 @@
     <footer class="bg-black text-white py-5">
         <div class="container">
             <div class="row">
-                <div class="col-4">
-                    <p>Usługi</p>
+                <div class="col-12 col-lg-4 text-center text-lg-start">
+                    <p class="fw-bold">Usługi</p>
                     <ul class="list-unstyled">
                         <li>Tworzenie stron i aplikacji internetowych</li>
                         <li>Back-end dla aplikacji internetowych</li>
                     </ul>
                 </div>
-                <div class="col-4">
-                    <p>Media</p>
+                <div class="col-12 col-lg-4 text-center text-lg-start">
+                    <p class="fw-bold">Media</p>
                     <ul class="list-unstyled">
                         <li>
                             <a class="link-light text-decoration-none"
@@ -192,9 +198,9 @@
                     </ul>
                 </div>
             </div>
-            <div class="d-flex justify-content-between mt-3">
-                <p>Wszystkie prawa zastrzeżone &copy; 2023</p>
-                <div>
+            <div class="d-flex justify-content-between mt-3 flex-column flex-lg-row">
+                <p class="text-center text-lg-start">Wszystkie prawa zastrzeżone &copy; 2023</p>
+                <div class="d-flex justify-content-center">
                     <a class="me-2" href="https://www.linkedin.com/in/kostecki-sebastian">
                         <img src="{{ asset('assets/icons/linkedin.svg') }}" alt="linkedin" height="20">
                     </a>
