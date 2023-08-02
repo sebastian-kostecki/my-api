@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Homepage\HomepageController;
 use App\Jobs\TestJob;
 use App\Lib\Connections\OpenAI;
 use App\Models\Action;
@@ -17,9 +18,11 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('developer');
-});
+/**
+ * Homepage routes
+ */
+Route::get('/', [HomepageController::class, 'index']);
+
 
 Route::get('logs', [\Rap2hpoutre\LaravelLogViewer\LogViewerController::class, 'index']);
 
