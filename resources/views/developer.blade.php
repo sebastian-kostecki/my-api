@@ -217,7 +217,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="py-5s">
+                    <div class="py-5">
                         <h1 class="skills-header mb-4">Czekasz na idealnego developera?</h1>
                         <a class="btn btn-danger me-3" href="#contact" role="button">Skontaktuj się ze mną</a>
                         <a class="btn btn-danger" href="#skills" role="button">Sprawdź moje umiejętności</a>
@@ -249,7 +249,7 @@
                     </ul>
                 </div>
             </div>
-            <div class="d-flex justify-content-between mt-5">
+            <div class="d-flex justify-content-between mt-3">
                 <p>Wszystkie prawa zastrzeżone &copy; 2023</p>
                 <div>
                     <a class="me-2" href="https://www.linkedin.com/in/kostecki-sebastian">
