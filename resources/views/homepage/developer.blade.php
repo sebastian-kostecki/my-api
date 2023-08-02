@@ -64,71 +64,23 @@
         </div>
         <div class="bg-black text-white">
             <div class="container py-5">
-                <h1 id="skills" class="skills-header pb-5">Umiejętności</h1>
-                <div class="row border-bottom border-secondary">
-                    <div class="col-2 d-flex flex-column">
-                        <img height="64" src="{{ asset('/assets/icons/php.svg') }}"/>
-                        <p class="text-center fs-6">PHP 8.2</p>
-                    </div>
-                    <div class="col-2 d-flex flex-column">
-                        <img height="64" src="{{ asset('/assets/icons/laravel.svg') }}"/>
-                        <p class="text-center fs-6">Laravel 10</p>
-                    </div>
-                    <div class="col-2 d-flex flex-column">
-                    </div>
-                    <div class="col-6 d-flex align-items-center">
-                        <p>Pracuję głównie w języku <strong>PHP</strong> korzystając z frameworku
-                            <strong>Laravel</strong>.
-                            W przyszłości planuję naukę Symfony.</p>
-                    </div>
-                </div>
-                <div class="row border-bottom border-secondary pt-3">
-                    <div class="col-2 d-flex flex-column">
-                        <img height="64" src="{{ asset('/assets/icons/javascript.svg') }}"/>
-                        <p class="text-center fs-6">Java Script</p>
-                    </div>
-                    <div class="col-2 d-flex flex-column">
-                        <img height="64" src="{{ asset('/assets/icons/vue.svg') }}"/>
-                        <p class="text-center fs-6">Vue.js 2 & 3</p>
-                    </div>
-                    <div class="col-2 d-flex flex-column">
-                        <img height="64" src="{{ asset('/assets/icons/ionic.svg') }}"/>
-                        <p class="text-center fs-6">Ionic</p>
-                    </div>
-                    <div class="col-6 d-flex align-items-center">
-                        <p>W pracy wykorzystuję framework <strong>Vue.js</strong> w wersji 2. Obecnie poznaję wersję 3.
-                            Tworząc aplikację mobilną wykorzystywałem framework <strong>Ionic</strong>.
-                        </p>
-                    </div>
-                </div>
-                <div class="row border-bottom border-secondary pt-3">
-                    <div class="col-2 d-flex flex-column">
-                        <img height="64" src="{{ asset('/assets/icons/mysql.svg') }}"/>
-                        <p class="text-center fs-6">MySQL</p>
-                    </div>
-                    <div class="col-2 d-flex flex-column">
-                    </div>
-                    <div class="col-2 d-flex flex-column">
-                    </div>
-                    <div class="col-6 d-flex align-items-center">
-                        <p>Pracuję na bazie danych <strong>MySQL.</strong></p>
-                    </div>
-                </div>
-                <div class="row pt-3">
-                    <div class="col-2 d-flex flex-column">
-                        <img height="64" src="{{ asset('/assets/icons/git.svg') }}"/>
-                        <p class="text-center fs-6">GIT</p>
-                    </div>
-                    <div class="col-2 d-flex flex-column">
-                        <img height="64" src="{{ asset('/assets/icons/phpstorm.svg') }}"/>
-                        <p class="text-center fs-6">PHP Storm</p>
-                    </div>
-                    <div class="col-2 d-flex flex-column">
-                    </div>
-                    <div class="col-6 d-flex align-items-center">
-                        <p>Posługuję się systemem kontroli wersji <strong>GIT</strong> oraz moim środowiskiem
-                            programistycznym jest <strong>PHP Storm</strong>.</p>
-                    </div>
+                <h1 id="skills" class="skills-header pb-3">Umiejętności</h1>
+                <div>
+                    @foreach($skills as $skill)
+                        <div class="row border-bottom border-secondary pt-4">
+                            <div class="col-6 d-flex">
+                                @foreach($skill['item'] as $item)
+                                    <div class="d-flex flex-column me-5">
+                                        <img height="64" src="{{ asset('/assets/icons/' . $item['icon'] . '.svg') }}" alt="{{ $item['icon'] }}"/>
+                                        <p class="text-center fs-6 mt-2">{{ $item['name'] }}</p>
+                                    </div>
+                                @endforeach
+                            </div>
+                            <div class="col-6 d-flex align-items-center">
+                                <p>{{ $skill['description'] }}</p>
+                            </div>
+                        </div>
+                    @endforeach
                 </div>
             </div>
             <div class="container">
