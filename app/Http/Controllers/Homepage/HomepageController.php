@@ -65,6 +65,38 @@ class HomepageController extends Controller
                         ]
                     ]
                 ]
+            ],
+            'projects' => [
+                [
+                    'img' => 'keep-wallet.png',
+                    'title' => 'Ogarniam Portfel',
+                    'subtitle' => 'Aplikacja internetowa do zarządzania domowym budżetem.',
+                    'links' => [
+                        [
+                            'title' => 'Przejdź do strony',
+                            'link' => 'https://budget.sebastian-kostecki.profesjonalnyprogramista.pl/'
+                        ],
+                        [
+                            'title' => 'Przejdź do GitHub',
+                            'link' => 'https://github.com/sebastian-kostecki/keep-wallet'
+                        ]
+                    ]
+                ],
+                [
+                    'img' => 'o-nia-o-niego.jpg',
+                    'title' => 'O Nią & O Niego',
+                    'subtitle' => 'Aplikacja mobilna pomagająca użytkownikowi odmawiać odpowiednią tajemnicę różańcową.',
+                    'links' => [
+                        [
+                            'title' => 'Przejdź do aplikacji',
+                            'link' => 'https://play.google.com/store/apps/details?id=kostecki.sebastian.oniaoniego'
+                        ],
+                        [
+                            'title' => 'Przejdź do GitHub',
+                            'link' => 'https://github.com/sebastian-kostecki/o-nia-o-niego'
+                        ]
+                    ]
+                ]
             ]
         ];
 
