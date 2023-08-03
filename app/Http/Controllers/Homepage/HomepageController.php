@@ -27,7 +27,7 @@ class HomepageController extends Controller
                     ]
                 ],
                 'javascript' => [
-                    'description' => 'W pracy wykorzystuję framework Vue.js w wersji 2. Obecnie poznaję wersję 3. Tworząc aplikację mobilną wykorzystywałem framework Ionic',
+                    'description' => 'W pracy wykorzystuję framework Vue.js w wersji 2. Obecnie poznaję wersję 3. Tworząc aplikację mobilną wykorzystywałem framework Ionic.',
                     'item' => [
                         [
                             'name' => 'JavaScript',
@@ -53,18 +53,27 @@ class HomepageController extends Controller
                     ]
                 ],
                 'tools' => [
-                    'description' => 'Posługuję się systemem kontroli wersji GIT oraz moim środowiskiem programistycznym jest PHP Storm',
+                    'description' => 'Posługuję się systemem kontroli wersji GIT oraz korzystam z Dockera.',
                     'item' => [
                         [
                             'name' => 'GIT',
                             'icon' => 'git'
                         ],
                         [
+                            'name' => 'Docker',
+                            'icon' => 'docker'
+                        ]
+                    ],
+                ],
+                'ide' => [
+                    'description' => 'Moim środowiskiem programistycznym jest PHP Storm.',
+                    'item' => [
+                        [
                             'name' => 'PHP Storm',
                             'icon' => 'phpstorm'
                         ]
-                    ]
-                ]
+                    ],
+                ],
             ],
             'projects' => [
                 [
