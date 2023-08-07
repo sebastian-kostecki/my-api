@@ -17,11 +17,11 @@ class HomepageController extends Controller
                     'description' => 'Pracuję głównie w języku PHP korzystając z frameworku Laravel. W przyszłości planuję naukę Symfony.',
                     'item' => [
                         [
-                            'name' => 'PHP 8.2',
+                            'name' => 'PHP',
                             'icon' => 'php'
                         ],
                         [
-                            'name' => 'Laravel 10',
+                            'name' => 'Laravel',
                             'icon' => 'laravel'
                         ]
                     ]
@@ -34,7 +34,7 @@ class HomepageController extends Controller
                             'icon' => 'javascript'
                         ],
                         [
-                            'name' => 'Vue.js 2 & 3',
+                            'name' => 'Vue.js',
                             'icon' => 'vue'
                         ],
                         [
