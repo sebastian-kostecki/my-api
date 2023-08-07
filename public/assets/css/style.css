@@ -48,6 +48,11 @@ svg {
     width: 90px;
 }
 
+.skill-card-icon {
+    height: 120px;
+    width: 120px;
+}
+
 .card {
     background-color: #0D0D0D;
 }

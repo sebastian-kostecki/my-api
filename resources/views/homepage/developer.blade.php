@@ -67,10 +67,11 @@
                 <h1 id="skills" class="display-3 fw-800 pb-3 text-center text-lg-start">Umiejętności</h1>
                 <div>
                     @foreach($skills as $skill)
-                        <div class="row border-bottom border-secondary pt-4">
+                        <div class="row contact-card my-3 py-2 rounded rounded-3">
                             <div class="col-12 col-lg-6 d-flex justify-content-center justify-content-lg-start">
                                 @foreach($skill['item'] as $item)
-                                    <div class="d-flex flex-column mx-2">
+                                    <div
+                                        class="mx-3 pt-3 d-flex flex-column justify-content-center align-items-center rounded rounded-4 bg-secondary skill-card-icon">
                                         <img height="64" src="{{ asset('/assets/icons/' . $item['icon'] . '.svg') }}"
                                              alt="{{ $item['icon'] }}"/>
                                         <p class="text-center fs-6 mt-2">{{ $item['name'] }}</p>
