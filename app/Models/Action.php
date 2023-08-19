@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\OpenAiModel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
@@ -22,11 +23,13 @@ class Action extends Model
         'icon',
         'shortcut',
         'prompt',
+        'model',
         'enabled'
     ];
 
     protected $casts = [
-        'enabled' => 'boolean'
+        'enabled' => 'boolean',
+        'model' => OpenAiModel::class
     ];
 
     public static function scan(): array
