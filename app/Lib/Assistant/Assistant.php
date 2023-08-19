@@ -2,7 +2,8 @@
 
 namespace App\Lib\Assistant;
 
-use App\Lib\Connections\OpenAI;
+use App\Lib\Apis\OpenAI;
+use App\Lib\Assistant\Assistant\ActionTypeController;
 use App\Lib\Connections\Qdrant;
 use App\Models\Action;
 use App\Models\Conversation;
@@ -30,36 +31,10 @@ class Assistant
      * @param string $query
      * @return string
      */
-    public function selectType(string $query): string
+    public function selectTypeAction(string $query): string
     {
-        $content = "Identify the following query with one of the types below.";
-        $content .= "Query is for AI Assistant who needs to identify parts of a long-term memory to access the most relevant information. Pay special attention to distinguish questions from actions.";
-        $content .= "types: query|save|forget|action\n";
-        $content .= "If query is a direct action like 'Add task' or 'Translate text', classify query as 'action'";
-        $content .= "If query includes any mention of 'save' or 'notes' or 'memory' or 'link', classify as 'save'";
-        $content .= "If query includes any mention of 'forget' or 'remove', classify as 'forget'";
-        $content .= "If query doesn't fit to any other category, classify as 'query'.\n";
-        $content .= "Focus on the beginning of it. Return plain category name and nothing else.\n";
-        $content .= "Examples\n: Zapisz wiadomość. \n'save'";
-        $content .= "Zapisz notatkę. \n'save'";
-        $content .= "Are you Ed? \n'query'";
-        $content .= "Co to jest docker? \n'query'";
-        $content .= "Zapamiętaj, że jestem programistą. \n'query'";
-        $content .= "Zapomnij notatkę o poprzednim spotkaniu. \n'forget'";
-        $content .= "Dodaj task o fixie do notifications. \n'action'";
-        $content .= "###message\n{$query}";
-
-        $response = Client::chat()->create([
-            'model' => 'gpt-3.5-turbo',
-            'temperature' => 0.1,
-            'messages' => [
-                [
-                    'role' => 'user',
-                    'content' => $content
-                ],
-            ],
-        ]);
-        return $response->choices[0]->message->content;
+        $params = (new ActionTypeController())->makeParams($query);
+        return $this->openAI->chat($params);
     }
 
     /**
@@ -159,7 +134,7 @@ class Assistant
         }
 
         $action = new $params['action']();
-        $action->setMessage($params['query']);
+        $action->setPrompt($params['query']);
         return $action->execute();
     }
 
