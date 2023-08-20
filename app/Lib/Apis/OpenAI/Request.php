@@ -4,13 +4,15 @@ namespace App\Lib\Apis\OpenAI;
 
 use OpenAI\Laravel\Facades\OpenAI;
 use OpenAI\Responses\Chat\CreateResponse;
+use OpenAI\Responses\Embeddings\CreateResponse as CreateResponseEmbedding;
 
 class Request
 {
     protected array $messages;
+    protected string $input;
     protected string $model = 'gpt-3.5-turbo';
     protected float $temperature = 0.5;
-    protected CreateResponse $response;
+    protected CreateResponse|CreateResponseEmbedding $response;
 
     /**
      * @return void
@@ -24,6 +26,14 @@ class Request
         ]);
     }
 
+    public function embedding(): void
+    {
+        $this->response = OpenAI::embeddings()->create([
+            'model' => $this->model,
+            'input' => $this->input,
+        ]);
+    }
+
     /**
      * @param array $messages
      * @return void
@@ -31,6 +41,15 @@ class Request
     public function setMessages(array $messages): void
     {
         $this->messages = $messages;
+    }
+
+    /**
+     * @param string $input
+     * @return void
+     */
+    public function setInput(string $input): void
+    {
+        $this->input = $input;
     }
 
     /**
@@ -57,5 +76,10 @@ class Request
     public function getContent(): string
     {
         return $this->response->choices[0]->message->content;
+    }
+
+    public function getEmbedding()
+    {
+        return $this->response->toArray()['data'][0]['embedding'];
     }
 }

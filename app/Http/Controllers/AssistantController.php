@@ -25,11 +25,12 @@ class AssistantController extends Controller
     {
         $params = $request->validated();
 
-        if (!$params['type']) {
-            $params['type'] = $this->assistant->selectType($params['query']);
-        }
+        $this->assistant->setPrompt($params['query']);
 
-        Log::debug('type', [$params]);
+        if (!$params['type']) {
+            $params['type'] = $this->assistant->selectTypeAction();
+
+        }
 
         switch ($params['type']) {
             case 'query':

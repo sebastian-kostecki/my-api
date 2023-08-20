@@ -2,14 +2,15 @@
 
 namespace App\Lib\Assistant;
 
+use App\Enums\OpenAIModel;
 use App\Lib\Apis\OpenAI;
-use App\Lib\Assistant\Assistant\ActionTypeController;
+use App\Lib\Assistant\Assistant\ActionTypeParams;
+use App\Lib\Assistant\Assistant\CategoryParams;
 use App\Lib\Connections\Qdrant;
 use App\Models\Action;
 use App\Models\Conversation;
 use App\Models\Resource;
 use Illuminate\Support\Facades\Log;
-use OpenAI\Laravel\Facades\OpenAI as Client;
 use Qdrant\Exception\InvalidArgumentException;
 
 class Assistant
@@ -20,20 +21,21 @@ class Assistant
     protected OpenAI $openAI;
     protected Qdrant $vectorDatabase;
     protected string $response = "";
+    protected Conversation $conversation;
 
     public function __construct()
     {
         $this->openAI = new OpenAI();
         $this->vectorDatabase = new Qdrant('test');
+        $this->conversation = new Conversation();
     }
 
     /**
-     * @param string $query
      * @return string
      */
-    public function selectTypeAction(string $query): string
+    public function selectTypeAction(): string
     {
-        $params = (new ActionTypeController())->makeParams($query);
+        $params = ActionTypeParams::make($this->prompt);
         return $this->openAI->chat($params);
     }
 
@@ -43,26 +45,22 @@ class Assistant
      */
     public function query(array $params): string
     {
-        $newConversation = new Conversation();
-        $newConversation->saveQuestion($params['query']);
+        $this->conversation->saveQuestion($params['query']);
 
         if (!$params['group']) {
-            $params['group'] = $this->openAI->categorizeQueryPrompt($params['query']);
+            $params['group'] = $this->categorizePrompt();
         }
 
-        $embedding = $this->openAI->createEmbedding($params['query']);
-        $resourcesIds = $this->vectorDatabase->getIdsOverAverageScore($embedding);
-
-        $resources = Resource::where('category', $params['group'])
-            ->whereIn('id', $resourcesIds)
-            ->pluck('content')
-            ->toArray();
-
+        $resources = $this->getResources($params);
         Conversation::updateSystemPrompt($resources);
-        $messages = Conversation::getConversationsLastFiveMinutes();
 
-        $response = $this->openAI->chat($messages);
-        $newConversation->saveAnswer($response);
+        $params = [
+            'model' => OpenAIModel::GPT3->value,
+            'messages' => Conversation::getConversationsLastFiveMinutes()
+        ];
+        $response = $this->openAI->chat($params);
+
+        $this->conversation->saveAnswer($response);
 
         return $response;
     }
@@ -138,6 +136,15 @@ class Assistant
         return $action->execute();
     }
 
+    /**
+     * @param string $prompt
+     * @return void
+     */
+    public function setPrompt(string $prompt): void
+    {
+        $this->prompt = $prompt;
+    }
+
     protected function selectAction(string $query)
     {
         $actions = Action::pluck('slug')->toArray();
@@ -155,5 +162,25 @@ class Assistant
         $response = $this->openAI->getJson($content);
         $response = returnJson($response);
         return json_decode($response)->action;
+    }
+
+    /**
+     * @return string
+     */
+    protected function categorizePrompt(): string
+    {
+        $params = CategoryParams::make($this->prompt);
+        return $this->openAI->chat($params);
+    }
+
+    protected function getResources(array $params)
+    {
+        $embedding = $this->openAI->createEmbedding($params['query']);
+        $resourcesIds = $this->vectorDatabase->getIdsOverAverageScore($embedding);
+
+        return Resource::where('category', $params['group'])
+            ->whereIn('id', $resourcesIds)
+            ->pluck('content')
+            ->toArray();
     }
 }
