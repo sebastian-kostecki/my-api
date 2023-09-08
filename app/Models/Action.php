@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Enums\OpenAiModel;
+use App\Enums\OpenAIModel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
@@ -31,7 +31,7 @@ class Action extends Model
 
     protected $casts = [
         'enabled' => 'boolean',
-        'model' => OpenAiModel::class
+        'model' => OpenAIModel::class
     ];
 
     public static function scan(): array

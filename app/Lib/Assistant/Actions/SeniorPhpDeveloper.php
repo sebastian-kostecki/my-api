@@ -3,7 +3,6 @@
 namespace App\Lib\Assistant\Actions;
 
 use App\Lib\Apis\OpenAI;
-use App\Lib\Assistant\AbstractAction;
 use App\Lib\Interfaces\ActionInterface;
 
 class SeniorPhpDeveloper extends AbstractAction implements ActionInterface

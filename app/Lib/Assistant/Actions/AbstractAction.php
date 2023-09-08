@@ -13,7 +13,7 @@ abstract class AbstractAction
      */
     public function getModel(): string
     {
-        $model = Action::class(self::class)->value('model');
+        $model = Action::class($this::class)->value('model');
         return $model->value;
     }
 
@@ -31,6 +31,6 @@ abstract class AbstractAction
      */
     protected function getSystemPrompt(): string
     {
-        return Action::class(self::class)->value('prompt');
+        return Action::class($this::class)->value('prompt');
     }
 }

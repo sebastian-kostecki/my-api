@@ -6,6 +6,7 @@ use App\Lib\Connections\Notion\PanelAlphaIssuesTable;
 use App\Lib\Connections\Notion\PanelAlphaTasksTable;
 use App\Lib\Connections\OpenAI;
 use App\Lib\Interfaces\ActionInterface;
+use App\Models\Action;
 use FiveamCode\LaravelNotionApi\Entities\Blocks\BulletedListItem;
 use FiveamCode\LaravelNotionApi\Entities\Blocks\HeadingThree;
 use Illuminate\Support\Collection;
@@ -19,19 +20,21 @@ class AddNotesToTask implements ActionInterface
 
     protected string $prompt;
     protected OpenAI $openAI;
+    protected string $model;
     protected Collection $tasks;
     protected \stdClass $response;
 
     public function __construct()
     {
         $this->openAI = new OpenAI();
+        $this->model = Action::where('type', $this::class)->value('model');
     }
 
     /**
      * @param string $prompt
      * @return void
      */
-    public function setMessage(string $prompt): void
+    public function setPrompt(string $prompt): void
     {
         $this->prompt = $prompt;
     }
@@ -86,7 +89,7 @@ class AddNotesToTask implements ActionInterface
      */
     protected function sendToOpenAI(string $content): void
     {
-        $response = $this->openAI->getJson($content);
+        $response = $this->openAI->getJson($content, $this->model);
         $this->response = json_decode($response);
     }
 

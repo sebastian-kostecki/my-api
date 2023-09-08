@@ -4,9 +4,9 @@ namespace App\Lib\Assistant\Assistant;
 
 use App\Enums\OpenAIModel;
 
-class ActionTypeController
+class ActionTypeParams
 {
-    protected string $systemPrompt = <<<EOT
+    protected const SYSTEM_PROMPT = <<<EOT
 Identify the following query with one of the types below.
 Query is for AI Assistant who needs to identify parts of a long-term memory to access the most relevant information.
 Pay special attention to distinguish questions from actions.
@@ -26,19 +26,19 @@ Examples:
 'Dodaj task o fixie do notifications.' - action'.
 EOT;
 
-    protected OpenAIModel $model = OpenAIModel::GPT4;
-    protected float $temperature = 0.1;
+    protected const MODEL = OpenAIModel::GPT4;
+    protected const TEMPERATURE = 0.1;
 
     /**
      * @param string $prompt
      * @return array
      */
-    public function makeParams(string $prompt): array
+    public static function make(string $prompt): array
     {
-        $content = $this->systemPrompt . "###message\n{$prompt}";
+        $content = self::SYSTEM_PROMPT . "###message\n{$prompt}";
         return [
-            'model' => $this->model->value,
-            'temperature' => $this->temperature,
+            'model' => self::MODEL->value,
+            'temperature' => self::TEMPERATURE,
             'messages' => [
                 [
                     'role' => 'user',

@@ -6,5 +6,5 @@ interface ActionInterface
 {
     public function execute(): string;
 
-    public function setMessage(string $prompt): void;
+    public function setPrompt(string $prompt): void;
 }

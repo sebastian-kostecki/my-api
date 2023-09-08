@@ -41,6 +41,8 @@ END;
      */
     public function execute(): string
     {
+        //dodać ostatnie wiadomości z pięciu minut
+
         $response = Client::chat()->create([
             'model' => 'gpt-3.5-turbo',
             'temperature' => 0.5,
@@ -58,7 +60,7 @@ END;
      * @param string $prompt
      * @return void
      */
-    public function setMessage(string $prompt): void
+    public function setPrompt(string $prompt): void
     {
         $this->prompt = $prompt;
     }

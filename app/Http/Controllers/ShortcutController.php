@@ -22,7 +22,7 @@ class ShortcutController extends Controller
         ]);
 
         $translator = new Translate();
-        $translator->setMessage($request->input('text'));
+        $translator->setPrompt($request->input('text'));
         $translatedText = $translator->execute();
         return new JsonResponse([
             'data' => $translatedText

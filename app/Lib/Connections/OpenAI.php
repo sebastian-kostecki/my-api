@@ -41,7 +41,7 @@ class OpenAI
     public function describeIntention(string $prompt)
     {
         $response = Client::chat()->create([
-            'model' => 'gpt-3.5-turbo',
+            'model' => 'gpt-4',
             'temperature' => 0,
             'messages' => [
                 [
@@ -59,10 +59,10 @@ class OpenAI
      * @param string $text
      * @return string
      */
-    public function getJson(string $text): string
+    public function getJson(string $text, string $model): string
     {
         $response = Client::chat()->create([
-            'model' => 'gpt-3.5-turbo',
+            'model' => $model,
             'temperature' => 0,
             'messages' => [
                 [
@@ -106,7 +106,7 @@ class OpenAI
 
 
         $response = Client::chat()->create([
-            'model' => 'gpt-3.5-turbo',
+            'model' => 'gpt-4',
             'temperature' => 0.1,
             'messages' => [
                 [
@@ -164,7 +164,7 @@ query```
 EOD;
 
         $response = Client::chat()->create([
-            'model' => 'gpt-3.5-turbo',
+            'model' => 'gpt-4',
             'temperature' => 0.1,
             'messages' => [
                 [
@@ -213,7 +213,7 @@ EOD;
 
     public function chat(array $messages) {
         $response = Client::chat()->create([
-            'model' => 'gpt-3.5-turbo',
+            'model' => 'gpt-4',
             'messages' => $messages
         ]);
         return $response->choices[0]->message->content;

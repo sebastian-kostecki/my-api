@@ -27,7 +27,7 @@ class SaveNote implements ActionInterface
      * @param string $prompt
      * @return void
      */
-    public function setMessage(string $prompt): void
+    public function setPrompt(string $prompt): void
     {
         $this->prompt = $prompt;
     }
