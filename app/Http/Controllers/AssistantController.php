@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\AssistantRequest;
 use App\Lib\Assistant\Assistant;
+use App\Models\Action;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Log;
 use Qdrant\Exception\InvalidArgumentException;
@@ -50,5 +51,19 @@ class AssistantController extends Controller
         return new JsonResponse([
             'data' => $response
         ]);
+    }
+
+    public function query(AssistantRequest $request)
+    {
+        $params = $request->validated();
+        $this->assistant->setQuery($params['query']);
+        if (!$params['action'] || !Action::type($params['action'])->exists()) {
+            $this->assistant->findAction();
+        }
+        $this->assistant->setAction($params['action']);
+
+
+
+        dd($this->assistant);
     }
 }

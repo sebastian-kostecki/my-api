@@ -15,6 +15,59 @@ use Qdrant\Exception\InvalidArgumentException;
 
 class Assistant
 {
+    protected string $query;
+    protected Action $action;
+
+    /**
+     * @param string $query
+     * @return void
+     */
+    public function setQuery(string $query): void
+    {
+        $this->query = $query;
+    }
+
+    /**
+     * @param string $action
+     * @return void
+     */
+    public function setAction(string $action): void
+    {
+        $this->action = Action::type($action)->first();
+    }
+
+    public function findAction()
+    {
+        $types = Action::pluck('type')->toArray();
+
+        $systemPrompt = "Describe my intention from message below with JSON"
+            . "Focus on the beginning of it. Always return JSON and nothing more. \n"
+            . "From the actions below, choose the best fit.\n"
+            . "Actions: " . implode('|', $types) . "\nExamples:\n";
+        foreach ($types as $type) {
+            $systemPrompt .= implode("\n", $type::EXAMPLE) . "\n";
+        }
+
+        $params = [
+            'model' => OpenAIModel::GPT4->value,
+            'temperature' => 0.1,
+            'messages' => [
+                [
+                    'role' => 'system',
+                    'content' => $systemPrompt
+                ],
+                [
+                    'role' => 'user',
+                    'content' => $this->query
+                ]
+            ]
+        ];
+
+        $response = \OpenAI\Laravel\Facades\OpenAI::chat()->create($params);
+        dd($response);
+    }
+
+
     protected string $prompt = "";
     protected string $type = "";
 
