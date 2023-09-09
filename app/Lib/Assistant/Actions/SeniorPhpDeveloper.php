@@ -2,15 +2,19 @@
 
 namespace App\Lib\Assistant\Actions;
 
+use App\Enums\OpenAIModel;
 use App\Lib\Apis\OpenAI;
 use App\Lib\Interfaces\ActionInterface;
 
 class SeniorPhpDeveloper extends AbstractAction implements ActionInterface
 {
+    /**
+     * Initial variables for action
+     */
     public static string $name = 'PHP';
-    public static string $slug = 'php';
     public static string $icon = 'fa-brands fa-php';
     public static string $shortcut = '';
+    public static string $model = OpenAIModel::GPT3->value;
 
     const TEMPERATURE = 0.4;
 

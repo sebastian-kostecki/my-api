@@ -2,6 +2,7 @@
 
 namespace App\Lib\Assistant\Actions;
 
+use App\Enums\OpenAIModel;
 use App\Lib\Connections\OpenAI;
 use App\Lib\Interfaces\ActionInterface;
 use App\Models\Action;
@@ -9,10 +10,14 @@ use OpenAI\Laravel\Facades\OpenAI as Client;
 
 class Text2JS implements ActionInterface
 {
+    /**
+     * Initial variables for action
+     */
     public static string $name = 'Text2JS';
-    public static string $slug = 'text-to-js';
     public static string $icon = 'fa-brands fa-square-js';
     public static string $shortcut = '';
+    public static string $model = OpenAIModel::GPT4->value;
+
     public static string $systemPrompt = <<<END
 You are developing a system that generates JavaScript code based on user input.
 Given a user's text description of a programming task or desired functionality, generate high-quality JavaScript code using JavaScript.

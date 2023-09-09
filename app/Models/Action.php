@@ -14,6 +14,7 @@ use Illuminate\Support\Str;
  * @method static findOrFail(int $id)
  * @method static type(mixed $action)
  * @method static get()
+ * @method static create(array $array)
  */
 class Action extends Model
 {
@@ -43,6 +44,9 @@ class Action extends Model
 
         foreach ($files as $file) {
             if (!Str::endsWith($file, '.php')) {
+                continue;
+            }
+            if (Str::endsWith($file, 'AbstractAction.php')) {
                 continue;
             }
             $name = Str::beforeLast($file, '.php');

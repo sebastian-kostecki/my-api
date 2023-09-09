@@ -2,18 +2,22 @@
 
 namespace App\Lib\Assistant\Actions;
 
+use App\Enums\OpenAIModel;
 use App\Lib\Connections\OpenAI;
 use App\Lib\Connections\Qdrant;
 use App\Lib\Interfaces\ActionInterface;
 use App\Models\Resource;
 use Exception;
 
-class SaveNote implements ActionInterface
+class Remember implements ActionInterface
 {
-    public static string $name = 'Add Note';
-    public static string $slug = 'add-note';
-    public static string $icon = 'fa-regular fa-note-sticky';
+    /**
+     * Initial variables for action
+     */
+    public static string $name = 'Remember';
+    public static string $icon = '';
     public static string $shortcut = 'CommandOrControl+Shift+N';
+    public static string $model = OpenAIModel::GPT3->value;
 
     protected OpenAI $openAI;
     protected string $prompt;

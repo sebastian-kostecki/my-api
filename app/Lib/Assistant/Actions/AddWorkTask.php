@@ -2,6 +2,7 @@
 
 namespace App\Lib\Assistant\Actions;
 
+use App\Enums\OpenAIModel;
 use App\Lib\Connections\Notion\PanelAlphaIssuesTable;
 use App\Lib\Connections\Notion\PanelAlphaTasksTable;
 use App\Lib\Connections\OpenAI;
@@ -11,21 +12,25 @@ use Illuminate\Support\Collection;
 
 class AddWorkTask implements ActionInterface
 {
+    /**
+     * Initial variables for action
+     */
     public static string $name = 'New Task';
-    public static string $slug = 'add-work-task';
     public static string $icon = 'fa-solid fa-check';
     public static string $shortcut = 'CommandOrControl+Shift+Q';
+    public static string $model = OpenAIModel::GPT4->value;
+
 
     protected string $prompt;
     protected OpenAI $openAI;
-    protected string $model;
+    protected string $action;
     protected Collection $issues;
     protected \stdClass $response;
 
     public function __construct()
     {
         $this->openAI = new OpenAI();
-        $this->model = Action::where('type', $this::class)->value('model');
+        $this->action = Action::where('type', $this::class)->value('model');
     }
 
     /**
@@ -74,7 +79,7 @@ class AddWorkTask implements ActionInterface
 
     protected function sendToOpenAI(string $content): void
     {
-        $response = $this->openAI->getJson($content, $this->model);
+        $response = $this->openAI->getJson($content, $this->action);
         $this->response = json_decode($response);
     }
 }

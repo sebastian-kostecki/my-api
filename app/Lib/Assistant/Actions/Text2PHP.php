@@ -2,6 +2,7 @@
 
 namespace App\Lib\Assistant\Actions;
 
+use App\Enums\OpenAIModel;
 use App\Lib\Connections\OpenAI;
 use App\Lib\Interfaces\ActionInterface;
 use App\Models\Action;
@@ -9,10 +10,15 @@ use OpenAI\Laravel\Facades\OpenAI as Client;
 
 class Text2PHP implements ActionInterface
 {
+    /**
+     * Initial variables for action
+     */
     public static string $name = 'Text2PHP';
-    public static string $slug = 'text-to-php';
     public static string $icon = 'fa-brands fa-php';
     public static string $shortcut = '';
+    public static string $model = OpenAIModel::GPT4->value;
+
+
     public static string $systemPrompt = <<<END
 You are building a text-to-code conversion system that generates PHP code, specifically targeting the Laravel framework.
 Given a user message that describes a programming task in natural language, generate the corresponding PHP code using Laravel conventions and features.

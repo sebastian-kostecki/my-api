@@ -2,6 +2,7 @@
 
 namespace App\Lib\Assistant\Actions;
 
+use App\Enums\OpenAIModel;
 use App\Lib\Connections\OpenAI;
 use App\Lib\Interfaces\ActionInterface;
 use App\Models\Action;
@@ -9,10 +10,15 @@ use OpenAI\Laravel\Facades\OpenAI as Client;
 
 class SeniorJavaScriptDeveloper implements ActionInterface
 {
+    /**
+     * Initial variables for action
+     */
     public static string $name = 'JavaScript';
-    public static string $slug = 'java-script';
     public static string $icon = 'fa-brands fa-square-js';
     public static string $shortcut = '';
+    public static string $model = OpenAIModel::GPT3->value;
+
+    
     public static string $systemPrompt = <<<END
 You are acting as a Senior JavaScript Developer with expertise in Vue.js and PHP.
 Users will approach you with questions, seek guidance, and request suggestions related to JavaScript programming,

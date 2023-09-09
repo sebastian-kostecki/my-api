@@ -44,7 +44,7 @@ class SyncActions extends Command
         }
 
         $this->removeOldRecords($integrationsInDatabase);
-        $this->info("Finished synchronizing integrations.");
+        $this->info("Finished synchronizing actions.");
     }
 
     protected function isIntegrationInDatabase(Collection $integrationsInDatabase, string $integrationClass): bool
@@ -65,6 +65,7 @@ class SyncActions extends Command
             'type' => $class,
             'icon' => $class::$icon,
             'shortcut' => $class::$shortcut,
+            'model' => $class::$model,
             'enabled' => true
         ]);
         $this->info("added to database");

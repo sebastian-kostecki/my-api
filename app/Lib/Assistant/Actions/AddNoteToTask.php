@@ -2,6 +2,7 @@
 
 namespace App\Lib\Assistant\Actions;
 
+use App\Enums\OpenAIModel;
 use App\Lib\Connections\Notion\PanelAlphaIssuesTable;
 use App\Lib\Connections\Notion\PanelAlphaTasksTable;
 use App\Lib\Connections\OpenAI;
@@ -11,23 +12,26 @@ use FiveamCode\LaravelNotionApi\Entities\Blocks\BulletedListItem;
 use FiveamCode\LaravelNotionApi\Entities\Blocks\HeadingThree;
 use Illuminate\Support\Collection;
 
-class AddNotesToTask implements ActionInterface
+class AddNoteToTask implements ActionInterface
 {
-    public static string $name = 'Note Task';
-    public static string $slug = 'add-work-task';
+    /**
+     * Initial variables for action
+     */
+    public static string $name = 'Add Note To Task';
     public static string $icon = 'fa-regular fa-comment';
     public static string $shortcut = '';
+    public static string $model = OpenAIModel::GPT3->value;
+
+
 
     protected string $prompt;
     protected OpenAI $openAI;
-    protected string $model;
     protected Collection $tasks;
     protected \stdClass $response;
 
     public function __construct()
     {
         $this->openAI = new OpenAI();
-        $this->model = Action::where('type', $this::class)->value('model');
     }
 
     /**
@@ -89,7 +93,7 @@ class AddNotesToTask implements ActionInterface
      */
     protected function sendToOpenAI(string $content): void
     {
-        $response = $this->openAI->getJson($content, $this->model);
+        $response = $this->openAI->getJson($content, $this->action);
         $this->response = json_decode($response);
     }
 
