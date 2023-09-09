@@ -14,10 +14,15 @@ return new class extends Migration
         Schema::create('actions', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('slug');
-            $table->string('type');
-            $table->string('icon');
+            $table->string('type')->unique();
+            $table->string('icon')->nullable();
+            $table->text('system_prompt')->nullable();
+            $table->enum('model',['gpt-3.5-turbo', 'gpt-4']);
+            $table->string('shortcut')->nullable();
+            $table->boolean('enabled')->default(1);
             $table->timestamps();
+
+            $table->index('type');
         });
     }
 

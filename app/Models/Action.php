@@ -13,6 +13,7 @@ use Illuminate\Support\Str;
  * @method static pluck(string $column)
  * @method static findOrFail(int $id)
  * @method static class(string $class)
+ * @method static slug(string $action)
  */
 class Action extends Model
 {
@@ -20,11 +21,10 @@ class Action extends Model
 
     protected $fillable = [
         'name',
-        'slug',
         'type',
         'icon',
         'shortcut',
-        'prompt',
+        'system_prompt',
         'model',
         'enabled'
     ];
@@ -59,7 +59,7 @@ class Action extends Model
      * @param string $class
      * @return void
      */
-    public function scopeClass(Builder $query, string $class): void
+    public function scopeType(Builder $query, string $class): void
     {
         $query->where('type', $class);
     }
