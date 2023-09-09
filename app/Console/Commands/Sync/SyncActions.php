@@ -25,16 +25,16 @@ class SyncActions extends Command
     /**
      * Execute the console command.
      */
-    public function handle()
+    public function handle(): void
     {
         $this->info("Scanning files...");
 
         $integrations = Action::scan();
-        $this->info("Found " . count($integrations) ." actions");
+        $this->info("Found " . count($integrations) . " actions");
 
         $integrationsInDatabase = Action::get()->keyBy('type');
 
-        foreach($integrations as $integrationClass) {
+        foreach ($integrations as $integrationClass) {
             $this->output->write($integrationClass::$name . ": ");
 
             if ($this->isIntegrationInDatabase($integrationsInDatabase, $integrationClass)) {
@@ -62,11 +62,9 @@ class SyncActions extends Command
     {
         Action::create([
             'name' => $class::$name,
-            'slug' => $class::$slug,
             'type' => $class,
             'icon' => $class::$icon,
             'shortcut' => $class::$shortcut,
-            'prompt' => $class::$systemPrompt ?? null,
             'enabled' => true
         ]);
         $this->info("added to database");

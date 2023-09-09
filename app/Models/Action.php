@@ -12,8 +12,8 @@ use Illuminate\Support\Str;
  * @method static where(string $column, mixed $value)
  * @method static pluck(string $column)
  * @method static findOrFail(int $id)
- * @method static class(string $class)
- * @method static slug(string $action)
+ * @method static type(mixed $action)
+ * @method static get()
  */
 class Action extends Model
 {
@@ -24,7 +24,6 @@ class Action extends Model
         'type',
         'icon',
         'shortcut',
-        'system_prompt',
         'model',
         'enabled'
     ];

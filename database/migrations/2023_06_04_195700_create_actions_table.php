@@ -16,7 +16,6 @@ return new class extends Migration
             $table->string('name');
             $table->string('type')->unique();
             $table->string('icon')->nullable();
-            $table->text('system_prompt')->nullable();
             $table->enum('model',['gpt-3.5-turbo', 'gpt-4']);
             $table->string('shortcut')->nullable();
             $table->boolean('enabled')->default(1);
