@@ -13,6 +13,9 @@ class Text2PHP implements ActionInterface
     /**
      * Initial variables for action
      */
+    public const EXAMPLE = [
+        "Zamień następujący tekst na kod PHP {\"action\": \"" . self::class . "\"}"
+    ];
     public static string $name = 'Text2PHP';
     public static string $icon = 'fa-brands fa-php';
     public static string $shortcut = '';

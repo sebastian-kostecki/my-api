@@ -13,8 +13,10 @@ class Translate implements ActionInterface
     /**
      * Initial variables for action
      */
+    public const EXAMPLE = [
+        "Przetłumacz: Lubię jeść pizzę {\"action\": \"" . self::class . "\"}"
+    ];
     public static string $name = 'Translate';
-    public static string $slug = 'translate';
     public static string $icon = 'fa-solid fa-language';
     public static string $shortcut = '';
     public static string $model = OpenAIModel::GPT3->value;

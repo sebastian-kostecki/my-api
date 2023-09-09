@@ -17,11 +17,13 @@ class AddNoteToTask implements ActionInterface
     /**
      * Initial variables for action
      */
+    public const EXAMPLE = [
+        "Dodaj notatke o poprawieniu kontrolera do zadania \"Task Management\" {\"action\": \"" . self::class . "\"}"
+    ];
     public static string $name = 'Add Note To Task';
     public static string $icon = 'fa-regular fa-comment';
     public static string $shortcut = '';
     public static string $model = OpenAIModel::GPT3->value;
-
 
 
     protected string $prompt;

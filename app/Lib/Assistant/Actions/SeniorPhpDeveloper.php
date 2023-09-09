@@ -11,6 +11,9 @@ class SeniorPhpDeveloper extends AbstractAction implements ActionInterface
     /**
      * Initial variables for action
      */
+    public const EXAMPLE = [
+        "Jako Senior PHP Developer napisz mi ja wykonować request do Curl {\"action\": \"" . self::class . "\"}"
+    ];
     public static string $name = 'PHP';
     public static string $icon = 'fa-brands fa-php';
     public static string $shortcut = '';

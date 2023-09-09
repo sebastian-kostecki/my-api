@@ -13,6 +13,9 @@ class Text2JS implements ActionInterface
     /**
      * Initial variables for action
      */
+    public const EXAMPLE = [
+        "Zamień następujący tekst na kod Javascript {\"action\": \"" . self::class . "\"}"
+    ];
     public static string $name = 'Text2JS';
     public static string $icon = 'fa-brands fa-square-js';
     public static string $shortcut = '';

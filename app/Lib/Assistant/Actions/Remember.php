@@ -14,6 +14,11 @@ class Remember implements ActionInterface
     /**
      * Initial variables for action
      */
+    public const EXAMPLE = [
+        "Zapamiętaj, że nazywam się Sebastian Kostecki {\"action\": \"". self::class . "\"}",
+        "Dodaj do pamięci następujące informacje: Lublin jest miastem wojewódzkim {\"action\": \"". self::class . "\"}"
+    ];
+
     public static string $name = 'Remember';
     public static string $icon = '';
     public static string $shortcut = 'CommandOrControl+Shift+N';

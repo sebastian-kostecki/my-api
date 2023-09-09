@@ -15,6 +15,9 @@ class AddWorkTask implements ActionInterface
     /**
      * Initial variables for action
      */
+    public const EXAMPLE = [
+        "Dodaj nowe zadanie o zrobieniu research do plesk api do issue Integracja z Pleskiem {\"action\": \"" . self::class . "\"}"
+    ];
     public static string $name = 'New Task';
     public static string $icon = 'fa-solid fa-check';
     public static string $shortcut = 'CommandOrControl+Shift+Q';
