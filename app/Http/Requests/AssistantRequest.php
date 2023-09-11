@@ -25,7 +25,6 @@ class AssistantRequest extends FormRequest
         return [
             'query' => 'string',
             'type' => 'string|nullable',
-            'group' => 'string|nullable',
             'action' => 'string|nullable'
         ];
     }

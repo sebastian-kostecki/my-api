@@ -59,13 +59,8 @@ class AssistantController extends Controller
 
         $this->assistant->setQuery($params['query']);
         $this->assistant->setAction($params['action']);
+        $this->assistant->setType();
         dd($this->assistant);
 
-
-//        if (!$params['action'] || !Action::type($params['action'])->exists()) {
-//            $this->assistant->findAction();
-//        }
-
-        
     }
 }

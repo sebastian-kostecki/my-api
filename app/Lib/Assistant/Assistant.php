@@ -2,7 +2,7 @@
 
 namespace App\Lib\Assistant;
 
-use App\Enums\Assistant\ChatModel;
+use App\Enums\Assistant\ChatModel as Model;
 use App\Enums\Assistant\Type;
 use App\Lib\Apis\OpenAI;
 use App\Lib\Assistant\Assistant\ActionTypeParams;
@@ -13,6 +13,7 @@ use App\Models\Conversation;
 use App\Models\Resource;
 use Illuminate\Support\Facades\Log;
 use Qdrant\Exception\InvalidArgumentException;
+use stdClass;
 
 class Assistant
 {
@@ -21,6 +22,7 @@ class Assistant
     protected ?Action $action;
 
     protected OpenAI $api;
+
     /**
      * @param string $query
      * @return void
@@ -39,15 +41,66 @@ class Assistant
         $this->action = Action::type($action)->first();
     }
 
-    public function setType()
+    /**
+     * @return void
+     */
+    public function setType(): void
     {
-        //na podstawie query, jeśli nie ma określonej akcji wybieramy
+        if ($this->action) {
+            $this->type = Type::ACTION;
+        } else {
+            $type = $this->assignType();
+            $this->type = Type::from($type->type);
+        }
     }
 
-
-
-
-
+    /**
+     * @return stdClass
+     */
+    protected function assignType(): stdClass
+    {
+        $model = Model::GPT3;
+        $messages = [
+            [
+                'role' => 'system',
+                'content' => "Identify the following query with one of the types below."
+                    . "Query is for AI Assistant who needs to identify parts of a long-term memory to access the most relevant information."
+                    . "Pay special attention to distinguish questions from actions."
+                    . "types: query|save|forget|action"
+                    . "If query includes any mention of 'save' or 'notes' or 'memory', classify as 'save'."
+                    . "If query includes any mention of 'forget' or 'remove', classify as 'forget'."
+                    . "If query doesn't fit to any other category, classify as 'query'."
+                    . "Focus on the beginning of it. Return plain category name and nothing else."
+            ],
+            [
+                'role' => 'user',
+                'content' => $this->query
+            ]
+        ];
+        $temperature = 0.1;
+        $functions = [
+            [
+                'name' => 'parse_query_type',
+                'description' => 'Parse type of query from user message.',
+                'parameters' => [
+                    'type' => 'object',
+                    'properties' => [
+                        'type' => [
+                            'type' => 'string',
+                            'enum' => [
+                                Type::QUERY->value,
+                                Type::SAVE->value,
+                                Type::FORGET->value
+                            ],
+                        ],
+                    ],
+                    'required' => ['type'],
+                ],
+            ]
+        ];
+        $this->api->chat()->create($model, $messages, $temperature, $functions);
+        return $this->api->chat()->getFunctions();
+    }
 
 
     public function findAction()
@@ -63,7 +116,7 @@ class Assistant
         }
 
         $params = [
-            'model' => ChatModel::GPT4->value,
+            'model' => ChatModel::G->value,
             'temperature' => 0.1,
             'messages' => [
                 [
@@ -80,16 +133,6 @@ class Assistant
         $response = \OpenAI\Laravel\Facades\OpenAI::chat()->create($params);
         dd($response);
     }
-
-
-
-
-
-
-
-
-
-
 
 
     protected string $prompt = "";

@@ -2,10 +2,10 @@
 
 namespace App\Models;
 
-use App\Enums\OpenAIModel;
+use App\Enums\Assistant\ChatModel;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Str;
 
 /**
@@ -31,7 +31,7 @@ class Action extends Model
 
     protected $casts = [
         'enabled' => 'boolean',
-        'model' => OpenAIModel::class
+        'model' => ChatModel::class
     ];
 
     public static function scan(): array
@@ -59,10 +59,10 @@ class Action extends Model
 
     /**
      * @param Builder $query
-     * @param string $class
+     * @param string|null $class
      * @return void
      */
-    public function scopeType(Builder $query, string $class): void
+    public function scopeType(Builder $query, ?string $class): void
     {
         $query->where('type', $class);
     }
