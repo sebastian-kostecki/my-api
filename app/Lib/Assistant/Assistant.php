@@ -2,7 +2,8 @@
 
 namespace App\Lib\Assistant;
 
-use App\Enums\OpenAIModel;
+use App\Enums\Assistant\ChatModel;
+use App\Enums\Assistant\Type;
 use App\Lib\Apis\OpenAI;
 use App\Lib\Assistant\Assistant\ActionTypeParams;
 use App\Lib\Assistant\Assistant\CategoryParams;
@@ -16,8 +17,10 @@ use Qdrant\Exception\InvalidArgumentException;
 class Assistant
 {
     protected string $query;
-    protected Action $action;
+    protected Type $type;
+    protected ?Action $action;
 
+    protected OpenAI $api;
     /**
      * @param string $query
      * @return void
@@ -28,13 +31,24 @@ class Assistant
     }
 
     /**
-     * @param string $action
+     * @param string|null $action
      * @return void
      */
-    public function setAction(string $action): void
+    public function setAction(?string $action): void
     {
         $this->action = Action::type($action)->first();
     }
+
+    public function setType()
+    {
+        //na podstawie query, jeśli nie ma określonej akcji wybieramy
+    }
+
+
+
+
+
+
 
     public function findAction()
     {
@@ -49,7 +63,7 @@ class Assistant
         }
 
         $params = [
-            'model' => OpenAIModel::GPT4->value,
+            'model' => ChatModel::GPT4->value,
             'temperature' => 0.1,
             'messages' => [
                 [
@@ -68,17 +82,27 @@ class Assistant
     }
 
 
-    protected string $prompt = "";
-    protected string $type = "";
 
-    protected OpenAI $openAI;
+
+
+
+
+
+
+
+
+
+    protected string $prompt = "";
+    //protected string $type = "";
+
+
     protected Qdrant $vectorDatabase;
     protected string $response = "";
     protected Conversation $conversation;
 
     public function __construct()
     {
-        $this->openAI = new OpenAI();
+        $this->api = new OpenAI();
         $this->vectorDatabase = new Qdrant('test');
         $this->conversation = new Conversation();
     }
@@ -89,7 +113,7 @@ class Assistant
     public function selectTypeAction(): string
     {
         $params = ActionTypeParams::make($this->prompt);
-        return $this->openAI->chat($params);
+        return $this->api->chat($params);
     }
 
     /**
@@ -108,10 +132,10 @@ class Assistant
         Conversation::updateSystemPrompt($resources);
 
         $params = [
-            'model' => OpenAIModel::GPT3->value,
+            'model' => ChatModel::GPT3->value,
             'messages' => Conversation::getConversationsLastFiveMinutes()
         ];
-        $response = $this->openAI->chat($params);
+        $response = $this->api->chat($params);
 
         $this->conversation->saveAnswer($response);
 
@@ -126,14 +150,14 @@ class Assistant
     {
         $language = detectLanguage($params['query']);
         if ($language !== 'pl') {
-            $params['query'] = $this->openAI->translateToPolish($params['query']);
+            $params['query'] = $this->api->translateToPolish($params['query']);
         }
 
         if (!$params['group']) {
-            $params['group'] = $this->openAI->categorizeQueryPrompt($params['query']);
+            $params['group'] = $this->api->categorizeQueryPrompt($params['query']);
         }
 
-        $response = $this->openAI->generateTagsAndTitle($params['query']);
+        $response = $this->api->generateTagsAndTitle($params['query']);
 
         $resource = new Resource();
         $resource->title = $response->title;
@@ -143,7 +167,7 @@ class Assistant
         $resource->save();
 
         $text = $resource->content . " " . implode(',', $resource->tags);
-        $embedding = $this->openAI->createEmbedding($text);
+        $embedding = $this->api->createEmbedding($text);
 
         $this->vectorDatabase->insertVector($resource->id, $embedding, [
             'id' => $resource->id,
@@ -160,7 +184,7 @@ class Assistant
      */
     public function forget($params): string
     {
-        $embedding = $this->openAI->createEmbedding($params['query']);
+        $embedding = $this->api->createEmbedding($params['query']);
         $resourceId = $this->vectorDatabase->findMessage($embedding);
 
         $resource = Resource::findOrFail($resourceId);
@@ -212,7 +236,7 @@ class Assistant
         $content .= "Przetłumacz tekst: I would like to eat some pizza. {\"action\": \"translate\"}";
         $content .= "###message\n{$$query}";
 
-        $response = $this->openAI->getJson($content);
+        $response = $this->api->getJson($content);
         $response = returnJson($response);
         return json_decode($response)->action;
     }
@@ -223,12 +247,12 @@ class Assistant
     protected function categorizePrompt(): string
     {
         $params = CategoryParams::make($this->prompt);
-        return $this->openAI->chat($params);
+        return $this->api->chat($params);
     }
 
     protected function getResources(array $params)
     {
-        $embedding = $this->openAI->createEmbedding($params['query']);
+        $embedding = $this->api->createEmbedding($params['query']);
         $resourcesIds = $this->vectorDatabase->getIdsOverAverageScore($embedding);
 
         return Resource::where('category', $params['group'])

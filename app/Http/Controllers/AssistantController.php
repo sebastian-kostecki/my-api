@@ -56,14 +56,16 @@ class AssistantController extends Controller
     public function query(AssistantRequest $request)
     {
         $params = $request->validated();
+
         $this->assistant->setQuery($params['query']);
-        if (!$params['action'] || !Action::type($params['action'])->exists()) {
-            $this->assistant->findAction();
-        }
         $this->assistant->setAction($params['action']);
-
-
-
         dd($this->assistant);
+
+
+//        if (!$params['action'] || !Action::type($params['action'])->exists()) {
+//            $this->assistant->findAction();
+//        }
+
+        
     }
 }
