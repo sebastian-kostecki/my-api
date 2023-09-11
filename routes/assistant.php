@@ -1,10 +1,6 @@
 <?php
 
+use App\Http\Controllers\AssistantController;
 use Illuminate\Support\Facades\Route;
 
-/**
- * test
- */
-Route::get('/test', function () {
-    return 'hello';
-});
+Route::post('/', [AssistantController::class, 'query']);
