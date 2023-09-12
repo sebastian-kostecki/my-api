@@ -5,7 +5,6 @@ namespace App\Lib\Assistant;
 use App\Enums\Assistant\ChatModel as Model;
 use App\Enums\Assistant\Type;
 use App\Lib\Apis\OpenAI;
-use App\Lib\Assistant\Assistant\ActionTypeParams;
 use App\Lib\Assistant\Assistant\CategoryParams;
 use App\Lib\Connections\Qdrant;
 use App\Models\Action;
@@ -17,11 +16,25 @@ use stdClass;
 
 class Assistant
 {
+    protected const DATABASE_NAME = 'test';
+
     protected string $query;
     protected Type $type;
+    protected ?string $category;
     protected ?Action $action;
 
+    protected string $response;
+
     protected OpenAI $api;
+
+    protected Conversation $conversation;
+
+    public function __construct()
+    {
+        $this->api = new OpenAI();
+        $this->vectorDatabase = new Qdrant(self::DATABASE_NAME);
+        $this->conversation = new Conversation();
+    }
 
     /**
      * @param string $query
@@ -102,37 +115,149 @@ class Assistant
         return $this->api->chat()->getFunctions();
     }
 
-
-    public function findAction()
+    public function execute()
     {
-        $types = Action::pluck('type')->toArray();
+        $this->conversation->saveQuestion($this->query);
 
-        $systemPrompt = "Describe my intention from message below with JSON"
-            . "Focus on the beginning of it. Always return JSON and nothing more. \n"
-            . "From the actions below, choose the best fit.\n"
-            . "Actions: " . implode('|', $types) . "\nExamples:\n";
-        foreach ($types as $type) {
-            $systemPrompt .= implode("\n", $type::EXAMPLE) . "\n";
+        switch ($this->type) {
+            case Type::QUERY:
+                //
+                break;
+            case Type::SAVE:
+                //
+                break;
+            case Type::FORGET:
+                //
+                break;
+            case Type::ACTION:
+                //
+                break;
         }
+    }
 
-        $params = [
-            'model' => ChatModel::G->value,
-            'temperature' => 0.1,
-            'messages' => [
-                [
-                    'role' => 'system',
-                    'content' => $systemPrompt
-                ],
-                [
-                    'role' => 'user',
-                    'content' => $this->query
-                ]
+    protected function query()
+    {
+        $this->assignCategory();
+    }
+
+    /**
+     * @return void
+     */
+    public function assignCategory(): void
+    {
+        $model = Model::GPT3;
+        $messages = [
+            [
+                'role' => 'system',
+                'content' => "Identify the following query with one of the categories below."
+                    . "Query is for AI Assistant who needs to identify parts of a long-term memory to access the most relevant information."
+                    . "Pay special attention to distinguish questions from actions."
+                    . "categories: memory|note|knowledge|link|all"
+                    . "If query is related directly to the assistant or user, classify as 'memory'."
+                    . "If query includes any mention of notes, classify as 'note'"
+                    . "If query includes any mention of knowledge or add to my knowledge, classify as 'knowledge'"
+                    . "If query includes any mention of links, classify as 'link'"
+                    . "If query doesn't fit to any other category, classify as 'all'."
+                    . "Focus on the beginning of it. Return plain category name and nothing else."
+            ],
+            [
+                'role' => 'user',
+                'content' => $this->query
             ]
         ];
-
-        $response = \OpenAI\Laravel\Facades\OpenAI::chat()->create($params);
-        dd($response);
+        $temperature = 0.1;
+        $functions = [
+            [
+                'name' => 'parse_query_type',
+                'description' => 'Parse category of query from user message.',
+                'parameters' => [
+                    'type' => 'object',
+                    'properties' => [
+                        'category' => [
+                            'type' => 'string',
+                            'enum' => [
+                                'memory',
+                                'note',
+                                'knowledge',
+                                'link',
+                                'all'
+                            ],
+                        ],
+                    ],
+                    'required' => ['category'],
+                ],
+            ]
+        ];
+        $this->api->chat()->create($model, $messages, $temperature, $functions);
+        $response = $this->api->chat()->getFunctions();
+        $this->category = $response->category;
     }
+
+    protected function getResources(array $params)
+    {
+        $embedding = $this->api->createEmbedding($params['query']);
+        $resourcesIds = $this->vectorDatabase->getIdsOverAverageScore($embedding);
+
+        return Resource::where('category', $params['group'])
+            ->whereIn('id', $resourcesIds)
+            ->pluck('content')
+            ->toArray();
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//    public function findAction()
+//    {
+//        $types = Action::pluck('type')->toArray();
+//
+//        $systemPrompt = "Describe my intention from message below with JSON"
+//            . "Focus on the beginning of it. Always return JSON and nothing more. \n"
+//            . "From the actions below, choose the best fit.\n"
+//            . "Actions: " . implode('|', $types) . "\nExamples:\n";
+//        foreach ($types as $type) {
+//            $systemPrompt .= implode("\n", $type::EXAMPLE) . "\n";
+//        }
+//
+//        $params = [
+//            'model' => ChatModel::G->value,
+//            'temperature' => 0.1,
+//            'messages' => [
+//                [
+//                    'role' => 'system',
+//                    'content' => $systemPrompt
+//                ],
+//                [
+//                    'role' => 'user',
+//                    'content' => $this->query
+//                ]
+//            ]
+//        ];
+//
+//        $response = \OpenAI\Laravel\Facades\OpenAI::chat()->create($params);
+//        dd($response);
+//    }
 
 
     protected string $prompt = "";
@@ -140,15 +265,9 @@ class Assistant
 
 
     protected Qdrant $vectorDatabase;
-    protected string $response = "";
-    protected Conversation $conversation;
+    //protected string $response = "";
+    //protected Conversation $conversation;
 
-    public function __construct()
-    {
-        $this->api = new OpenAI();
-        $this->vectorDatabase = new Qdrant('test');
-        $this->conversation = new Conversation();
-    }
 
     /**
      * @return string
@@ -159,31 +278,31 @@ class Assistant
         return $this->api->chat($params);
     }
 
-    /**
-     * @param array $params
-     * @return string
-     */
-    public function query(array $params): string
-    {
-        $this->conversation->saveQuestion($params['query']);
-
-        if (!$params['group']) {
-            $params['group'] = $this->categorizePrompt();
-        }
-
-        $resources = $this->getResources($params);
-        Conversation::updateSystemPrompt($resources);
-
-        $params = [
-            'model' => ChatModel::GPT3->value,
-            'messages' => Conversation::getConversationsLastFiveMinutes()
-        ];
-        $response = $this->api->chat($params);
-
-        $this->conversation->saveAnswer($response);
-
-        return $response;
-    }
+//    /**
+//     * @param array $params
+//     * @return string
+//     */
+//    public function query(array $params): string
+//    {
+//        $this->conversation->saveQuestion($params['query']);
+//
+//        if (!$params['group']) {
+//            $params['group'] = $this->categorizePrompt();
+//        }
+//
+//        $resources = $this->getResources($params);
+//        Conversation::updateSystemPrompt($resources);
+//
+//        $params = [
+//            'model' => ChatModel::GPT3->value,
+//            'messages' => Conversation::getConversationsLastFiveMinutes()
+//        ];
+//        $response = $this->api->chat($params);
+//
+//        $this->conversation->saveAnswer($response);
+//
+//        return $response;
+//    }
 
     /**
      * @param array $params
@@ -293,14 +412,14 @@ class Assistant
         return $this->api->chat($params);
     }
 
-    protected function getResources(array $params)
-    {
-        $embedding = $this->api->createEmbedding($params['query']);
-        $resourcesIds = $this->vectorDatabase->getIdsOverAverageScore($embedding);
-
-        return Resource::where('category', $params['group'])
-            ->whereIn('id', $resourcesIds)
-            ->pluck('content')
-            ->toArray();
-    }
+//    protected function getResources(array $params)
+//    {
+//        $embedding = $this->api->createEmbedding($params['query']);
+//        $resourcesIds = $this->vectorDatabase->getIdsOverAverageScore($embedding);
+//
+//        return Resource::where('category', $params['group'])
+//            ->whereIn('id', $resourcesIds)
+//            ->pluck('content')
+//            ->toArray();
+//    }
 }
