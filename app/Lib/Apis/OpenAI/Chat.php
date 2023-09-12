@@ -5,13 +5,15 @@ namespace App\Lib\Apis\OpenAI;
 use App\Enums\Assistant\ChatModel;
 use App\Lib\Apis\OpenAI;
 use Illuminate\Http\Client\PendingRequest;
+use JsonException;
+use stdClass;
 
 class Chat
 {
     private const BASEURL = 'chat';
     private string $url;
     private PendingRequest $request;
-    private \stdClass $response;
+    private stdClass $response;
 
     /**
      * @param OpenAI $api
@@ -44,10 +46,11 @@ class Chat
     }
 
     /**
-     * @return \stdClass
+     * @return stdClass
+     * @throws JsonException
      */
-    public function getFunctions(): \stdClass
+    public function getFunctions(): stdClass
     {
-        return json_decode($this->response->choices[0]->message->function_call->arguments, false);
+        return json_decode($this->response->choices[0]->message->function_call->arguments, false, 512, JSON_THROW_ON_ERROR);
     }
 }
