@@ -36,40 +36,11 @@ class OpenAI
     /**
      * @return Embedding
      */
-    public function embeddings(): Embedding 
+    public function embeddings(): Embedding
     {
         if ($this->embedding) {
             return $this->embedding;
         }
         return new Embedding($this);
     }
-
-    /**
-     * @param array $params
-     * @return string
-     */
-//    public function chat(array $params): string
-//    {
-//        $this->request->setModel($params['model']);
-//        if (isset($params['temperature'])) {
-//            $this->request->setTemperature($params['temperature']);
-//        }
-//        $this->request->setMessages($params['messages']);
-//        $this->request->chat();
-//        return $this->request->getContent();
-//    }
-
-    /**
-     * @param string $input
-     * @return array
-     */
-    public function createEmbedding(string $input): array
-    {
-        $this->request->setModel('text-embedding-ada-002');
-        $this->request->setInput($input);
-        $this->request->embedding();
-        return $this->request->getEmbedding();
-    }
-
-
 }

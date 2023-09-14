@@ -2,6 +2,7 @@
 
 namespace App\Lib\Apis\OpenAI;
 
+use Illuminate\Support\Facades\Http;
 use OpenAI\Laravel\Facades\OpenAI;
 use OpenAI\Responses\Chat\CreateResponse;
 use OpenAI\Responses\Embeddings\CreateResponse as CreateResponseEmbedding;
@@ -82,4 +83,12 @@ class Request
     {
         return $this->response->toArray()['data'][0]['embedding'];
     }
+
+
+    public function call()
+    {
+        //Http::withToken(config('openai.'))
+    }
+
+
 }

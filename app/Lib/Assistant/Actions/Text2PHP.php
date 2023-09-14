@@ -2,7 +2,7 @@
 
 namespace App\Lib\Assistant\Actions;
 
-use App\Enums\OpenAIModel;
+use App\Enums\Assistant\ChatModel;
 use App\Lib\Connections\OpenAI;
 use App\Lib\Interfaces\ActionInterface;
 use App\Models\Action;
@@ -19,7 +19,7 @@ class Text2PHP implements ActionInterface
     public static string $name = 'Text2PHP';
     public static string $icon = 'fa-brands fa-php';
     public static string $shortcut = '';
-    public static string $model = OpenAIModel::GPT4->value;
+    public static string $model = ChatModel::GPT4->value;
 
 
     public static string $systemPrompt = <<<END

@@ -2,14 +2,11 @@
 
 namespace App\Lib\Assistant\Actions;
 
-use App\Enums\OpenAIModel;
-use App\Lib\Connections\Notion\PanelAlphaIssuesTable;
+use App\Enums\Assistant\ChatModel;
 use App\Lib\Connections\Notion\PanelAlphaTasksTable;
 use App\Lib\Connections\OpenAI;
 use App\Lib\Interfaces\ActionInterface;
-use App\Models\Action;
 use FiveamCode\LaravelNotionApi\Entities\Blocks\BulletedListItem;
-use FiveamCode\LaravelNotionApi\Entities\Blocks\HeadingThree;
 use Illuminate\Support\Collection;
 
 class AddNoteToTask implements ActionInterface
@@ -23,7 +20,7 @@ class AddNoteToTask implements ActionInterface
     public static string $name = 'Add Note To Task';
     public static string $icon = 'fa-regular fa-comment';
     public static string $shortcut = '';
-    public static string $model = OpenAIModel::GPT3->value;
+    public static string $model = ChatModel::GPT3->value;
 
 
     protected string $prompt;

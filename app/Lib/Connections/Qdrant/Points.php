@@ -32,7 +32,69 @@ class Points
             'with_payload' => $withPayload,
             'with_vector' => $withVector
         ];
-        $response = $this->connection->api->call('POST', $endpoint, $params);
-        return $response->result;
+        return $this->connection->api->call('POST', $endpoint, $params)->result;
+    }
+
+    /**
+     * @param array $embedding
+     * @param string $category
+     * @param int $limit
+     * @return array
+     * @throws ConnectionException
+     * @throws JsonException
+     */
+    public function searchPoints(array $embedding, string $category, int $limit = 3): array
+    {
+        $endpoint = "collections/{$this->connection->databaseName}/points/search";
+        $params = [
+            'vector' => $embedding,
+            'filter' => [
+                'must' => [
+                    [
+                        'key' => 'category',
+                        'match' => [
+                            'value' => $category
+                        ]
+                    ]
+                ]
+            ],
+            'limit' => $limit,
+            'with_payload' => true
+        ];
+        return $this->connection->api->call('POST', $endpoint, $params)->result;
+    }
+
+    /**
+     * @param array $points {
+     *     id: int, vector: array, payload: array
+     * }@param
+     * @return void
+     * @throws ConnectionException
+     * @throws JsonException
+     */
+    public function upsertPoints(array $points): void
+    {
+        $endpoint = "collections/{$this->connection->databaseName}/points";
+        $params = [
+            'points' => $points
+        ];
+        $this->connection->api->call('PUT', $endpoint, $params);
+    }
+
+    /**
+     * @param array $point {
+     *     id: int, vector: array, payload: array
+     * }@param
+     * @return void
+     * @throws ConnectionException
+     * @throws JsonException
+     */
+    public function upsertPoint(array $point): void
+    {
+        $endpoint = "collections/{$this->connection->databaseName}/points";
+        $params = [
+            'points' => [$point]
+        ];
+        $this->connection->api->call('PUT', $endpoint, $params);
     }
 }

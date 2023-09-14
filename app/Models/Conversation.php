@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Model;
  * @method static where(string $column, string $operator, Carbon $value)
  * @property string $question
  * @property string $answer
+ * @property int $id
  */
 class Conversation extends Model
 {
@@ -22,7 +23,7 @@ class Conversation extends Model
         'answer'
     ];
 
-    public static function updateSystemPrompt(array $resources): void
+    public static function updateSystemPrompt(array $resources = []): void
     {
         $context = implode("\n", $resources);
         $currentDateTime = Carbon::now()->format('Y-m-d H:i');

@@ -2,7 +2,7 @@
 
 namespace App\Lib\Assistant\Actions;
 
-use App\Enums\OpenAIModel;
+use App\Enums\Assistant\ChatModel;
 use App\Lib\Connections\Notion\PanelAlphaIssuesTable;
 use App\Lib\Connections\Notion\PanelAlphaTasksTable;
 use App\Lib\Connections\OpenAI;
@@ -21,7 +21,7 @@ class AddWorkTask implements ActionInterface
     public static string $name = 'New Task';
     public static string $icon = 'fa-solid fa-check';
     public static string $shortcut = 'CommandOrControl+Shift+Q';
-    public static string $model = OpenAIModel::GPT4->value;
+    public static string $model = ChatModel::GPT4->value;
 
 
     protected string $prompt;

@@ -2,7 +2,7 @@
 
 namespace App\Lib\Assistant\Actions;
 
-use App\Enums\OpenAIModel;
+use App\Enums\Assistant\ChatModel;
 use App\Lib\Apis\OpenAI;
 use App\Lib\Interfaces\ActionInterface;
 
@@ -17,7 +17,7 @@ class SeniorPhpDeveloper extends AbstractAction implements ActionInterface
     public static string $name = 'PHP';
     public static string $icon = 'fa-brands fa-php';
     public static string $shortcut = '';
-    public static string $model = OpenAIModel::GPT3->value;
+    public static string $model = ChatModel::GPT3->value;
 
     const TEMPERATURE = 0.4;
 

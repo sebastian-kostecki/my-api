@@ -2,7 +2,7 @@
 
 namespace App\Lib\Assistant\Actions;
 
-use App\Enums\OpenAIModel;
+use App\Enums\Assistant\ChatModel;
 use App\Lib\Connections\OpenAI;
 use App\Lib\Interfaces\ActionInterface;
 use App\Models\Action;
@@ -19,7 +19,7 @@ class Text2JS implements ActionInterface
     public static string $name = 'Text2JS';
     public static string $icon = 'fa-brands fa-square-js';
     public static string $shortcut = '';
-    public static string $model = OpenAIModel::GPT4->value;
+    public static string $model = ChatModel::GPT4->value;
 
     public static string $systemPrompt = <<<END
 You are developing a system that generates JavaScript code based on user input.

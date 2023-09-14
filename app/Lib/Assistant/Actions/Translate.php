@@ -2,7 +2,7 @@
 
 namespace App\Lib\Assistant\Actions;
 
-use App\Enums\OpenAIModel;
+use App\Enums\Assistant\ChatModel;
 use App\Lib\Interfaces\ActionInterface;
 use DeepL\DeepLException;
 use DeepL\Translator;
@@ -19,7 +19,7 @@ class Translate implements ActionInterface
     public static string $name = 'Translate';
     public static string $icon = 'fa-solid fa-language';
     public static string $shortcut = '';
-    public static string $model = OpenAIModel::GPT3->value;
+    public static string $model = ChatModel::GPT3->value;
 
     protected Translator $translator;
     protected string $text;

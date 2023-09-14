@@ -2,7 +2,7 @@
 
 namespace App\Lib\Assistant\Actions;
 
-use App\Enums\OpenAIModel;
+use App\Enums\Assistant\ChatModel;
 use App\Lib\Connections\OpenAI;
 use App\Lib\Connections\Qdrant;
 use App\Lib\Interfaces\ActionInterface;
@@ -22,7 +22,7 @@ class Remember implements ActionInterface
     public static string $name = 'Remember';
     public static string $icon = '';
     public static string $shortcut = 'CommandOrControl+Shift+N';
-    public static string $model = OpenAIModel::GPT3->value;
+    public static string $model = ChatModel::GPT3->value;
 
     protected OpenAI $openAI;
     protected string $prompt;

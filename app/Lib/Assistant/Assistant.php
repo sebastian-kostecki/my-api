@@ -6,34 +6,47 @@ use App\Enums\Assistant\ChatModel as Model;
 use App\Enums\Assistant\Type;
 use App\Lib\Apis\OpenAI;
 use App\Lib\Assistant\Assistant\CategoryParams;
+use App\Lib\Assistant\Assistant\Query;
 use App\Lib\Connections\Qdrant;
+use App\Lib\Exceptions\ConnectionException;
 use App\Models\Action;
 use App\Models\Conversation;
 use App\Models\Resource;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
+use JsonException;
 use Qdrant\Exception\InvalidArgumentException;
 use stdClass;
 
 class Assistant
 {
-    protected const DATABASE_NAME = 'test';
+    protected const DATABASE_NAME = 'myapi';
 
-    protected string $query;
-    protected Type $type;
-    protected ?string $category;
-    protected ?Action $action;
+    public string $query;
+    public Type $type;
+    public ?string $category;
+    public ?Action $action;
 
     protected string $response;
 
-    protected OpenAI $api;
+    public OpenAI $api;
+    public Qdrant $database;
 
     protected Conversation $conversation;
 
     public function __construct()
     {
         $this->api = new OpenAI();
-        $this->vectorDatabase = new Qdrant(self::DATABASE_NAME);
+        $this->database = new Qdrant(self::DATABASE_NAME);
         $this->conversation = new Conversation();
+    }
+
+    /**
+     * @return Query
+     */
+    public function query(): Query
+    {
+        return new Query($this);
     }
 
     /**
@@ -115,94 +128,74 @@ class Assistant
         return $this->api->chat()->getFunctions();
     }
 
-    public function execute()
+    /**
+     * @return void
+     * @throws ConnectionException
+     * @throws JsonException
+     */
+    public function execute(): void
     {
         $this->conversation->saveQuestion($this->query);
 
         switch ($this->type) {
             case Type::QUERY:
-                //
+                $this->query()->execute();
+                $this->saveAnswer();
                 break;
             case Type::SAVE:
-                //
+                //zapisywanie do pamięci memory
                 break;
             case Type::FORGET:
-                //
+                //usuwanie z pamięci memory
                 break;
             case Type::ACTION:
-                //
+                //wywoływanie akcji
+                //zastanowić się jak zrobić, żeby nie zawsze zapisywało answer do qdrant
                 break;
         }
-    }
-
-    protected function query()
-    {
-        $this->assignCategory();
+        $this->conversation->saveAnswer($this->response);
     }
 
     /**
      * @return void
+     * @throws ConnectionException
+     * @throws JsonException
      */
-    public function assignCategory(): void
+    protected function saveAnswer(): void
     {
-        $model = Model::GPT3;
-        $messages = [
-            [
-                'role' => 'system',
-                'content' => "Identify the following query with one of the categories below."
-                    . "Query is for AI Assistant who needs to identify parts of a long-term memory to access the most relevant information."
-                    . "Pay special attention to distinguish questions from actions."
-                    . "categories: memory|note|knowledge|link|all"
-                    . "If query is related directly to the assistant or user, classify as 'memory'."
-                    . "If query includes any mention of notes, classify as 'note'"
-                    . "If query includes any mention of knowledge or add to my knowledge, classify as 'knowledge'"
-                    . "If query includes any mention of links, classify as 'link'"
-                    . "If query doesn't fit to any other category, classify as 'all'."
-                    . "Focus on the beginning of it. Return plain category name and nothing else."
-            ],
-            [
-                'role' => 'user',
-                'content' => $this->query
+        $embeddings = $this->api->embeddings()->create($this->response);
+        $point = [
+            "id" => Str::uuid()->toString(),
+            "vector" => $embeddings,
+            "payload" => [
+                "text" => $this->response,
+                'category' => 'conversation'
             ]
         ];
-        $temperature = 0.1;
-        $functions = [
-            [
-                'name' => 'parse_query_type',
-                'description' => 'Parse category of query from user message.',
-                'parameters' => [
-                    'type' => 'object',
-                    'properties' => [
-                        'category' => [
-                            'type' => 'string',
-                            'enum' => [
-                                'memory',
-                                'note',
-                                'knowledge',
-                                'link',
-                                'all'
-                            ],
-                        ],
-                    ],
-                    'required' => ['category'],
-                ],
-            ]
-        ];
-        $this->api->chat()->create($model, $messages, $temperature, $functions);
-        $response = $this->api->chat()->getFunctions();
-        $this->category = $response->category;
+        $this->database->points()->upsertPoint($point);
     }
 
-    protected function getResources(array $params)
+    /**
+     * @return string
+     */
+    public function getResponse(): string
     {
-        $embedding = $this->api->createEmbedding($params['query']);
-        $resourcesIds = $this->vectorDatabase->getIdsOverAverageScore($embedding);
-
-        return Resource::where('category', $params['group'])
-            ->whereIn('id', $resourcesIds)
-            ->pluck('content')
-            ->toArray();
+        return $this->response;
     }
+
+    /**
+     * @param string $response
+     * @return void
+     */
+    public function setResponse(string $response): void
+    {
+        $this->response = $response;
+    }
+
+
+
+
+
 
 
 

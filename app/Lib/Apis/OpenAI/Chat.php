@@ -30,8 +30,9 @@ class Chat
      * @param float $temperature
      * @param array $functions
      * @return void
+     * @throws JsonException
      */
-    public function create(ChatModel $model, array $messages, float $temperature, array $functions = []): void
+    public function create(ChatModel $model, array $messages, float $temperature = 0.5, array $functions = []): void
     {
         $url = $this->url . '/completions';
         $params['model'] = $model->value;
@@ -40,9 +41,8 @@ class Chat
         if (!empty($functions)) {
             $params['functions'] = $functions;
         }
-
         $result = $this->request->post($url, $params);
-        $this->response = json_decode($result->body(), false);
+        $this->response = json_decode($result->body(), false, 512, JSON_THROW_ON_ERROR);
     }
 
     /**
@@ -52,5 +52,13 @@ class Chat
     public function getFunctions(): stdClass
     {
         return json_decode($this->response->choices[0]->message->function_call->arguments, false, 512, JSON_THROW_ON_ERROR);
+    }
+
+    /**
+     * @return string
+     */
+    public function getResponse(): string
+    {
+        return $this->response->choices[0]->message->content;
     }
 }

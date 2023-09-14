@@ -4,6 +4,7 @@ namespace App\Lib\Apis\OpenAI;
 
 use App\Lib\Apis\OpenAI;
 use Illuminate\Http\Client\PendingRequest;
+use JsonException;
 use stdClass;
 
 class Embedding
@@ -22,19 +23,20 @@ class Embedding
         $this->request = $api->request;
     }
 
-    public function create(string $input)
+    /**
+     * @param string $input
+     * @return array
+     * @throws JsonException
+     */
+    public function create(string $input): array
     {
         $params = [
             'model' => self::MODEL,
             'input' => $input
         ];
 
-        $result = $this->request->post($this->url, $params);
-        $this->response = json_decode($result->body(), false, 512, JSON_THROW_ON_ERROR);
-    }
-
-    public function getEmbedding()
-    {
-        return $this->response->data[0]->embedding;
+        $response = $this->request->post($this->url, $params);
+        $result = json_decode($response->body(), false, 512, JSON_THROW_ON_ERROR);
+        return $result->data[0]->embedding;
     }
 }
