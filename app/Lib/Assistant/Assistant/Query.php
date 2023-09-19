@@ -40,7 +40,7 @@ class Query
      * @return void
      * @throws JsonException
      */
-    protected function assignCategory(): void
+    public function assignCategory(): void
     {
         $model = Model::GPT3;
         $messages = [

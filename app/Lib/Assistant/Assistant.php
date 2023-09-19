@@ -7,6 +7,7 @@ use App\Enums\Assistant\Type;
 use App\Lib\Apis\OpenAI;
 use App\Lib\Assistant\Assistant\CategoryParams;
 use App\Lib\Assistant\Assistant\Query;
+use App\Lib\Assistant\Assistant\Save;
 use App\Lib\Connections\Qdrant;
 use App\Lib\Exceptions\ConnectionException;
 use App\Models\Action;
@@ -50,6 +51,14 @@ class Assistant
     }
 
     /**
+     * @return Save
+     */
+    public function save(): Save
+    {
+        return new Save($this);
+    }
+
+    /**
      * @param string $query
      * @return void
      */
@@ -69,6 +78,7 @@ class Assistant
 
     /**
      * @return void
+     * @throws JsonException
      */
     public function setType(): void
     {
@@ -82,6 +92,7 @@ class Assistant
 
     /**
      * @return stdClass
+     * @throws JsonException
      */
     protected function assignType(): stdClass
     {
@@ -135,15 +146,17 @@ class Assistant
      */
     public function execute(): void
     {
-        $this->conversation->saveQuestion($this->query);
+
 
         switch ($this->type) {
             case Type::QUERY:
+                $this->conversation->saveQuestion($this->query);
                 $this->query()->execute();
                 $this->saveAnswer();
+                $this->conversation->saveAnswer($this->response);
                 break;
             case Type::SAVE:
-                //zapisywanie do pamięci memory
+                $this->save()->execute();
                 break;
             case Type::FORGET:
                 //usuwanie z pamięci memory
@@ -153,7 +166,7 @@ class Assistant
                 //zastanowić się jak zrobić, żeby nie zawsze zapisywało answer do qdrant
                 break;
         }
-        $this->conversation->saveAnswer($this->response);
+
     }
 
     /**
@@ -297,40 +310,40 @@ class Assistant
 //        return $response;
 //    }
 
-    /**
-     * @param array $params
-     * @return string
-     */
-    public function save(array $params): string
-    {
-        $language = detectLanguage($params['query']);
-        if ($language !== 'pl') {
-            $params['query'] = $this->api->translateToPolish($params['query']);
-        }
-
-        if (!$params['group']) {
-            $params['group'] = $this->api->categorizeQueryPrompt($params['query']);
-        }
-
-        $response = $this->api->generateTagsAndTitle($params['query']);
-
-        $resource = new Resource();
-        $resource->title = $response->title;
-        $resource->content = $params['query'];
-        $resource->category = $params['group'];
-        $resource->tags = $response->tags;
-        $resource->save();
-
-        $text = $resource->content . " " . implode(',', $resource->tags);
-        $embedding = $this->api->createEmbedding($text);
-
-        $this->vectorDatabase->insertVector($resource->id, $embedding, [
-            'id' => $resource->id,
-            'category' => $resource->category,
-            'tags' => implode(',', $resource->tags)
-        ]);
-        return "Notatkę zapisano";
-    }
+//    /**
+//     * @param array $params
+//     * @return string
+//     */
+//    public function save(array $params): string
+//    {
+//        $language = detectLanguage($params['query']);
+//        if ($language !== 'pl') {
+//            $params['query'] = $this->api->translateToPolish($params['query']);
+//        }
+//
+//        if (!$params['group']) {
+//            $params['group'] = $this->api->categorizeQueryPrompt($params['query']);
+//        }
+//
+//        $response = $this->api->generateTagsAndTitle($params['query']);
+//
+//        $resource = new Resource();
+//        $resource->title = $response->title;
+//        $resource->content = $params['query'];
+//        $resource->category = $params['group'];
+//        $resource->tags = $response->tags;
+//        $resource->save();
+//
+//        $text = $resource->content . " " . implode(',', $resource->tags);
+//        $embedding = $this->api->createEmbedding($text);
+//
+//        $this->vectorDatabase->insertVector($resource->id, $embedding, [
+//            'id' => $resource->id,
+//            'category' => $resource->category,
+//            'tags' => implode(',', $resource->tags)
+//        ]);
+//        return "Notatkę zapisano";
+//    }
 
     /**
      * @param $params

@@ -17,10 +17,10 @@ return new class extends Migration
             $table->text('content');
             $table->string('url')->nullable();
             $table->enum('category', [
-                'memories',
-                'notes',
+                'memory',
+                'note',
                 'knowledge',
-                'links'
+                'link'
             ]);
             $table->json('tags');
             $table->timestamps();
