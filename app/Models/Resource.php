@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 /**
  * @property integer $id
+ * @property string $uuid
  * @property string $title
  * @property string $content
  * @property string $category

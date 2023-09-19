@@ -97,4 +97,19 @@ class Points
         ];
         $this->connection->api->call('PUT', $endpoint, $params);
     }
+
+    /**
+     * @param string $id
+     * @return void
+     * @throws ConnectionException
+     * @throws JsonException
+     */
+    public function deletePoint(string $id): void
+    {
+        $endpoint = "collections/{$this->connection->databaseName}/points/delete";
+        $params = [
+            'points' => [$id]
+        ];
+        $this->connection->api->call('POST', $endpoint, $params);
+    }
 }

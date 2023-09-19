@@ -6,6 +6,7 @@ use App\Enums\Assistant\ChatModel as Model;
 use App\Enums\Assistant\Type;
 use App\Lib\Apis\OpenAI;
 use App\Lib\Assistant\Assistant\CategoryParams;
+use App\Lib\Assistant\Assistant\Forget;
 use App\Lib\Assistant\Assistant\Query;
 use App\Lib\Assistant\Assistant\Save;
 use App\Lib\Connections\Qdrant;
@@ -56,6 +57,14 @@ class Assistant
     public function save(): Save
     {
         return new Save($this);
+    }
+
+    /**
+     * @return Forget
+     */
+    public function forget(): Forget
+    {
+        return new Forget($this);
     }
 
     /**
@@ -159,7 +168,7 @@ class Assistant
                 $this->save()->execute();
                 break;
             case Type::FORGET:
-                //usuwanie z pamięci memory
+                $this->forget()->execute();
                 break;
             case Type::ACTION:
                 //wywoływanie akcji
@@ -350,20 +359,20 @@ class Assistant
      * @return string
      * @throws InvalidArgumentException
      */
-    public function forget($params): string
-    {
-        $embedding = $this->api->createEmbedding($params['query']);
-        $resourceId = $this->vectorDatabase->findMessage($embedding);
-
-        $resource = Resource::findOrFail($resourceId);
-        Log::debug('forget', [$resource]);
-        $resource->delete();
-
-        $vectorDatabase = new Qdrant('test');
-        $vectorDatabase->deleteVector($resourceId);
-
-        return "Notatkę usunięto";
-    }
+//    public function forget($params): string
+//    {
+//        $embedding = $this->api->createEmbedding($params['query']);
+//        $resourceId = $this->vectorDatabase->findMessage($embedding);
+//
+//        $resource = Resource::findOrFail($resourceId);
+//        Log::debug('forget', [$resource]);
+//        $resource->delete();
+//
+//        $vectorDatabase = new Qdrant('test');
+//        $vectorDatabase->deleteVector($resourceId);
+//
+//        return "Notatkę usunięto";
+//    }
 
     /**
      * @param array $params

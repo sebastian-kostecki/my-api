@@ -16,6 +16,8 @@ class Save
     protected array $tags;
     protected string $title;
     protected string $response;
+    protected string $uuid;
+
 
     public function __construct(Assistant $assistant)
     {
@@ -31,6 +33,7 @@ class Save
     {
         $this->generateTitleAndTags();
         $this->assistant->query()->assignCategory();
+        $this->uuid = Str::uuid()->toString();
         $this->saveToDatabase();
         $this->saveResource();
         $this->assistant->setResponse('Zapisano.');
@@ -92,9 +95,10 @@ class Save
      */
     protected function saveToDatabase(): void
     {
+
         $embedding = $this->assistant->api->embeddings()->create($this->assistant->query);
         $point = [
-            "id" => Str::uuid()->toString(),
+            "id" => $this->uuid,
             "vector" => $embedding,
             "payload" => [
                 "text" => $this->assistant->query,
@@ -110,6 +114,7 @@ class Save
     protected function saveResource(): void
     {
         $resource = new Resource();
+        $resource->uuid = $this->uuid;
         $resource->title = $this->title;
         $resource->content = $this->assistant->query;
         $resource->category = $this->assistant->category;
