@@ -5,7 +5,6 @@ namespace App\Lib\Assistant;
 use App\Enums\Assistant\ChatModel as Model;
 use App\Enums\Assistant\Type;
 use App\Lib\Apis\OpenAI;
-use App\Lib\Assistant\Assistant\CategoryParams;
 use App\Lib\Assistant\Assistant\Forget;
 use App\Lib\Assistant\Assistant\Query;
 use App\Lib\Assistant\Assistant\Save;
@@ -13,11 +12,8 @@ use App\Lib\Connections\Qdrant;
 use App\Lib\Exceptions\ConnectionException;
 use App\Models\Action;
 use App\Models\Conversation;
-use App\Models\Resource;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use JsonException;
-use Qdrant\Exception\InvalidArgumentException;
 use stdClass;
 
 class Assistant
@@ -155,8 +151,6 @@ class Assistant
      */
     public function execute(): void
     {
-
-
         switch ($this->type) {
             case Type::QUERY:
                 $this->conversation->saveQuestion($this->query);
@@ -171,11 +165,10 @@ class Assistant
                 $this->forget()->execute();
                 break;
             case Type::ACTION:
-                //wywoływanie akcji
-                //zastanowić się jak zrobić, żeby nie zawsze zapisywało answer do qdrant
+                $action = $this->action->factory($this);
+                $action->execute();
                 break;
         }
-
     }
 
     /**
@@ -213,228 +206,4 @@ class Assistant
     {
         $this->response = $response;
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//    public function findAction()
-//    {
-//        $types = Action::pluck('type')->toArray();
-//
-//        $systemPrompt = "Describe my intention from message below with JSON"
-//            . "Focus on the beginning of it. Always return JSON and nothing more. \n"
-//            . "From the actions below, choose the best fit.\n"
-//            . "Actions: " . implode('|', $types) . "\nExamples:\n";
-//        foreach ($types as $type) {
-//            $systemPrompt .= implode("\n", $type::EXAMPLE) . "\n";
-//        }
-//
-//        $params = [
-//            'model' => ChatModel::G->value,
-//            'temperature' => 0.1,
-//            'messages' => [
-//                [
-//                    'role' => 'system',
-//                    'content' => $systemPrompt
-//                ],
-//                [
-//                    'role' => 'user',
-//                    'content' => $this->query
-//                ]
-//            ]
-//        ];
-//
-//        $response = \OpenAI\Laravel\Facades\OpenAI::chat()->create($params);
-//        dd($response);
-//    }
-
-
-    protected string $prompt = "";
-    //protected string $type = "";
-
-
-    protected Qdrant $vectorDatabase;
-    //protected string $response = "";
-    //protected Conversation $conversation;
-
-
-    /**
-     * @return string
-     */
-    public function selectTypeAction(): string
-    {
-        $params = ActionTypeParams::make($this->prompt);
-        return $this->api->chat($params);
-    }
-
-//    /**
-//     * @param array $params
-//     * @return string
-//     */
-//    public function query(array $params): string
-//    {
-//        $this->conversation->saveQuestion($params['query']);
-//
-//        if (!$params['group']) {
-//            $params['group'] = $this->categorizePrompt();
-//        }
-//
-//        $resources = $this->getResources($params);
-//        Conversation::updateSystemPrompt($resources);
-//
-//        $params = [
-//            'model' => ChatModel::GPT3->value,
-//            'messages' => Conversation::getConversationsLastFiveMinutes()
-//        ];
-//        $response = $this->api->chat($params);
-//
-//        $this->conversation->saveAnswer($response);
-//
-//        return $response;
-//    }
-
-//    /**
-//     * @param array $params
-//     * @return string
-//     */
-//    public function save(array $params): string
-//    {
-//        $language = detectLanguage($params['query']);
-//        if ($language !== 'pl') {
-//            $params['query'] = $this->api->translateToPolish($params['query']);
-//        }
-//
-//        if (!$params['group']) {
-//            $params['group'] = $this->api->categorizeQueryPrompt($params['query']);
-//        }
-//
-//        $response = $this->api->generateTagsAndTitle($params['query']);
-//
-//        $resource = new Resource();
-//        $resource->title = $response->title;
-//        $resource->content = $params['query'];
-//        $resource->category = $params['group'];
-//        $resource->tags = $response->tags;
-//        $resource->save();
-//
-//        $text = $resource->content . " " . implode(',', $resource->tags);
-//        $embedding = $this->api->createEmbedding($text);
-//
-//        $this->vectorDatabase->insertVector($resource->id, $embedding, [
-//            'id' => $resource->id,
-//            'category' => $resource->category,
-//            'tags' => implode(',', $resource->tags)
-//        ]);
-//        return "Notatkę zapisano";
-//    }
-
-    /**
-     * @param $params
-     * @return string
-     * @throws InvalidArgumentException
-     */
-//    public function forget($params): string
-//    {
-//        $embedding = $this->api->createEmbedding($params['query']);
-//        $resourceId = $this->vectorDatabase->findMessage($embedding);
-//
-//        $resource = Resource::findOrFail($resourceId);
-//        Log::debug('forget', [$resource]);
-//        $resource->delete();
-//
-//        $vectorDatabase = new Qdrant('test');
-//        $vectorDatabase->deleteVector($resourceId);
-//
-//        return "Notatkę usunięto";
-//    }
-
-    /**
-     * @param array $params
-     * @return string
-     */
-    public function action(array $params): string
-    {
-        if (!$params['action'] || !isset($params['action'])) {
-            $slug = $this->selectAction($params['query']);
-            $params['action'] = Action::where('slug', $slug)->value('type');
-        }
-
-        $action = new $params['action']();
-        $action->setPrompt($params['query']);
-        return $action->execute();
-    }
-
-    /**
-     * @param string $prompt
-     * @return void
-     */
-    public function setPrompt(string $prompt): void
-    {
-        $this->prompt = $prompt;
-    }
-
-    protected function selectAction(string $query)
-    {
-        $actions = Action::pluck('slug')->toArray();
-
-        $content = "Describe my intention from message below with JSON";
-        $content .= "Focus on the beginning of it. Always return JSON and nothing more. \n";
-        $content .= "Actions: " . implode('|', $actions) . "\n";
-        $content .= "Example: Dodaj zadanie do pracy o zrobieniu nowego wyglądu strony {\"action\": \"add-work-task\"}";
-        $content .= "Zadanie o nauczeniu się Vue.js {\"action\": \"add-private-task\"}";
-        $content .= "Zapisz to jako email {\"action\": \"save-email\"}";
-        $content .= "Napisz metodę w kontrolerze tworzącą nowego użytkownika. {\"action\": \"text-to-php\"}";
-        $content .= "Przetłumacz tekst: I would like to eat some pizza. {\"action\": \"translate\"}";
-        $content .= "###message\n{$$query}";
-
-        $response = $this->api->getJson($content);
-        $response = returnJson($response);
-        return json_decode($response)->action;
-    }
-
-    /**
-     * @return string
-     */
-    protected function categorizePrompt(): string
-    {
-        $params = CategoryParams::make($this->prompt);
-        return $this->api->chat($params);
-    }
-
-//    protected function getResources(array $params)
-//    {
-//        $embedding = $this->api->createEmbedding($params['query']);
-//        $resourcesIds = $this->vectorDatabase->getIdsOverAverageScore($embedding);
-//
-//        return Resource::where('category', $params['group'])
-//            ->whereIn('id', $resourcesIds)
-//            ->pluck('content')
-//            ->toArray();
-//    }
 }

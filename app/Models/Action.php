@@ -3,8 +3,9 @@
 namespace App\Models;
 
 use App\Enums\Assistant\ChatModel;
+use App\Lib\Assistant\Assistant;
+use App\Lib\Interfaces\ActionInterface;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
@@ -15,11 +16,10 @@ use Illuminate\Support\Str;
  * @method static type(mixed $action)
  * @method static get()
  * @method static create(array $array)
+ * @property string $type
  */
 class Action extends Model
 {
-    use HasFactory;
-
     protected $fillable = [
         'name',
         'type',
@@ -65,5 +65,14 @@ class Action extends Model
     public function scopeType(Builder $query, ?string $class): void
     {
         $query->where('type', $class);
+    }
+
+    /**
+     * @param Assistant $assistant
+     * @return ActionInterface
+     */
+    public function factory(Assistant $assistant): ActionInterface
+    {
+        return new $this->type($assistant);
     }
 }

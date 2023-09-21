@@ -2,87 +2,138 @@
 
 namespace App\Lib\Assistant\Actions;
 
-use App\Enums\Assistant\ChatModel;
+use App\Enums\Assistant\ChatModel as Model;
+use App\Lib\Assistant\Assistant;
 use App\Lib\Connections\Notion\PanelAlphaIssuesTable;
 use App\Lib\Connections\Notion\PanelAlphaTasksTable;
-use App\Lib\Connections\OpenAI;
 use App\Lib\Interfaces\ActionInterface;
-use App\Models\Action;
+use Exception;
 use Illuminate\Support\Collection;
+use JsonException;
+use stdClass;
 
-class AddWorkTask implements ActionInterface
+class AddWorkTask extends AbstractAction implements ActionInterface
 {
-    /**
-     * Initial variables for action
-     */
-    public const EXAMPLE = [
-        "Dodaj nowe zadanie o zrobieniu research do plesk api do issue Integracja z Pleskiem {\"action\": \"" . self::class . "\"}"
-    ];
-    public static string $name = 'New Task';
-    public static string $icon = 'fa-solid fa-check';
-    public static string $shortcut = 'CommandOrControl+Shift+Q';
-    public static string $model = ChatModel::GPT4->value;
+    protected Assistant $assistant;
 
-
-    protected string $prompt;
-    protected OpenAI $openAI;
-    protected string $action;
     protected Collection $issues;
-    protected \stdClass $response;
+    protected stdClass $task;
 
-    public function __construct()
+
+    public function __construct(Assistant $assistant)
     {
-        $this->openAI = new OpenAI();
-        $this->action = Action::where('type', $this::class)->value('model');
+        $this->assistant = $assistant;
+    }
+
+    public static function getInitAction(): array
+    {
+        return [
+            'name' => 'New Task',
+            'icon' => 'fa-solid fa-check',
+            'shortcut' => 'CommandOrControl+Shift+Q',
+            'model' => Model::GPT3
+        ];
     }
 
     /**
-     * @param string $prompt
      * @return void
      */
-    public function setPrompt(string $prompt): void
+    public function execute(): void
     {
-        $this->prompt = $prompt;
+        try {
+            $this->getPanelAlphaIssuesFromGitLab();
+            $this->createTaskFromQuery();
+            $this->addTaskToNotionTable();
+        } catch (Exception $exception) {
+            $this->assistant->setResponse($exception->getMessage());
+            return;
+        }
+        $this->assistant->setResponse('Zadanie zostało dodane.');
     }
 
-    /**
-     * @return string
-     */
-    public function execute(): string
-    {
-        $this->getIssues();
-        $content = $this->getPrompt();
-        $this->sendToOpenAI($content);
-        PanelAlphaTasksTable::createNewTask($this->response, $this->issues);
-        return "Zadanie zostało dodane";
-    }
-
-    protected function getIssues(): void
+    protected function getPanelAlphaIssuesFromGitLab(): void
     {
         $this->issues = PanelAlphaIssuesTable::getIssuesList();
     }
 
-    protected function getPrompt(): string
+    /**
+     * @return void
+     * @throws JsonException
+     */
+    protected function createTaskFromQuery(): void
     {
-        $issues = $this->issues->map(function ($issue) {
-            return $issue->getRawResponse()['properties']['Title']['title'][0]['text']['content'];
-        })->join('|');
-
-        $content = "Describe my intention from message below with JSON";
-        $content .= "Focus on the beginning of it. Always return JSON and nothing more. \n";
-        $content .= "Return a response in the format: {\"task\": \"Make function\", \"issue\": \"Notifications\", \"priority\": \"High\"}\n";
-        $content .= "###Issues: " . $issues . "\n";
-        $content .= "###Priority: High|Medium|Low\n";
-        $content .= "###Example: Dodaj zadanie do pracy o zrobieniu nowego wyglądu strony do issue o nowa strona z niskim priorytetem ";
-        $content .= "{\"task\": \"Nowy wygląd strony\", \"issue\": \"Notifications\", \"priority\": \"High\"}\n";
-        $content .= "###message\n{$this->prompt}";
-
-        return $content;
+        $model = $this->getModel();
+        $messages = [
+            [
+                'role' => 'system',
+                'content' => "Describe my intention from message below. "
+                    . "###Example: Dodaj zadanie do pracy o zrobieniu nowego wyglądu strony do issue o nowa strona z niskim priorytetem. "
+                    . "{\"task\": \"Nowy wygląd strony\", \"issue\": \"Notifications\", \"priority\": \"High\"}\n"
+            ],
+            [
+                'role' => 'user',
+                'content' => $this->assistant->query
+            ]
+        ];
+        $temperature = 0.1;
+        $functions = [
+            [
+                'name' => 'parse_task',
+                'description' => 'Parse task of query from user message.',
+                'parameters' => [
+                    'type' => 'object',
+                    'properties' => [
+                        'task' => [
+                            'type' => 'string',
+                            'description' => 'Extract name or title of task'
+                        ],
+                        'issue' => [
+                            'type' => 'string',
+                            'enum' => $this->getIssuesTitles(),
+                            'description' => 'Assign issue to task'
+                        ],
+                        'priority' => [
+                            'type' => 'string',
+                            'enum' => [
+                                'Low',
+                                'Medium',
+                                'High'
+                            ]
+                        ]
+                    ],
+                    'required' => ['task', 'issue', 'priority']
+                ],
+            ]
+        ];
+        $this->assistant->api->chat()->create($model, $messages, $temperature, $functions);
+        $this->task = $this->assistant->api->chat()->getFunctions();
     }
 
-    protected function sendToOpenAI(string $content): void
+    /**
+     * @return void
+     */
+    protected function addTaskToNotionTable(): void
     {
-        $response = $this->openAI->getJson($content, $this->action);
-        $this->response = json_decode($response);
+        PanelAlphaTasksTable::createNewTask($this->task, $this->getSelectedIssueId());
+    }
+
+    /**
+     * @return array
+     */
+    protected function getIssuesTitles(): array
+    {
+        return $this->issues->map(function ($issue) {
+            return $issue->getTitle();
+        })->toArray();
+    }
+
+    /**
+     * @return string|null
+     */
+    protected function getSelectedIssueId(): ?string
+    {
+        return $this->issues->first(function ($item) {
+            return str_contains($item->getRawResponse()['properties']['Title']['title'][0]['text']['content'], $this->task->issue);
+        })->getId();
     }
 }

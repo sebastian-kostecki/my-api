@@ -2,35 +2,16 @@
 
 namespace App\Lib\Assistant\Actions;
 
+use App\Enums\Assistant\ChatModel;
 use App\Models\Action;
 
 abstract class AbstractAction
 {
-    protected string $prompt;
-
     /**
-     * @return string
+     * @return ChatModel
      */
-    public function getModel(): string
+    public function getModel(): ChatModel
     {
-        $model = Action::class($this::class)->value('model');
-        return $model->value;
-    }
-
-    /**
-     * @param string $prompt
-     * @return void
-     */
-    public function setPrompt(string $prompt): void
-    {
-        $this->prompt = $prompt;
-    }
-
-    /**
-     * @return string
-     */
-    protected function getSystemPrompt(): string
-    {
-        return Action::class($this::class)->value('prompt');
+        return Action::type($this::class)->value('model');
     }
 }
