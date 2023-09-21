@@ -30,7 +30,7 @@ class Assistant
     public OpenAI $api;
     public Qdrant $database;
 
-    protected Conversation $conversation;
+    public Conversation $conversation;
 
     public function __construct()
     {
@@ -155,7 +155,7 @@ class Assistant
             case Type::QUERY:
                 $this->conversation->saveQuestion($this->query);
                 $this->query()->execute();
-                $this->saveAnswer();
+                $this->saveAnswerToDatabase();
                 $this->conversation->saveAnswer($this->response);
                 break;
             case Type::SAVE:
@@ -176,7 +176,7 @@ class Assistant
      * @throws ConnectionException
      * @throws JsonException
      */
-    protected function saveAnswer(): void
+    public function saveAnswerToDatabase(): void
     {
         $embeddings = $this->api->embeddings()->create($this->response);
         $point = [

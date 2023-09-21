@@ -31,7 +31,7 @@ class Query
         if ($this->assistant->category !== 'all') {
             $this->getResources();
         }
-        Conversation::updateSystemPrompt($this->resources);
+        $this->assistant->conversation->updateSystemPrompt($this->resources);
         $this->sendRequest();
         $this->setResponse();
     }
