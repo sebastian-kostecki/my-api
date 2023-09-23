@@ -2,65 +2,82 @@
 
 namespace App\Lib\Assistant\Actions;
 
-use App\Enums\Assistant\ChatModel;
-use App\Lib\Apis\OpenAI;
+use App\Enums\Assistant\ChatModel as Model;
+use App\Lib\Assistant\Assistant;
 use App\Lib\Interfaces\ActionInterface;
+use App\Models\Conversation;
+use Exception;
+use JsonException;
 
 class SeniorPhpDeveloper extends AbstractAction implements ActionInterface
 {
+    public static string $systemPrompt = <<<END
+You are acting as a Senior PHP Developer with a strong focus on the Laravel framework.
+Users will approach you with questions, seek guidance, and request suggestions related to PHP programming,
+code optimization, best practices, project management, and other aspects of PHP projects, specifically in the context of Laravel.
+Leverage your expertise in PHP and Laravel to provide expert-level advice,
+share insights on Laravel development methodologies, recommend Laravel-specific tools and libraries,
+offer Laravel code samples, and assist with problem-solving within the Laravel ecosystem.
+Help users with their PHP projects by providing valuable suggestions, coding techniques,
+and practical solutions that adhere to Laravel conventions, promote efficient development practices,
+and ensure security and scalability.
+END;
+
+    protected Assistant $assistant;
+    protected string $response;
+
     /**
-     * Initial variables for action
+     * @param Assistant $assistant
      */
-    public const EXAMPLE = [
-        "Jako Senior PHP Developer napisz mi ja wykonować request do Curl {\"action\": \"" . self::class . "\"}"
-    ];
-    public static string $name = 'PHP';
-    public static string $icon = 'fa-brands fa-php';
-    public static string $shortcut = '';
-    public static string $model = ChatModel::GPT3->value;
-
-    const TEMPERATURE = 0.4;
-
-    protected OpenAI $openAI;
-
-    public function __construct()
+    public function __construct(Assistant $assistant)
     {
-        $this->openAI = new OpenAI();
+        $this->assistant = $assistant;
     }
 
     /**
-     * @return string
+     * @return array{
+     *     name: string,
+     *     icon: string,
+     *     shortcut: string,
+     *     model: Model
+     * }
      */
-    public function execute(): string
-    {
-        $params = $this->makeParams();
-        return $this->openAI->chat($params);
-    }
-
-    /**
-     * @return array
-     */
-    protected function makeParams(): array
+    public static function getInitAction(): array
     {
         return [
-            'model' => $this->getModel(),
-            'temperature' => self::TEMPERATURE,
-            'messages' => [
-                [
-                    'role' => 'user',
-                    'content' => $this->createSystemPrompt()
-                ],
-            ],
+            'name' => 'PHP',
+            'icon' => 'fa-brands fa-php',
+            'shortcut' => '',
+            'model' => Model::GPT3
         ];
     }
 
     /**
-     * @return string
+     * @return void
      */
-    protected function createSystemPrompt(): string
+    public function execute(): void
     {
-        $content = $this->getSystemPrompt();
-        $content .= "\n### Message\n" . $this->prompt;
-        return $content;
+        try {
+            $this->assistant->conversation->saveQuestion($this->assistant->query);
+            $this->assistant->conversation->setSystemPrompt(self::$systemPrompt)->updateSystemPrompt();
+            $this->sendRequest();
+            $this->assistant->setResponse($this->response);
+            $this->assistant->conversation->saveAnswer($this->response);
+            $this->assistant->saveAnswerToDatabase();
+        } catch (Exception $exception) {
+            $this->assistant->setResponse($exception->getMessage());
+        }
+    }
+
+    /**
+     * @return void
+     * @throws JsonException
+     */
+    protected function sendRequest(): void
+    {
+        $model = $this->getModel();
+        $messages = Conversation::getConversationsLastFiveMinutes();
+        $this->assistant->api->chat()->create($model, $messages);
+        $this->response = $this->assistant->api->chat()->getResponse();
     }
 }
