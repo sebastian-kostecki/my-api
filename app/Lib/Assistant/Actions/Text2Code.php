@@ -21,7 +21,8 @@ class Text2Code extends AbstractAction implements ActionInterface
     . "Consider the user's specific requirements and provide code that addresses their needs comprehensively. "
     . "Feel free to ask for additional details or clarifications from the user if necessary to provide the most accurate and relevant code.\n"
     . "This prompt allows you to request code generation based on specific user prompts related to web development tasks, "
-    . "whether it's PHP with Laravel or JavaScript with Vue.js, two popular choices in web development.";
+    . "whether it's PHP with Laravel or JavaScript with Vue.js, two popular choices in web development."
+    . "Return only code without any comments and nothing more.";
 
     protected Assistant $assistant;
     protected string $response;

@@ -29,24 +29,30 @@ class SyncActions extends Command
     {
         $this->info("Scanning files...");
 
-        $integrations = Action::scan();
-        $this->info("Found " . count($integrations) . " actions");
+        $actions = Action::scan();
+        $this->info("Found " . count($actions) . " actions");
 
-        $integrationsInDatabase = Action::get()->keyBy('type');
+        $actionsInDatabase = Action::get()->keyBy('type');
 
-        foreach ($integrations as $integrationClass) {
-            $this->output->write($integrationClass::$name . ": ");
+        foreach ($actions as $actionClass) {
+            $initData = $actionClass::getInitAction();
 
-            if ($this->isIntegrationInDatabase($integrationsInDatabase, $integrationClass)) {
+            $this->output->write($initData['name'] . ": ");
+            if ($this->isIntegrationInDatabase($actionsInDatabase, $actionClass)) {
                 continue;
             }
-            $this->createIntegration($integrationClass);
+            $this->createIntegration($actionClass, $initData);
         }
 
-        $this->removeOldRecords($integrationsInDatabase);
+        $this->removeOldRecords($actionsInDatabase);
         $this->info("Finished synchronizing actions.");
     }
 
+    /**
+     * @param Collection $integrationsInDatabase
+     * @param string $integrationClass
+     * @return bool
+     */
     protected function isIntegrationInDatabase(Collection $integrationsInDatabase, string $integrationClass): bool
     {
         $integrationInDatabase = $integrationsInDatabase->get($integrationClass);
@@ -58,19 +64,28 @@ class SyncActions extends Command
         return false;
     }
 
-    protected function createIntegration(string $class): void
+    /**
+     * @param string $class
+     * @param array $data
+     * @return void
+     */
+    protected function createIntegration(string $class, array $data): void
     {
         Action::create([
-            'name' => $class::$name,
+            'name' => $data['name'],
             'type' => $class,
-            'icon' => $class::$icon,
-            'shortcut' => $class::$shortcut,
-            'model' => $class::$model,
+            'icon' => $data['icon'],
+            'shortcut' => $data['shortcut'],
+            'model' => $data['model'],
             'enabled' => true
         ]);
         $this->info("added to database");
     }
 
+    /**
+     * @param Collection $integrationsInDatabase
+     * @return void
+     */
     protected function removeOldRecords(Collection $integrationsInDatabase): void
     {
         if ($oldRecords = count($integrationsInDatabase)) {
