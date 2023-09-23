@@ -1,8 +1,6 @@
 <?php
 
-use App\Http\Controllers\Assistant\ActionController;
-use App\Http\Controllers\AssistantController;
-use App\Http\Controllers\ShortcutController;
+use App\Http\Controllers\Assistant\ShortcutController;
 use App\Http\Controllers\TranslationController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;

@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Assistant;
 
+use App\Http\Controllers\Controller;
 use App\Http\Requests\AssistantRequest;
 use App\Lib\Assistant\Assistant;
 use App\Lib\Exceptions\ConnectionException;

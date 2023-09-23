@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Assistant;
 
+use App\Http\Controllers\Controller;
 use App\Jobs\SaveResource;
 use App\Lib\Assistant\Actions\Translate;
 use App\Lib\Assistant\Assistant;
