@@ -2,90 +2,89 @@
 
 namespace App\Lib\Assistant\Actions;
 
-use App\Enums\Assistant\ChatModel;
+use App\Enums\Assistant\ChatModel as Model;
+use App\Lib\Assistant\Assistant;
 use App\Lib\Interfaces\ActionInterface;
 use DeepL\DeepLException;
 use DeepL\Translator;
 use LanguageDetection\Language;
 
-class Translate implements ActionInterface
+class Translate extends AbstractAction implements ActionInterface
 {
-    /**
-     * Initial variables for action
-     */
-    public const EXAMPLE = [
-        "Przetłumacz: Lubię jeść pizzę {\"action\": \"" . self::class . "\"}"
-    ];
-    public static string $name = 'Translate';
-    public static string $icon = 'fa-solid fa-language';
-    public static string $shortcut = '';
-    public static string $model = ChatModel::GPT3->value;
+    protected Assistant $assistant;
 
     protected Translator $translator;
+
     protected string $text;
 
     /**
+     * @param Assistant $assistant
      * @throws DeepLException
      */
-    public function __construct()
+    public function __construct(Assistant $assistant)
     {
+        $this->assistant = $assistant;
         $this->translator = new Translator(env('DEEPL_TOKEN'));
     }
 
     /**
-     * @param string $prompt
-     * @return void
+     * @return array{
+     *     name: string,
+     *     icon: string,
+     *     shortcut: string,
+     *     model: Model
+     * }
      */
-    public function setPrompt(string $prompt): void
+    public static function getInitAction(): array
     {
-        $this->text = $prompt;
+        return [
+            'name' => 'Translate',
+            'icon' => 'fa-solid fa-language',
+            'shortcut' => '',
+            'model' => Model::GPT3
+        ];
     }
 
     /**
-     * @return string
+     * @return void
      * @throws DeepLException
      */
-    public function execute(): string
+    public function execute(): void
     {
-        $sourceLang = $this->detectLanguage($this->text);
+        $sourceLang = $this->detectLanguage();
         if ($sourceLang === 'pl') {
-            $translatedText = $this->translateFromPolishToEnglish($this->text);
+            $translatedText = $this->translateFromPolishToEnglish();
         } else {
-            $translatedText = $this->translateFromEnglishToPolish($this->text);
+            $translatedText = $this->translateFromEnglishToPolish();
         }
-        return $translatedText;
+        $this->assistant->setResponse($translatedText);
     }
 
     /**
-     * @param string $string
      * @return string
      */
-    public function detectLanguage(string $string): string
+    public function detectLanguage(): string
     {
         $detector = new Language();
-        $result = $detector->detect($string)->bestResults()->close();
+        $result = $detector->detect($this->assistant->query)->bestResults()->close();
         return key($result);
     }
 
     /**
-     * @param string $text
      * @return string
      * @throws DeepLException
      */
-    protected function translateFromPolishToEnglish(string $text): string
+    protected function translateFromPolishToEnglish(): string
     {
-        $translationResult = $this->translator->translateText($text, 'pl', 'en-GB');
-        return $translationResult->text;
+        return $this->translator->translateText($this->assistant->query, 'pl', 'en-GB')->text;
     }
 
     /**
-     * @param string $text
      * @return string
      * @throws DeepLException
      */
-    protected function translateFromEnglishToPolish(string $text): string
+    protected function translateFromEnglishToPolish(): string
     {
-        $translationResult = $this->translator->translateText($text, null, 'pl');
-        return $translationResult->text;
+        return $this->translator->translateText($this->assistant->query, null, 'pl')->text;
     }
 }
