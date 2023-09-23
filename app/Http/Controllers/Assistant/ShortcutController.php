@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Assistant;
 
 use App\Http\Controllers\Controller;
-use App\Jobs\SaveResource;
 use App\Lib\Assistant\Actions\Translate;
 use App\Lib\Assistant\Assistant;
 use DeepL\DeepLException;
@@ -37,30 +36,6 @@ class ShortcutController extends Controller
 
         return new JsonResponse([
             'data' => $translatedText
-        ]);
-    }
-
-    /**
-     * @param Request $request
-     * @return JsonResponse
-     */
-    public function saveResource(Request $request): JsonResponse
-    {
-        $request->validate([
-            'text' => 'required'
-        ]);
-        $text = $request->input('text');
-
-        $lines = explode("\n", $text['text']);
-        $title = $text['title'];
-        $chunkedLines = array_chunk($lines, 100);
-
-        foreach ($chunkedLines as $chunkedLine) {
-            SaveResource::dispatch($title, $chunkedLine);
-        }
-
-        return new JsonResponse([
-            'status' => 'started'
         ]);
     }
 }

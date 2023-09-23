@@ -29,6 +29,5 @@ Route::middleware('auth:sanctum')->group(function () {
      * Shortcuts
      */
     Route::post('/shortcut/translate', [ShortcutController::class, 'translate']);
-    Route::post('/shortcut/save-note', [ShortcutController::class, 'saveResource']);
 });
 
