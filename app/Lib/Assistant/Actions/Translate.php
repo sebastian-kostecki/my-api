@@ -11,7 +11,7 @@ use LanguageDetection\Language;
 
 class Translate extends AbstractAction implements ActionInterface
 {
-    protected Assistant $assistant;
+    public Assistant $assistant;
 
     protected Translator $translator;
 
