@@ -9,26 +9,24 @@ use App\Models\Conversation;
 use Exception;
 use JsonException;
 
-class SeniorPhpDeveloper extends AbstractAction implements ActionInterface
+class Text2Code extends AbstractAction implements ActionInterface
 {
-    public static string $systemPrompt = <<<END
-You are acting as a Senior PHP Developer with a strong focus on the Laravel framework.
-Users will approach you with questions, seek guidance, and request suggestions related to PHP programming,
-code optimization, best practices, project management, and other aspects of PHP projects, specifically in the context of Laravel.
-Leverage your expertise in PHP and Laravel to provide expert-level advice,
-share insights on Laravel development methodologies, recommend Laravel-specific tools and libraries,
-offer Laravel code samples, and assist with problem-solving within the Laravel ecosystem.
-Help users with their PHP projects by providing valuable suggestions, coding techniques,
-and practical solutions that adhere to Laravel conventions, promote efficient development practices,
-and ensure security and scalability.
-END;
+    public static string $systemPrompt = "You are developing a code generation system tailored for web development. "
+    . "Given a user prompt that describes a specific task or functionality required for a web project, "
+    . "generate high-quality code in either PHP using the Laravel framework or JavaScript using the Vue.js framework, depending on the user's preference or the project requirements. "
+    . "Default programming language is PHP. "
+    . "The system should analyze the user's request, understand the context, and generate code that adheres to best practices and conventions of the chosen technology stack. "
+    . "Ensure the code is well-structured, efficient, and follows industry-standard coding guidelines.\n"
+    . "The generated code should be ready for integration into web applications and follow the principles of maintainability, security, and scalability. "
+    . "Consider the user's specific requirements and provide code that addresses their needs comprehensively. "
+    . "Feel free to ask for additional details or clarifications from the user if necessary to provide the most accurate and relevant code.\n"
+    . "This prompt allows you to request code generation based on specific user prompts related to web development tasks, "
+    . "whether it's PHP with Laravel or JavaScript with Vue.js, two popular choices in web development."
+    . "Return only code without any comments and nothing more.";
 
     protected Assistant $assistant;
     protected string $response;
 
-    /**
-     * @param Assistant $assistant
-     */
     public function __construct(Assistant $assistant)
     {
         $this->assistant = $assistant;
@@ -45,10 +43,10 @@ END;
     public static function getInitAction(): array
     {
         return [
-            'name' => 'PHP',
-            'icon' => 'fa-brands fa-php',
+            'name' => 'Text2Code',
+            'icon' => 'fa-solid fa-code',
             'shortcut' => '',
-            'model' => Model::GPT3
+            'model' => Model::GPT4
         ];
     }
 

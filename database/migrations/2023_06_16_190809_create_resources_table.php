@@ -13,17 +13,20 @@ return new class extends Migration
     {
         Schema::create('resources', function (Blueprint $table) {
             $table->id();
+            $table->uuid();
             $table->string('title')->nullable();
             $table->text('content');
             $table->string('url')->nullable();
             $table->enum('category', [
-                'memories',
-                'notes',
-                'knowledge',
-                'links'
+                'memory',
+                'note',
+                'link'
             ]);
             $table->json('tags');
             $table->timestamps();
+
+            $table->index('uuid');
+            $table->index('category');
         });
     }
 

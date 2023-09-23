@@ -2,17 +2,15 @@
 
 namespace App\Lib\Assistant\Actions;
 
-use App\Lib\Connections\OpenAI;
+use App\Enums\Assistant\ChatModel as Model;
+use App\Lib\Assistant\Assistant;
 use App\Lib\Interfaces\ActionInterface;
-use App\Models\Action;
-use OpenAI\Laravel\Facades\OpenAI as Client;
+use App\Models\Conversation;
+use Exception;
+use JsonException;
 
-class SeniorJavaScriptDeveloper implements ActionInterface
+class SeniorJavaScriptDeveloper extends AbstractAction implements ActionInterface
 {
-    public static string $name = 'JavaScript';
-    public static string $slug = 'java-script';
-    public static string $icon = 'fa-brands fa-square-js';
-    public static string $shortcut = '';
     public static string $systemPrompt = <<<END
 You are acting as a Senior JavaScript Developer with expertise in Vue.js and PHP.
 Users will approach you with questions, seek guidance, and request suggestions related to JavaScript programming,
@@ -27,51 +25,50 @@ coding techniques, and practical solutions that align with industry standards,
 promote efficient development practices, and ensure seamless integration between Vue.js and PHP.
 END;
 
+    protected Assistant $assistant;
+    protected string $response;
 
-    protected OpenAI $openAI;
-    protected string $prompt;
-
-    public function __construct()
+    public function __construct(Assistant $assistant)
     {
-        $this->openAI = new OpenAI();
+        $this->assistant = $assistant;
+    }
+
+    public static function getInitAction(): array
+    {
+        return [
+            'name' => 'JavaScript',
+            'icon' => 'fa-brands fa-square-js',
+            'shortcut' => '',
+            'model' => Model::GPT3
+        ];
     }
 
     /**
-     * @return string
-     */
-    public function execute(): string
-    {
-        $response = Client::chat()->create([
-            'model' => 'gpt-3.5-turbo',
-            'temperature' => 0.5,
-            'messages' => [
-                [
-                    'role' => 'user',
-                    'content' => $this->getSystemPrompt()
-                ],
-            ],
-        ]);
-        return $response->choices[0]->message->content;
-    }
-
-    /**
-     * @param string $prompt
      * @return void
      */
-    public function setMessage(string $prompt): void
+    public function execute(): void
     {
-        $this->prompt = $prompt;
+        try {
+            $this->assistant->conversation->saveQuestion($this->assistant->query);
+            $this->assistant->conversation->setSystemPrompt(self::$systemPrompt)->updateSystemPrompt();
+            $this->sendRequest();
+            $this->assistant->setResponse($this->response);
+            $this->assistant->conversation->saveAnswer($this->response);
+            $this->assistant->saveAnswerToDatabase();
+        } catch (Exception $exception) {
+            $this->assistant->setResponse($exception->getMessage());
+        }
     }
 
     /**
-     * @return string
+     * @return void
+     * @throws JsonException
      */
-    protected function getSystemPrompt(): string
+    protected function sendRequest(): void
     {
-        $action = Action::where('slug', self::$slug)->first();
-
-        $content = $action->prompt;
-        $content .= "\n### Message\n" . $this->prompt;
-        return $content;
+        $model = $this->getModel();
+        $messages = Conversation::getConversationsLastFiveMinutes();
+        $this->assistant->api->chat()->create($model, $messages);
+        $this->response = $this->assistant->api->chat()->getResponse();
     }
 }
