@@ -27,8 +27,8 @@ class CreateQdrantCollection extends Command
     public function handle()
     {
         $collectionName = $this->argument('name');
-        $client = new Qdrant();
-        $client->createCollection($collectionName, 1536);
+        $client = new Qdrant($collectionName);
+        $client->collections()->create(1536);
         $this->info('Created collection');
     }
 }
