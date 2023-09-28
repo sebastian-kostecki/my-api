@@ -12,4 +12,6 @@ Route::middleware('auth:sanctum')->group(function () {
         ->name('action.list');
     Route::put('action/{id}/update', [ActionController::class, 'update'])
         ->name('action.update');
+
+    Route::get('models', [ActionController::class, 'modelIndex']);
 });
