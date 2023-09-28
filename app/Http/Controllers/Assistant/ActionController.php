@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Assistant;
 
+use App\Enums\Assistant\ChatModel;
 use App\Http\Controllers\Controller;
 use App\Models\Action;
 use Illuminate\Http\JsonResponse;
@@ -31,6 +32,7 @@ class ActionController extends Controller
             'name' => 'string|required',
             'icon' => 'string|required',
             'shortcut' => 'string|nullable',
+            'model' => 'string|required',
             'enabled' => 'boolean|required'
         ]);
 
@@ -39,6 +41,25 @@ class ActionController extends Controller
 
         return new JsonResponse([
             'success' => true
+        ]);
+    }
+
+    /**
+     * @return JsonResponse
+     */
+    public function modelIndex(): JsonResponse
+    {
+        $models = ChatModel::cases();
+
+        $data = collect($models)->map(function ($model) {
+            return [
+                'name' => $model->name,
+                'value' => $model->value
+            ];
+        });
+
+        return new JsonResponse([
+            'data' => $data
         ]);
     }
 }
