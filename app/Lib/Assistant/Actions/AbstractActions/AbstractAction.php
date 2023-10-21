@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Lib\Assistant\Actions;
+namespace App\Lib\Assistant\Actions\AbstractActions;
 
 use App\Enums\Assistant\ChatModel;
 use App\Models\Action;
@@ -18,7 +18,7 @@ abstract class AbstractAction
     /**
      * @return string
      */
-    public function getSystemPrompt()
+    public function getSystemPrompt(): string
     {
         return Action::type($this::class)->value('system_prompt');
     }

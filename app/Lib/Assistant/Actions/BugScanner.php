@@ -3,13 +3,10 @@
 namespace App\Lib\Assistant\Actions;
 
 use App\Enums\Assistant\ChatModel as Model;
-use App\Lib\Assistant\Assistant;
+use App\Lib\Assistant\Actions\AbstractActions\AbstractPromptAction;
 use App\Lib\Interfaces\ActionInterface;
-use App\Models\Conversation;
-use Exception;
-use JsonException;
 
-class BugScanner extends AbstractAction implements ActionInterface
+class BugScanner extends AbstractPromptAction implements ActionInterface
 {
     public static string $systemPrompt = <<<END
 Your task is to review and improve PHP code, with a specific focus on the Laravel framework.
@@ -24,14 +21,15 @@ Please provide your responses in Polish. Limit your feedback to the use of singl
 This way, you will follow the specified language requirements while maintaining the review process in English and delivering responses in Polish.
 END;
 
-    protected Assistant $assistant;
-    protected string $response;
-
-    public function __construct(Assistant $assistant)
-    {
-        $this->assistant = $assistant;
-    }
-
+    /**
+     * @return array{
+     *     name: string,
+     *     icon: string,
+     *     shortcut: string,
+     *     model: Model,
+     *     system_prompt: string
+     * }
+     */
     public static function getInitAction(): array
     {
         return [
@@ -41,34 +39,5 @@ END;
             'model' => Model::GPT4,
             'system_prompt' => self::$systemPrompt
         ];
-    }
-
-    /**
-     * @return void
-     */
-    public function execute(): void
-    {
-        try {
-            $this->assistant->conversation->saveQuestion($this->assistant->query);
-            $this->assistant->conversation->updateSystemPrompt([$this->getSystemPrompt()]);
-            $this->sendRequest();
-            $this->assistant->setResponse($this->response);
-            $this->assistant->conversation->saveAnswer($this->response);
-            $this->assistant->saveAnswerToDatabase();
-        } catch (Exception $exception) {
-            $this->assistant->setResponse($exception->getMessage());
-        }
-    }
-
-    /**
-     * @return void
-     * @throws JsonException
-     */
-    protected function sendRequest(): void
-    {
-        $model = $this->getModel();
-        $messages = Conversation::getConversationsLastFiveMinutes();
-        $this->assistant->api->chat()->create($model, $messages);
-        $this->response = $this->assistant->api->chat()->getResponse();
     }
 }

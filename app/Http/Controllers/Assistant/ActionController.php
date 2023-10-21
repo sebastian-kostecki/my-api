@@ -22,6 +22,11 @@ class ActionController extends Controller
         return ActionResource::collection($actions);
     }
 
+    public function create(Request $request)
+    {
+
+    }
+
     /**
      * @param Request $request
      * @param int $id

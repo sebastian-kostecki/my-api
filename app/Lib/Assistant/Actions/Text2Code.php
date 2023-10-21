@@ -3,13 +3,10 @@
 namespace App\Lib\Assistant\Actions;
 
 use App\Enums\Assistant\ChatModel as Model;
-use App\Lib\Assistant\Assistant;
+use App\Lib\Assistant\Actions\AbstractActions\AbstractPromptAction;
 use App\Lib\Interfaces\ActionInterface;
-use App\Models\Conversation;
-use Exception;
-use JsonException;
 
-class Text2Code extends AbstractAction implements ActionInterface
+class Text2Code extends AbstractPromptAction implements ActionInterface
 {
     public static string $systemPrompt = "You are developing a code generation system tailored for web development. "
     . "Given a user prompt that describes a specific task or functionality required for a web project, "
@@ -23,14 +20,6 @@ class Text2Code extends AbstractAction implements ActionInterface
     . "This prompt allows you to request code generation based on specific user prompts related to web development tasks, "
     . "whether it's PHP with Laravel or JavaScript with Vue.js, two popular choices in web development."
     . "Return only code without any comments and nothing more.";
-
-    protected Assistant $assistant;
-    protected string $response;
-
-    public function __construct(Assistant $assistant)
-    {
-        $this->assistant = $assistant;
-    }
 
     /**
      * @return array{
@@ -49,34 +38,5 @@ class Text2Code extends AbstractAction implements ActionInterface
             'model' => Model::GPT4,
             'system_prompt' => self::$systemPrompt
         ];
-    }
-
-    /**
-     * @return void
-     */
-    public function execute(): void
-    {
-        try {
-            $this->assistant->conversation->saveQuestion($this->assistant->query);
-            $this->assistant->conversation->updateSystemPrompt([$this->getSystemPrompt()]);
-            $this->sendRequest();
-            $this->assistant->setResponse($this->response);
-            $this->assistant->conversation->saveAnswer($this->response);
-            $this->assistant->saveAnswerToDatabase();
-        } catch (Exception $exception) {
-            $this->assistant->setResponse($exception->getMessage());
-        }
-    }
-
-    /**
-     * @return void
-     * @throws JsonException
-     */
-    protected function sendRequest(): void
-    {
-        $model = $this->getModel();
-        $messages = Conversation::getConversationsLastFiveMinutes();
-        $this->assistant->api->chat()->create($model, $messages);
-        $this->response = $this->assistant->api->chat()->getResponse();
     }
 }

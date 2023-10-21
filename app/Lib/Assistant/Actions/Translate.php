@@ -3,6 +3,7 @@
 namespace App\Lib\Assistant\Actions;
 
 use App\Enums\Assistant\ChatModel as Model;
+use App\Lib\Assistant\Actions\AbstractActions\AbstractAction;
 use App\Lib\Assistant\Assistant;
 use App\Lib\Interfaces\ActionInterface;
 use DeepL\DeepLException;
