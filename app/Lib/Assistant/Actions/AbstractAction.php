@@ -14,4 +14,9 @@ abstract class AbstractAction
     {
         return Action::type($this::class)->value('model');
     }
+
+    public function getSystemPrompt()
+    {
+        return Action::type($this::class)->value('system_prompt');
+    }
 }

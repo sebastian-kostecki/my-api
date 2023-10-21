@@ -26,6 +26,7 @@ class Action extends Model
         'icon',
         'shortcut',
         'model',
+        'system_prompt',
         'enabled'
     ];
 

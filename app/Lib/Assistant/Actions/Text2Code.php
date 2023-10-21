@@ -46,7 +46,8 @@ class Text2Code extends AbstractAction implements ActionInterface
             'name' => 'Text2Code',
             'icon' => 'fa-solid fa-code',
             'shortcut' => '',
-            'model' => Model::GPT4
+            'model' => Model::GPT4,
+            'system_prompt' => self::$systemPrompt
         ];
     }
 
@@ -57,7 +58,7 @@ class Text2Code extends AbstractAction implements ActionInterface
     {
         try {
             $this->assistant->conversation->saveQuestion($this->assistant->query);
-            $this->assistant->conversation->updateSystemPrompt([self::$systemPrompt]);
+            $this->assistant->conversation->updateSystemPrompt([$this->getSystemPrompt()]);
             $this->sendRequest();
             $this->assistant->setResponse($this->response);
             $this->assistant->conversation->saveAnswer($this->response);
