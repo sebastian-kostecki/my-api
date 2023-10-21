@@ -14,6 +14,8 @@ Route::middleware('auth:sanctum')->group(function () {
         ->name('action.create');
     Route::put('action/{id}/update', [ActionController::class, 'update'])
         ->name('action.update');
+    Route::delete('action/{id}', [ActionController::class, 'destroy'])
+        ->name('action.delete');
 
     Route::get('models', [ActionController::class, 'modelIndex']);
 });

@@ -66,6 +66,20 @@ class ActionController extends Controller
     }
 
     /**
+     * @param int $id
+     * @return JsonResponse
+     */
+    public function destroy(int $id): JsonResponse
+    {
+        $action = Action::findOrFail($id);
+        $action->delete();
+
+        return new JsonResponse([
+            'success' => true
+        ]);
+    }
+
+    /**
      * @return JsonResponse
      */
     public function modelIndex(): JsonResponse
