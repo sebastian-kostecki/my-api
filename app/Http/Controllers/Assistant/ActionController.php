@@ -4,21 +4,22 @@ namespace App\Http\Controllers\Assistant;
 
 use App\Enums\Assistant\ChatModel;
 use App\Http\Controllers\Controller;
+use App\Http\Resources\ActionResource;
 use App\Models\Action;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class ActionController extends Controller
 {
+
     /**
-     * @return JsonResponse
+     * @return AnonymousResourceCollection
      */
-    public function index(): JsonResponse
+    public function index(): AnonymousResourceCollection
     {
         $actions = Action::all();
-        return new JsonResponse([
-            'data' => $actions
-        ]);
+        return ActionResource::collection($actions);
     }
 
     /**
