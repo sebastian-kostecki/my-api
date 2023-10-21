@@ -57,7 +57,7 @@ class Text2Code extends AbstractAction implements ActionInterface
     {
         try {
             $this->assistant->conversation->saveQuestion($this->assistant->query);
-            $this->assistant->conversation->setSystemPrompt(self::$systemPrompt)->updateSystemPrompt();
+            $this->assistant->conversation->updateSystemPrompt([self::$systemPrompt]);
             $this->sendRequest();
             $this->assistant->setResponse($this->response);
             $this->assistant->conversation->saveAnswer($this->response);
