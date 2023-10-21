@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Assistant;
 use App\Enums\Assistant\ChatModel;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\ActionResource;
+use App\Lib\Assistant\Actions\CustomPromptAction;
 use App\Models\Action;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -22,17 +23,33 @@ class ActionController extends Controller
         return ActionResource::collection($actions);
     }
 
-    public function create(Request $request)
+    /**
+     * @param Request $request
+     * @return ActionResource
+     */
+    public function create(Request $request): ActionResource
     {
+        $params = $request->validate([
+            'name' => 'string|required',
+            'icon' => 'string|required',
+            'shortcut' => 'string|nullable',
+            'model' => 'string|required',
+            'system_prompt' => 'string|required',
+            'enabled' => 'boolean|required'
+        ]);
 
+        $params['type'] = CustomPromptAction::class;
+        $action = Action::create($params);
+
+        return new ActionResource($action);
     }
 
     /**
      * @param Request $request
      * @param int $id
-     * @return JsonResponse
+     * @return ActionResource
      */
-    public function update(Request $request, int $id): JsonResponse
+    public function update(Request $request, int $id): ActionResource
     {
         $params = $request->validate([
             'name' => 'string|required',
@@ -45,9 +62,7 @@ class ActionController extends Controller
         $action = Action::findOrFail($id);
         $action->update($params);
 
-        return new JsonResponse([
-            'success' => true
-        ]);
+        return new ActionResource($action);
     }
 
     /**
