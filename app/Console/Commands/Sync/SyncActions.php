@@ -55,8 +55,7 @@ class SyncActions extends Command
      */
     protected function isIntegrationInDatabase(Collection $integrationsInDatabase, string $integrationClass): bool
     {
-        $integrationInDatabase = $integrationsInDatabase->get($integrationClass);
-        if ($integrationInDatabase) {
+        if ($integrationsInDatabase->has($integrationClass)) {
             $this->info("already in database");
             $integrationsInDatabase->forget($integrationClass);
             return true;
@@ -77,6 +76,7 @@ class SyncActions extends Command
             'icon' => $data['icon'],
             'shortcut' => $data['shortcut'],
             'model' => $data['model'],
+            'system_prompt' => $data['system_prompt'] ?? null,
             'enabled' => true
         ]);
         $this->info("added to database");

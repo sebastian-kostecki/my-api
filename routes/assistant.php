@@ -10,8 +10,12 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::get('actions', [ActionController::class, 'index'])
         ->name('action.list');
+    Route::post('action/create', [ActionController::class, 'create'])
+        ->name('action.create');
     Route::put('action/{id}/update', [ActionController::class, 'update'])
         ->name('action.update');
+    Route::delete('action/{id}', [ActionController::class, 'destroy'])
+        ->name('action.delete');
 
     Route::get('models', [ActionController::class, 'modelIndex']);
 });

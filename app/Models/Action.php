@@ -26,6 +26,7 @@ class Action extends Model
         'icon',
         'shortcut',
         'model',
+        'system_prompt',
         'enabled'
     ];
 
@@ -46,7 +47,7 @@ class Action extends Model
             if (!Str::endsWith($file, '.php')) {
                 continue;
             }
-            if (Str::endsWith($file, 'AbstractAction.php')) {
+            if (Str::endsWith($file, 'CustomPromptAction.php')) {
                 continue;
             }
             $name = Str::beforeLast($file, '.php');
