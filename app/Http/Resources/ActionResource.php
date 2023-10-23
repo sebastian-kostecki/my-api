@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Lib\Assistant\Actions\CustomPromptAction;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -33,7 +34,8 @@ class ActionResource extends JsonResource
             'shortcut' => $this->shortcut,
             'has_system_prompt' => isset($this->type::$systemPrompt),
             'system_prompt' => $this->system_prompt,
-            'enabled' => $this->enabled
+            'enabled' => $this->enabled,
+            'custom' => $this->type === CustomPromptAction::class
         ];
     }
 }
