@@ -39,6 +39,7 @@ class SyncActions extends Command
 
             $this->output->write($initData['name'] . ": ");
             if ($this->isIntegrationInDatabase($actionsInDatabase, $actionClass)) {
+                $this->syncModel($actionClass, $initData);
                 continue;
             }
             $this->createIntegration($actionClass, $initData);
@@ -61,6 +62,22 @@ class SyncActions extends Command
             return true;
         }
         return false;
+    }
+
+    /**
+     * @param string $actionClass
+     * @param array $data
+     * @return void
+     */
+    protected function syncModel(string $actionClass, array $data): void
+    {
+        $action = Action::where('type', $actionClass)->first();
+        try {
+            $action->model;
+        } catch (\Throwable $throwable) {
+            $action->model = $data['model'];
+            $action->save();
+        }
     }
 
     /**
