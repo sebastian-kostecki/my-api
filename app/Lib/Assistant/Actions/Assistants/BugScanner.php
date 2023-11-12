@@ -3,10 +3,9 @@
 namespace App\Lib\Assistant\Actions\Assistants;
 
 use App\Enums\Assistant\ChatModel as Model;
-use App\Lib\Assistant\Actions\AbstractActions\AbstractPromptAction;
-use App\Lib\Interfaces\ActionInterface;
+use App\Lib\Assistant\Actions\AssistantAction;
 
-class BugScanner extends AbstractPromptAction implements ActionInterface
+class BugScanner
 {
     /**
      * @return array{
@@ -20,6 +19,7 @@ class BugScanner extends AbstractPromptAction implements ActionInterface
     public static function getInitAction(): array
     {
         return [
+            'type' => AssistantAction::class,
             'name' => 'Code Fix',
             'icon' => 'fa-solid fa-bug',
             'shortcut' => 'CommandOrControl+Shift+B',

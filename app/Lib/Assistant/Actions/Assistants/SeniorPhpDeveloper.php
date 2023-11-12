@@ -3,10 +3,9 @@
 namespace App\Lib\Assistant\Actions\Assistants;
 
 use App\Enums\Assistant\ChatModel as Model;
-use App\Lib\Assistant\Actions\AbstractActions\AbstractPromptAction;
-use App\Lib\Interfaces\ActionInterface;
+use App\Lib\Assistant\Actions\AssistantAction;
 
-class SeniorPhpDeveloper extends AbstractPromptAction implements ActionInterface
+class SeniorPhpDeveloper
 {
     /**
      * @return array{
@@ -19,9 +18,10 @@ class SeniorPhpDeveloper extends AbstractPromptAction implements ActionInterface
     public static function getInitAction(): array
     {
         return [
+            'type' => AssistantAction::class,
             'name' => 'PHP',
             'icon' => 'fa-brands fa-php',
-            'shortcut' => '',
+            'shortcut' => null,
             'model' => Model::GPT4,
             'system_prompt' => "You are acting as a Senior PHP Developer with a strong focus on the Laravel framework.\n" .
                 "Users will approach you with questions, seek guidance, and request suggestions related to PHP programming," .

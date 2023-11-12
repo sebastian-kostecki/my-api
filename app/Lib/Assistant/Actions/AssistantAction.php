@@ -1,13 +1,11 @@
 <?php
 
-namespace App\Lib\Assistant\Actions\AbstractActions;
+namespace App\Lib\Assistant\Actions;
 
 use App\Lib\Assistant\Assistant;
 use App\Models\Conversation;
-use Exception;
-use JsonException;
 
-abstract class AbstractPromptAction extends AbstractAction
+class AssistantAction
 {
     protected Assistant $assistant;
     protected string $response;

@@ -7,6 +7,7 @@ use App\Lib\Assistant\Assistant;
 use App\Lib\Interfaces\ActionInterface;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 
 /**
@@ -51,25 +52,18 @@ class Action extends Model
 
     public static function scan(): array
     {
-        $namespace = 'App\Lib\Assistant\Actions';
         $dir = app_path() . '/Lib/Assistant/Actions';
-        $files = scandir($dir);
+        $files = File::allFiles($dir);
 
-        $actions = [];
-
-        foreach ($files as $file) {
-            if (!Str::endsWith($file, '.php')) {
-                continue;
-            }
-            if (Str::endsWith($file, 'CustomPromptAction.php')) {
-                continue;
-            }
-            $name = Str::beforeLast($file, '.php');
-            $classname = $namespace . '\\' . $name;
-            $actions[] = $classname;
-        }
-
-        return $actions;
+        return collect($files)->filter(function ($file) {
+            return $file->getBasename() !== 'AssistantAction.php';
+        })->map(function ($file) {
+            $namespace = 'App\Lib\Assistant\Actions';
+            $endClass = $file->getRelativePathname();
+            $endClass = Str::beforeLast($endClass, '.php');
+            $endClass = Str::replace('/', '\\', $endClass);
+            return $namespace . '\\' . $endClass;
+        })->values()->toArray();
     }
 
     /**

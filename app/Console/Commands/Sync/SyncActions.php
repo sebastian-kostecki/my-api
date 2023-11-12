@@ -20,7 +20,7 @@ class SyncActions extends Command
      *
      * @var string
      */
-    protected $description = 'Command description';
+    protected $description = 'Synchronize actions';
 
     /**
      * Execute the console command.
@@ -32,17 +32,17 @@ class SyncActions extends Command
         $actions = Action::scan();
         $this->info("Found " . count($actions) . " actions");
 
-        $actionsInDatabase = Action::get()->keyBy('type');
+        $actionsInDatabase = Action::get()->keyBy('name');
 
         foreach ($actions as $actionClass) {
             $initData = $actionClass::getInitAction();
 
             $this->output->write($initData['name'] . ": ");
-            if ($this->isIntegrationInDatabase($actionsInDatabase, $actionClass)) {
-                $this->syncModel($actionClass, $initData);
+            if ($this->isIntegrationInDatabase($actionsInDatabase, $initData)) {
+                $this->syncModel($initData);
                 continue;
             }
-            $this->createIntegration($actionClass, $initData);
+            $this->createIntegration($initData);
         }
 
         $this->removeOldRecords($actionsInDatabase);
@@ -51,51 +51,41 @@ class SyncActions extends Command
 
     /**
      * @param Collection $integrationsInDatabase
-     * @param string $integrationClass
+     * @param array $params
      * @return bool
      */
-    protected function isIntegrationInDatabase(Collection $integrationsInDatabase, string $integrationClass): bool
+    protected function isIntegrationInDatabase(Collection $integrationsInDatabase, array $params): bool
     {
-        if ($integrationsInDatabase->has($integrationClass)) {
+        if ($integrationsInDatabase->has($params['name'])) {
             $this->info("already in database");
-            $integrationsInDatabase->forget($integrationClass);
+            $integrationsInDatabase->forget($params['name']);
             return true;
         }
         return false;
     }
 
     /**
-     * @param string $actionClass
-     * @param array $data
+     * @param array $params
      * @return void
      */
-    protected function syncModel(string $actionClass, array $data): void
+    protected function syncModel(array $params): void
     {
-        $action = Action::where('type', $actionClass)->first();
+        $action = Action::where('name', $params['name'])->first();
         try {
             $action->model;
         } catch (\Throwable $throwable) {
-            $action->model = $data['model'];
+            $action->model = $params['model'];
             $action->save();
         }
     }
 
     /**
-     * @param string $class
-     * @param array $data
+     * @param array $params
      * @return void
      */
-    protected function createIntegration(string $class, array $data): void
+    protected function createIntegration(array $params): void
     {
-        Action::create([
-            'name' => $data['name'],
-            'type' => $class,
-            'icon' => $data['icon'],
-            'shortcut' => $data['shortcut'],
-            'model' => $data['model'],
-            'system_prompt' => $data['system_prompt'] ?? null,
-            'enabled' => true
-        ]);
+        Action::create($params);
         $this->info("added to database");
     }
 

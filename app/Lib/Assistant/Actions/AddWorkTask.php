@@ -3,17 +3,15 @@
 namespace App\Lib\Assistant\Actions;
 
 use App\Enums\Assistant\ChatModel as Model;
-use App\Lib\Assistant\Actions\AbstractActions\AbstractAction;
 use App\Lib\Assistant\Assistant;
 use App\Lib\Connections\Notion\PanelAlphaIssuesTable;
 use App\Lib\Connections\Notion\PanelAlphaTasksTable;
-use App\Lib\Interfaces\ActionInterface;
 use Exception;
 use Illuminate\Support\Collection;
 use JsonException;
 use stdClass;
 
-class AddWorkTask extends AbstractAction implements ActionInterface
+class AddWorkTask
 {
     protected Assistant $assistant;
 
@@ -29,6 +27,7 @@ class AddWorkTask extends AbstractAction implements ActionInterface
     public static function getInitAction(): array
     {
         return [
+            'type' => self::class,
             'name' => 'New Task',
             'icon' => 'fa-solid fa-check',
             'shortcut' => 'CommandOrControl+Shift+Q',

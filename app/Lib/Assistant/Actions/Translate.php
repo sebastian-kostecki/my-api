@@ -3,14 +3,12 @@
 namespace App\Lib\Assistant\Actions;
 
 use App\Enums\Assistant\ChatModel as Model;
-use App\Lib\Assistant\Actions\AbstractActions\AbstractAction;
 use App\Lib\Assistant\Assistant;
-use App\Lib\Interfaces\ActionInterface;
 use DeepL\DeepLException;
 use DeepL\Translator;
 use LanguageDetection\Language;
 
-class Translate extends AbstractAction implements ActionInterface
+class Translate
 {
     public Assistant $assistant;
 
@@ -39,6 +37,7 @@ class Translate extends AbstractAction implements ActionInterface
     public static function getInitAction(): array
     {
         return [
+            'type' => self::class,
             'name' => 'Translate',
             'icon' => 'fa-solid fa-language',
             'shortcut' => '',

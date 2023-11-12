@@ -3,10 +3,9 @@
 namespace App\Lib\Assistant\Actions\Assistants;
 
 use App\Enums\Assistant\ChatModel as Model;
-use App\Lib\Assistant\Actions\AbstractActions\AbstractPromptAction;
-use App\Lib\Interfaces\ActionInterface;
+use App\Lib\Assistant\Actions\AssistantAction;
 
-class SeniorJavaScriptDeveloper extends AbstractPromptAction implements ActionInterface
+class SeniorJavaScriptDeveloper
 {
     /**
      * @return array{
@@ -20,9 +19,10 @@ class SeniorJavaScriptDeveloper extends AbstractPromptAction implements ActionIn
     public static function getInitAction(): array
     {
         return [
+            'type' => AssistantAction::class,
             'name' => 'JavaScript',
             'icon' => 'fa-brands fa-square-js',
-            'shortcut' => '',
+            'shortcut' => null,
             'model' => Model::GPT4,
             'system_prompt' => "You are acting as a Senior JavaScript Developer with expertise in Vue.js and PHP.\n" .
                 "Users will approach you with questions, seek guidance, and request suggestions related to JavaScript programming," .
