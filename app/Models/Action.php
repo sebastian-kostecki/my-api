@@ -27,12 +27,26 @@ class Action extends Model
         'shortcut',
         'model',
         'system_prompt',
-        'enabled'
+        'enabled',
+        'hidden'
     ];
 
+    /**
+     * @var array
+     */
     protected $casts = [
         'enabled' => 'boolean',
         'model' => ChatModel::class
+    ];
+
+    /**
+     * The model's default values for attributes.
+     *
+     * @var array
+     */
+    protected $attributes = [
+        'enabled' => true,
+        'hidden' => false,
     ];
 
     public static function scan(): array
