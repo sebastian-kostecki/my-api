@@ -15,12 +15,12 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Conversation extends Model
 {
-    protected string $systemPrompt = "";
+    protected const SYSTEM_PROMPT = "";
     protected $fillable = [
         'question',
         'answer'
     ];
-    
+
     /**
      * @param string $prompt
      * @return $this

@@ -11,10 +11,14 @@ use Illuminate\Support\Collection;
 use JsonException;
 use stdClass;
 
-class AddWorkTask
+class AddWorkTask extends AbstractAction
 {
-    protected Assistant $assistant;
+    public const NAME = 'New Task';
+    public const ICON = 'fa-solid fa-check';
+    public const SHORTCUT = 'CommandOrControl+Shift+Q';
+    public const MODEL = Model::GPT3;
 
+    protected Assistant $assistant;
     protected Collection $issues;
     protected stdClass $task;
 

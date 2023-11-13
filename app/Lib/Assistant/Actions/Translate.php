@@ -8,10 +8,12 @@ use DeepL\DeepLException;
 use DeepL\Translator;
 use LanguageDetection\Language;
 
-class Translate
+class Translate extends AbstractAction
 {
-    public Assistant $assistant;
+    public const NAME = 'Translate';
+    public const ICON = 'fa-solid fa-language';
 
+    public Assistant $assistant;
     protected Translator $translator;
 
     protected string $text;
@@ -24,25 +26,6 @@ class Translate
     {
         $this->assistant = $assistant;
         $this->translator = new Translator(env('DEEPL_TOKEN'));
-    }
-
-    /**
-     * @return array{
-     *     name: string,
-     *     icon: string,
-     *     shortcut: string,
-     *     model: Model
-     * }
-     */
-    public static function getInitAction(): array
-    {
-        return [
-            'type' => self::class,
-            'name' => 'Translate',
-            'icon' => 'fa-solid fa-language',
-            'shortcut' => null,
-            'model' => Model::GPT3
-        ];
     }
 
     /**

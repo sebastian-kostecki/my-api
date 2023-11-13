@@ -3,9 +3,10 @@
 namespace App\Lib\Assistant\Actions;
 
 use App\Lib\Assistant\Assistant;
+use App\Lib\Interfaces\AssistantInterface;
 use App\Models\Conversation;
 
-class AbstractAssistant
+class DefaultAssistant extends AbstractAction implements AssistantInterface
 {
     protected Assistant $assistant;
     protected string $response;
@@ -46,4 +47,6 @@ class AbstractAssistant
         $this->assistant->api->chat()->create($model, $messages);
         $this->response = $this->assistant->api->chat()->getResponse();
     }
+
+
 }

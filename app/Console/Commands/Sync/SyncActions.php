@@ -65,7 +65,7 @@ class SyncActions extends Command
      */
     protected function createOrIgnore(string $actionClass): void
     {
-        $initActionData = $actionClass::getInitAction();
+        $initActionData = $actionClass::getInit();
         $this->output->write($initActionData['name'] . ": ");
         if ($this->isIntegrationInDatabase($actionClass)) {
             $this->syncModel($initActionData);
@@ -110,7 +110,11 @@ class SyncActions extends Command
      */
     protected function createIntegration(array $params): void
     {
-        Action::create($params);
+        $newAction = Action::create($params);
+
+        $newAction->assistant->save();
+
+
         $this->info("added to database");
     }
 

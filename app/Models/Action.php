@@ -70,7 +70,8 @@ class Action extends Model
         $files = File::allFiles($dir);
 
         return collect($files)->filter(function ($file) {
-            return !Str::startsWith($file->getBasename(),'Abstract');
+            return !(Str::startsWith($file->getBasename(),'Default')
+                || Str::startsWith($file->getBasename(),'Abstract'));
         })->map(function ($file) {
             $namespace = 'App\Lib\Assistant\Actions';
             $endClass = $file->getRelativePathname();
