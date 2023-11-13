@@ -20,4 +20,30 @@ class Assistant
         $result = $this->assistant->request->get($url);
         return json_decode($result->body(), true);
     }
+
+    /**
+     * @param string $assistantId
+     * @return array
+     */
+    public function retrieve(string $assistantId): array
+    {
+        $url = $this->assistant->api::BASEURL . 'assistants/' . $assistantId;
+        $result = $this->assistant->request->get($url);
+        return json_decode($result->body(), true);
+    }
+
+    public function create(array $params)
+    {
+        $data = [
+            'model' => $params['model'],
+            'name' => $params['name'],
+            'instructions' => $params['system_prompt'],
+            'tools' => [
+                ['type' => 'code_interpreter']
+            ]
+        ];
+        $url = $this->assistant->api::BASEURL . 'assistants';
+        $result = $this->assistant->request->post($url, $data);
+        return json_decode($result->body(), true);
+    }
 }

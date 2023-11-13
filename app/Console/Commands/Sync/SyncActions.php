@@ -3,6 +3,7 @@
 namespace App\Console\Commands\Sync;
 
 use App\Models\Action;
+use App\Models\Assistant;
 use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\Collection;
 
@@ -112,8 +113,12 @@ class SyncActions extends Command
     {
         $newAction = Action::create($params);
 
-        $newAction->assistant->save();
-
+        if ($params['assistant']) {
+            $assistant = new Assistant();
+            $assistant->create($params);
+            $newAction->assistant()->save($assistant);
+            $newAction->save();
+        }
 
         $this->info("added to database");
     }
