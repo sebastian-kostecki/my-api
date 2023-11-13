@@ -5,8 +5,11 @@ namespace App\Models;
 use App\Enums\Assistant\ChatModel;
 use App\Lib\Assistant\Assistant;
 use App\Lib\Interfaces\ActionInterface;
+use App\Models\Assistant as AssistantModel;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 
@@ -50,20 +53,31 @@ class Action extends Model
         'hidden' => false,
     ];
 
-    public static function scan(): array
+    /**
+     * @return HasOne
+     */
+    public function assistant(): HasOne
+    {
+        return $this->hasOne(AssistantModel::class);
+    }
+
+    /**
+     * @return Collection
+     */
+    public static function scan(): Collection
     {
         $dir = app_path() . '/Lib/Assistant/Actions';
         $files = File::allFiles($dir);
 
         return collect($files)->filter(function ($file) {
-            return $file->getBasename() !== 'AssistantAction.php';
+            return !Str::startsWith($file->getBasename(),'Abstract');
         })->map(function ($file) {
             $namespace = 'App\Lib\Assistant\Actions';
             $endClass = $file->getRelativePathname();
             $endClass = Str::beforeLast($endClass, '.php');
             $endClass = Str::replace('/', '\\', $endClass);
             return $namespace . '\\' . $endClass;
-        })->values()->toArray();
+        })->values();
     }
 
     /**

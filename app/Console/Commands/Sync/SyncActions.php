@@ -22,43 +22,68 @@ class SyncActions extends Command
      */
     protected $description = 'Synchronize actions';
 
+    private \Illuminate\Support\Collection $actions;
+    private Collection $actionsInDatabase;
+
+
     /**
      * Execute the console command.
      */
     public function handle(): void
     {
-        $this->info("Scanning files...");
+        $this->getActions();
+        $this->getActionsInDatabase();
 
-        $actions = Action::scan();
-        $this->info("Found " . count($actions) . " actions");
-
-        $actionsInDatabase = Action::get()->keyBy('name');
-
-        foreach ($actions as $actionClass) {
-            $initData = $actionClass::getInitAction();
-
-            $this->output->write($initData['name'] . ": ");
-            if ($this->isIntegrationInDatabase($actionsInDatabase, $initData)) {
-                $this->syncModel($initData);
-                continue;
-            }
-            $this->createIntegration($initData);
-        }
-
-        $this->removeOldRecords($actionsInDatabase);
+        $this->actions->each(function ($action) {
+            $this->createOrIgnore($action);
+        });
+        $this->removeOldRecords();
         $this->info("Finished synchronizing actions.");
     }
 
     /**
-     * @param Collection $integrationsInDatabase
-     * @param array $params
+     * @return void
+     */
+    protected function getActions(): void
+    {
+        $this->info("Scanning files...");
+        $this->actions = Action::scan();
+        $this->info("Found " . $this->actions->count() . " actions");
+    }
+
+    /**
+     * @return void
+     */
+    protected function getActionsInDatabase(): void
+    {
+        $this->actionsInDatabase = Action::get()->keyBy('type');
+    }
+
+    /**
+     * @param string $actionClass
+     * @return void
+     */
+    protected function createOrIgnore(string $actionClass): void
+    {
+        $initActionData = $actionClass::getInitAction();
+        $this->output->write($initActionData['name'] . ": ");
+        if ($this->isIntegrationInDatabase($actionClass)) {
+            $this->syncModel($initActionData);
+            return;
+        }
+        $this->createIntegration($initActionData);
+    }
+
+
+    /**
+     * @param string $actionClass
      * @return bool
      */
-    protected function isIntegrationInDatabase(Collection $integrationsInDatabase, array $params): bool
+    protected function isIntegrationInDatabase(string $actionClass): bool
     {
-        if ($integrationsInDatabase->has($params['name'])) {
+        if ($this->actionsInDatabase->has($actionClass)) {
             $this->info("already in database");
-            $integrationsInDatabase->forget($params['name']);
+            $this->actionsInDatabase->forget($actionClass);
             return true;
         }
         return false;
@@ -70,7 +95,7 @@ class SyncActions extends Command
      */
     protected function syncModel(array $params): void
     {
-        $action = Action::where('name', $params['name'])->first();
+        $action = Action::where('type', $params['type'])->first();
         try {
             $action->model;
         } catch (\Throwable $throwable) {
@@ -90,13 +115,12 @@ class SyncActions extends Command
     }
 
     /**
-     * @param Collection $integrationsInDatabase
      * @return void
      */
-    protected function removeOldRecords(Collection $integrationsInDatabase): void
+    protected function removeOldRecords(): void
     {
-        if ($oldRecords = count($integrationsInDatabase)) {
-            $integrationsInDatabase->map->delete();
+        if ($oldRecords = count($this->actionsInDatabase)) {
+            $this->actionsInDatabase->map->delete();
             $this->info("Removed {$oldRecords} old records from database");
         }
     }

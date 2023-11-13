@@ -2,7 +2,7 @@
 
 namespace App\Http\Resources;
 
-use App\Lib\Assistant\Actions\AssistantAction;
+use App\Lib\Assistant\Actions\AbstractAssistant;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -35,7 +35,7 @@ class ActionResource extends JsonResource
             'has_system_prompt' => isset($this->type::$systemPrompt),
             'system_prompt' => $this->system_prompt,
             'enabled' => $this->enabled,
-            'custom' => $this->type === AssistantAction::class
+            'custom' => $this->type === AbstractAssistant::class
         ];
     }
 }

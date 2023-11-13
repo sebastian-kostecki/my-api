@@ -5,7 +5,7 @@ namespace App\Lib\Assistant\Actions;
 use App\Lib\Assistant\Assistant;
 use App\Models\Conversation;
 
-class AssistantAction
+class AbstractAssistant
 {
     protected Assistant $assistant;
     protected string $response;

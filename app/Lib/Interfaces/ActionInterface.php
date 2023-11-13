@@ -19,6 +19,7 @@ interface ActionInterface
 
     /**
      * @return array{
+     *     type: string,
      *     name: string,
      *     icon: string,
      *     shortcut: string,

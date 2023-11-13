@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Lib\Assistant\Actions\Assistants;
+namespace App\Lib\Assistant\Actions;
 
 use App\Enums\Assistant\ChatModel as Model;
-use App\Lib\Assistant\Actions\AssistantAction;
+use App\Lib\Assistant\Actions\AbstractAssistant;
 
 class Query
 {
@@ -19,7 +19,7 @@ class Query
     public static function getInitAction(): array
     {
         return [
-            'type' => AssistantAction::class,
+            'type' => self::class,
             'name' => 'Query',
             'icon' => null,
             'shortcut' => null,

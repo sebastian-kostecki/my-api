@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Assistant;
 use App\Enums\Assistant\ChatModel;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\ActionResource;
-use App\Lib\Assistant\Actions\AssistantAction;
+use App\Lib\Assistant\Actions\AbstractAssistant;
 use App\Models\Action;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -38,7 +38,7 @@ class ActionController extends Controller
             'enabled' => 'boolean|required'
         ]);
 
-        $params['type'] = AssistantAction::class;
+        $params['type'] = AbstractAssistant::class;
         $action = Action::create($params);
 
         return new ActionResource($action);

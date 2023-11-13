@@ -40,7 +40,7 @@ class Translate
             'type' => self::class,
             'name' => 'Translate',
             'icon' => 'fa-solid fa-language',
-            'shortcut' => '',
+            'shortcut' => null,
             'model' => Model::GPT3
         ];
     }

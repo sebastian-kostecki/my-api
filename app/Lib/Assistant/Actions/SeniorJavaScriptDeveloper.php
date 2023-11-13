@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Lib\Assistant\Actions\Assistants;
+namespace App\Lib\Assistant\Actions;
 
 use App\Enums\Assistant\ChatModel as Model;
-use App\Lib\Assistant\Actions\AssistantAction;
+use App\Lib\Assistant\Actions\AbstractAssistant;
 
 class SeniorJavaScriptDeveloper
 {
@@ -19,7 +19,7 @@ class SeniorJavaScriptDeveloper
     public static function getInitAction(): array
     {
         return [
-            'type' => AssistantAction::class,
+            'type' => self::class,
             'name' => 'JavaScript',
             'icon' => 'fa-brands fa-square-js',
             'shortcut' => null,
