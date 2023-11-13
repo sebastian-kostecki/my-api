@@ -5,6 +5,9 @@ namespace App\Models;
 use App\Lib\Apis\OpenAI;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 /**
  * @property string $assistant_remote_id
@@ -19,21 +22,19 @@ class Assistant extends Model
         'assistant_remote_id'
     ];
 
-    public function action()
+    public function action(): BelongsTo
     {
         return $this->belongsTo(Action::class);
     }
 
-    public function connect()
+    public function threads(): HasMany
     {
-        dd($this->action);
+        return $this->hasMany(Thread::class);
+    }
 
-
-
-        if ($this->assistant_remote_id) {
-            return $api->assistant()->assistant()->retrieve($this->assistant_remote_id);
-        }
-
+    public function latestThread(): HasOne
+    {
+        return $this->hasOne(Thread::class)->latestOfMany();
     }
 
     /**
