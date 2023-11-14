@@ -11,7 +11,8 @@ class Thread extends Model
 
     protected $fillable = [
         'assistant_id',
-        'remote_id'
+        'remote_id',
+        'description'
     ];
 
 
