@@ -1,6 +1,5 @@
 <?php
 
-use App\Models\Assistant;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -12,11 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('threads', function (Blueprint $table) {
+        Schema::create('messages', function (Blueprint $table) {
             $table->id();
-            $table->foreignIdFor(Assistant::class)->index();
+            $table->foreignIdFor(\App\Models\Thread::class)->index();
             $table->string('remote_id')->index();
+            $table->text('question');
+            $table->text('answer')->nullable();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
@@ -25,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('threads');
+        Schema::dropIfExists('messages');
     }
 };
