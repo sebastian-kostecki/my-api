@@ -24,16 +24,19 @@ class DefaultAssistant extends AbstractAction implements AssistantInterface
      */
     public function execute(): void
     {
-        try {
-            $this->assistant->conversation->saveQuestion($this->assistant->query);
-            $this->assistant->conversation->updateSystemPrompt([$this->getSystemPrompt()]);
-            $this->sendRequest();
-            $this->assistant->setResponse($this->response);
-            $this->assistant->conversation->saveAnswer($this->response);
-            $this->assistant->saveAnswerToDatabase();
-        } catch (Exception $exception) {
-            $this->assistant->setResponse($exception->getMessage());
-        }
+        dd($this);
+
+
+//        try {
+//            $this->assistant->conversation->saveQuestion($this->assistant->query);
+//            $this->assistant->conversation->updateSystemPrompt([$this->getSystemPrompt()]);
+//            $this->sendRequest();
+//            $this->assistant->setResponse($this->response);
+//            $this->assistant->conversation->saveAnswer($this->response);
+//            $this->assistant->saveAnswerToDatabase();
+//        } catch (Exception $exception) {
+//            $this->assistant->setResponse($exception->getMessage());
+//        }
     }
 
     /**

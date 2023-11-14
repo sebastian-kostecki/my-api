@@ -2,7 +2,6 @@
 
 namespace App\Lib\Assistant\Actions;
 
-use App\Enums\Assistant\ChatModel;
 use App\Enums\Assistant\ChatModel as Model;
 
 class BugScanner extends DefaultAssistant

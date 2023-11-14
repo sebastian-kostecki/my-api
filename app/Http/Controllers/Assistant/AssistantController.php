@@ -27,16 +27,9 @@ class AssistantController extends Controller
     {
         $params = $request->validated();
 
-        /**
-         * na wejście: action + query
-         */
-
-
-
-//        $this->assistant->setQuery($params['query']);
-//        $this->assistant->setAction($params['action']);
-//        $this->assistant->setType();
-//        $this->assistant->execute();
+        $this->assistant->setQuery($params['query']);
+        $this->assistant->setAction($params['action']);
+        $this->assistant->execute();
 //
 //        return new JsonResponse([
 //            'data' => $this->assistant->getResponse()

@@ -41,7 +41,7 @@ class Forget
     protected function getPoint(): void
     {
         $embedding = $this->assistant->api->embeddings()->create($this->assistant->query);
-        $response = $this->assistant->database->points()->searchPoints($embedding, $this->assistant->category, 1);
+        $response = $this->assistant->vectorDatabase->points()->searchPoints($embedding, $this->assistant->category, 1);
         $this->point = collect($response)->first();
     }
 
@@ -60,6 +60,6 @@ class Forget
      */
     protected function deleteFromDatabase(): void
     {
-        $this->assistant->database->points()->deletePoint($this->point->id);
+        $this->assistant->vectorDatabase->points()->deletePoint($this->point->id);
     }
 }

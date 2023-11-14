@@ -6,7 +6,7 @@ use App\Enums\Assistant\ChatModel as Model;
 use App\Enums\Assistant\Type;
 use App\Lib\Apis\OpenAI;
 use App\Lib\Assistant\Assistant\Forget;
-use App\Lib\Assistant\Assistant\Query;
+use App\Lib\Assistant\Actions\Query;
 use App\Lib\Assistant\Assistant\Save;
 use App\Lib\Connections\Qdrant;
 use App\Lib\Exceptions\ConnectionException;
@@ -21,25 +21,54 @@ class Assistant
     protected const DATABASE_NAME = 'myapi';
 
     public OpenAI $api;
-    public Qdrant $database;
-    public Conversation $conversation;
+    public Qdrant $vectorDatabase;
 
+    private string $query;
+    private ?Action $action;
 
     public function __construct()
     {
         $this->api = new OpenAI();
-        $this->database = new Qdrant(self::DATABASE_NAME);
-        $this->conversation = new Conversation();
+        $this->vectorDatabase = new Qdrant(self::DATABASE_NAME);
     }
 
-    public function execute(string $query, ?string $action)
+    /**
+     * @return void
+     */
+    public function execute(): void
     {
-        if (!$action) {
-            //standardowa akcja
+        if (!$this->action) {
+            $action = new Query($this);
         } else {
-            $action = Action::type($action)->first();
-            //wykonujemy akcję
+            $action = $this->action->factory($this);
         }
+        $action->execute();
+    }
+
+    /**
+     * @param string $query
+     * @return void
+     */
+    public function setQuery(string $query): void
+    {
+        $this->query = $query;
+    }
+
+    /**
+     * @param string|null $action
+     * @return void
+     */
+    public function setAction(?string $action): void
+    {
+        $this->action = Action::type($action)->first();
+    }
+
+    /**
+     * @return string
+     */
+    public function getQuery(): string
+    {
+        return $this->query;
     }
 
 

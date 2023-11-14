@@ -16,15 +16,4 @@ interface ActionInterface
      * @return void
      */
     public function execute(): void;
-
-    /**
-     * @return array{
-     *     type: string,
-     *     name: string,
-     *     icon: string,
-     *     shortcut: string,
-     *     model: ChatModel
-     * }
-     */
-    public static function getInitAction(): array;
 }

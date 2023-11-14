@@ -49,7 +49,7 @@ class Translate extends AbstractAction
     public function detectLanguage(): string
     {
         $detector = new Language();
-        $result = $detector->detect($this->assistant->query)->bestResults()->close();
+        $result = $detector->detect($this->assistant->getQuery())->bestResults()->close();
         return key($result);
     }
 
@@ -59,7 +59,7 @@ class Translate extends AbstractAction
      */
     protected function translateFromPolishToEnglish(): string
     {
-        return $this->translator->translateText($this->assistant->query, 'pl', 'en-GB')->text;
+        return $this->translator->translateText($this->assistant->getQuery(), 'pl', 'en-GB')->text;
     }
 
     /**
@@ -68,6 +68,6 @@ class Translate extends AbstractAction
      */
     protected function translateFromEnglishToPolish(): string
     {
-        return $this->translator->translateText($this->assistant->query, null, 'pl')->text;
+        return $this->translator->translateText($this->assistant->getQuery(), null, 'pl')->text;
     }
 }

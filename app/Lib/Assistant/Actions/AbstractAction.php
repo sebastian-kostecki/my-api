@@ -3,9 +3,10 @@
 namespace App\Lib\Assistant\Actions;
 
 use App\Enums\Assistant\ChatModel;
+use App\Lib\Interfaces\ActionInterface;
 use App\Lib\Interfaces\AssistantInterface;
 
-abstract class AbstractAction
+abstract class AbstractAction implements ActionInterface
 {
     public const NAME = "AbstractAction";
     public const ICON = null;

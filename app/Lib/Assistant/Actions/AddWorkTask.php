@@ -76,7 +76,7 @@ class AddWorkTask extends AbstractAction
             ],
             [
                 'role' => 'user',
-                'content' => $this->assistant->query
+                'content' => $this->assistant->getQuery()
             ]
         ];
         $temperature = 0.1;

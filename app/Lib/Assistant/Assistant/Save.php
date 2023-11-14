@@ -105,7 +105,7 @@ class Save
                 'category' => $this->assistant->category
             ]
         ];
-        $this->assistant->database->points()->upsertPoint($point);
+        $this->assistant->vectorDatabase->points()->upsertPoint($point);
     }
 
     /**
