@@ -15,8 +15,8 @@ return new class extends Migration
             $table->id();
             $table->foreignIdFor(\App\Models\Thread::class)->index();
             $table->string('remote_id')->index();
-            $table->text('question');
-            $table->text('answer')->nullable();
+            $table->enum('role', ['user', 'assistant']);
+            $table->text('text');
             $table->timestamps();
             $table->softDeletes();
         });

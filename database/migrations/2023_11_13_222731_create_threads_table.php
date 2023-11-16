@@ -16,7 +16,7 @@ return new class extends Migration
             $table->id();
             $table->foreignIdFor(Assistant::class)->index();
             $table->string('remote_id')->index();
-            $table->string('description');
+            $table->string('description')->nullable();
             $table->timestamps();
         });
     }
