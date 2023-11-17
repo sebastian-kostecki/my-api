@@ -20,19 +20,20 @@ class AssistantController extends Controller
     /**
      * @param AssistantRequest $request
      * @return JsonResponse
-     * @throws ConnectionException
-     * @throws JsonException
      */
     public function query(AssistantRequest $request): JsonResponse
     {
         $params = $request->validated();
 
         $this->assistant->setQuery($params['query']);
+        if (!empty($params['thread'])) {
+            $this->assistant->setThread($params['thread']);
+        }
         $this->assistant->setAction($params['action']);
         $this->assistant->execute();
-//
-//        return new JsonResponse([
-//            'data' => $this->assistant->getResponse()
-//        ]);
+
+        return new JsonResponse([
+            'data' => $this->assistant->getResponse()
+        ]);
     }
 }
