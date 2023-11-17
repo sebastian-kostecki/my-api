@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Lib\Apis\OpenAI;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -12,6 +13,8 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 /**
  * @property string $assistant_remote_id
  * @property int $action_id
+ * @property Collection $threads
+ * @property int $id
  */
 class Assistant extends Model
 {
@@ -48,5 +51,34 @@ class Assistant extends Model
         $this->action_id = 0;
         $this->assistant_remote_id = $assistant['id'];
         $this->save();
+    }
+
+    /**
+     * @param int|null $threadId
+     * @return Thread
+     */
+    public function getOrCreateThread(?int $threadId): Thread
+    {
+        if ($thread = $this->threads->where('id', $threadId)->where('assistant_id', $this->id)->first()) {
+            return $thread;
+        }
+        $remoteThread = Thread::remoteCreate();
+        return Thread::create([
+            'assistant_id' => $this->id,
+            'remote_id' => $remoteThread['id']
+        ]);
+    }
+
+    /**
+     * @param string $remoteThreadId
+     * @return void
+     */
+    public function run(string $remoteThreadId): void
+    {
+        $startedRun = OpenAI::factory()->assistant()->run()->create($remoteThreadId, $this->assistant_remote_id);
+        do {
+            sleep(2);
+            $run = OpenAI::factory()->assistant()->run()->retrieve($remoteThreadId, $startedRun['id']);
+        } while($run['status'] !== 'completed');
     }
 }

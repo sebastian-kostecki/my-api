@@ -4,11 +4,14 @@ namespace App\Lib\Assistant\Actions;
 
 use App\Lib\Assistant\Assistant;
 use App\Lib\Interfaces\AssistantInterface;
-use App\Models\Conversation;
+use App\Models\Action;
+use App\Models\Thread;
 
 class DefaultAssistant extends AbstractAction implements AssistantInterface
 {
     protected Assistant $assistant;
+    protected ?Action $action;
+    protected ?Thread $thread;
     protected string $response;
 
     /**
@@ -17,6 +20,8 @@ class DefaultAssistant extends AbstractAction implements AssistantInterface
     public function __construct(Assistant $assistant)
     {
         $this->assistant = $assistant;
+        $this->action = Action::type(static::class)->first();
+        $this->thread = $this->action->assistant->getOrCreateThread($this->assistant->getThreadId());
     }
 
     /**
@@ -24,32 +29,9 @@ class DefaultAssistant extends AbstractAction implements AssistantInterface
      */
     public function execute(): void
     {
-        dd($this);
-
-
-//        try {
-//            $this->assistant->conversation->saveQuestion($this->assistant->query);
-//            $this->assistant->conversation->updateSystemPrompt([$this->getSystemPrompt()]);
-//            $this->sendRequest();
-//            $this->assistant->setResponse($this->response);
-//            $this->assistant->conversation->saveAnswer($this->response);
-//            $this->assistant->saveAnswerToDatabase();
-//        } catch (Exception $exception) {
-//            $this->assistant->setResponse($exception->getMessage());
-//        }
+        $this->thread->createMessage($this->assistant->getQuery());
+        $this->action->assistant->run($this->thread->remote_id);
+        $response = $this->thread->getLastMessage();
+        $this->assistant->setResponse($response->text);
     }
-
-    /**
-     * @return void
-     * @throws JsonException
-     */
-    protected function sendRequest(): void
-    {
-        $model = $this->getModel();
-        $messages = Conversation::getConversationsLastFiveMinutes();
-        $this->assistant->api->chat()->create($model, $messages);
-        $this->response = $this->assistant->api->chat()->getResponse();
-    }
-
-
 }

@@ -20,6 +20,14 @@ class OpenAI
     }
 
     /**
+     * @return OpenAI
+     */
+    public static function factory(): OpenAI
+    {
+        return new self();
+    }
+
+    /**
      * @return Chat
      */
     public function chat(): Chat
