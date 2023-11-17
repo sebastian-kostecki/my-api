@@ -33,5 +33,6 @@ class DefaultAssistant extends AbstractAction implements AssistantInterface
         $this->action->assistant->run($this->thread->remote_id);
         $response = $this->thread->getLastMessage();
         $this->assistant->setResponse($response->text);
+        $this->assistant->setThread($this->thread->id);
     }
 }

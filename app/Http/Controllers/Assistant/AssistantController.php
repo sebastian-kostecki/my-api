@@ -33,7 +33,8 @@ class AssistantController extends Controller
         $this->assistant->execute();
 
         return new JsonResponse([
-            'data' => $this->assistant->getResponse()
+            'message' => $this->assistant->getResponse(),
+            'thread' => $this->assistant->getThreadId()
         ]);
     }
 }
