@@ -12,8 +12,6 @@ use JsonException;
 
 class Assistant
 {
-    protected const DATABASE_NAME = 'myapi';
-
     public OpenAI $api;
     public Qdrant $vectorDatabase;
 
@@ -26,7 +24,7 @@ class Assistant
     public function __construct()
     {
         $this->api = new OpenAI();
-        $this->vectorDatabase = new Qdrant(self::DATABASE_NAME);
+        $this->vectorDatabase = new Qdrant(config('services.qdrant.database_name'));
     }
 
     /**

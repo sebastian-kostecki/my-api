@@ -31,4 +31,13 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
+    'qdrant' => [
+        'database_name' => env('QDRANT_DATABASE_NAME', 'myapi')
+    ],
+
+    'open_ai' => [
+        'api_key' => env('OPENAI_API_KEY'),
+        'organization' => env('OPENAI_ORGANIZATION'),
+    ]
+
 ];

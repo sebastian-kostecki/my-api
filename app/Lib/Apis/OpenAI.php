@@ -16,7 +16,7 @@ class OpenAI
 
     public function __construct()
     {
-        $this->request = Http::withToken(config('openai.api_key'));
+        $this->request = Http::withToken(config('services.open_ai.api_key'));
     }
 
     /**
