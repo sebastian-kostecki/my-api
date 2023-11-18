@@ -6,27 +6,53 @@ use App\Enums\Assistant\ChatModel as Model;
 use App\Lib\Assistant\Assistant;
 use App\Lib\Connections\Notion\PanelAlphaIssuesTable;
 use App\Lib\Connections\Notion\PanelAlphaTasksTable;
+use App\Lib\Interfaces\ActionInterface;
 use Exception;
 use Illuminate\Support\Collection;
 use JsonException;
 use stdClass;
 
-class AddWorkTask extends AbstractAction
+class AddWorkTask extends AbstractAction implements ActionInterface
 {
     public const NAME = 'New Task';
     public const ICON = 'fa-solid fa-check';
-    public const SHORTCUT = 'CommandOrControl+Shift+Q';
     public const MODEL = Model::GPT3;
 
     protected Assistant $assistant;
     protected Collection $issues;
     protected stdClass $task;
 
+    /**
+     * @var array
+     */
+    public static array $configFields = [
+        'name' => [
+            'name' => 'name',
+            'label' => 'Name',
+            'type' => 'text',
+            'default' => self::NAME
+        ],
+        'icon' => [
+            'name' => 'icon',
+            'label' => 'Icon',
+            'type' => 'text',
+            'default' => self::ICON
+        ],
+        'model' => [
+            'name' => 'model',
+            'label' => 'Model',
+            'type' => 'model',
+            'default' => self::MODEL
+        ]
+    ];
+
 
     public function __construct(Assistant $assistant)
     {
         $this->assistant = $assistant;
     }
+
+
 
     public static function getInitAction(): array
     {

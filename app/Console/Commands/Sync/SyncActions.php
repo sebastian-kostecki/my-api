@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands\Sync;
 
+use App\Lib\Interfaces\AssistantInterface;
 use App\Models\Action;
 use App\Models\Assistant;
 use Illuminate\Console\Command;
@@ -66,13 +67,16 @@ class SyncActions extends Command
      */
     protected function createOrIgnore(string $actionClass): void
     {
-        $initActionData = $actionClass::getInit();
+        $initActionData = array_map(function ($value) {
+            return $value['default'];
+        }, $actionClass::getConfigFields());
+
         $this->output->write($initActionData['name'] . ": ");
         if ($this->isIntegrationInDatabase($actionClass)) {
-            $this->syncModel($initActionData);
+            $this->syncModel($actionClass, $initActionData);
             return;
         }
-        $this->createIntegration($initActionData);
+        $this->createIntegration($actionClass, $initActionData);
     }
 
 
@@ -91,12 +95,13 @@ class SyncActions extends Command
     }
 
     /**
+     * @param string $actionClass
      * @param array $params
      * @return void
      */
-    protected function syncModel(array $params): void
+    protected function syncModel(string $actionClass, array $params): void
     {
-        $action = Action::where('type', $params['type'])->first();
+        $action = Action::where('type', $actionClass)->first();
         try {
             $action->model;
         } catch (\Throwable $throwable) {
@@ -106,14 +111,23 @@ class SyncActions extends Command
     }
 
     /**
+     * @param string $actionClass
      * @param array $params
      * @return void
      */
-    protected function createIntegration(array $params): void
+    protected function createIntegration(string $actionClass, array $params): void
     {
-        $newAction = Action::create($params);
+        $newAction = Action::create([
+            'type' => $actionClass,
+            'name' => $params['name'],
+            'icon' => $params['icon'] ?? null,
+            'shortcut' => $params['shortcut'] ?? null,
+            'instructions' => $params['instructions'] ?? null,
+            'enabled' => true,
+            'hidden' => $params['hidden'] ?? false
+        ]);
 
-        if ($params['assistant']) {
+        if ($this->isAssistant($actionClass)) {
             $assistant = new Assistant();
             $assistant->create($params);
             $newAction->assistant()->save($assistant);
@@ -132,5 +146,14 @@ class SyncActions extends Command
             $this->actionsInDatabase->map->delete();
             $this->info("Removed {$oldRecords} old records from database");
         }
+    }
+
+    /**
+     * @param string $actionClass
+     * @return bool
+     */
+    protected function isAssistant(string $actionClass): bool
+    {
+        return in_array(AssistantInterface::class, class_implements($actionClass), true);
     }
 }

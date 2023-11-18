@@ -42,4 +42,12 @@ abstract class AbstractAction implements ActionInterface
             'assistant' => in_array(AssistantInterface::class, class_implements(static::class), true)
         ];
     }
+
+    /**
+     * @return array
+     */
+    public static function getConfigFields(): array
+    {
+        return static::$configFields;
+    }
 }

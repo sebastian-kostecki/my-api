@@ -4,11 +4,12 @@ namespace App\Lib\Assistant\Actions;
 
 use App\Enums\Assistant\ChatModel as Model;
 use App\Lib\Assistant\Assistant;
+use App\Lib\Interfaces\ActionInterface;
 use DeepL\DeepLException;
 use DeepL\Translator;
 use LanguageDetection\Language;
 
-class Translate extends AbstractAction
+class Translate extends AbstractAction implements ActionInterface
 {
     public const NAME = 'Translate';
     public const ICON = 'fa-solid fa-language';
@@ -17,6 +18,21 @@ class Translate extends AbstractAction
     protected Translator $translator;
 
     protected string $text;
+
+    public static array $configFields = [
+        'name' => [
+            'name' => 'name',
+            'label' => 'Name',
+            'type' => 'text',
+            'default' => self::NAME
+        ],
+        'icon' => [
+            'name' => 'icon',
+            'label' => 'Icon',
+            'type' => 'text',
+            'default' => self::ICON
+        ],
+    ];
 
     /**
      * @param Assistant $assistant
