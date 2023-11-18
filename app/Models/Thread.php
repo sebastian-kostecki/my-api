@@ -3,9 +3,11 @@
 namespace App\Models;
 
 use App\Lib\Apis\OpenAI;
+use App\Enums\Assistant\ChatModel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use JsonException;
 
 /**
  * @method static findOrFail(int|null $threadId)
@@ -14,6 +16,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property int $assistant_id
  * @property string $remote_id
  * @property int $id
+ * @property string|null $description
  */
 class Thread extends Model
 {
@@ -71,5 +74,52 @@ class Thread extends Model
             'role' => $lastRemoteMessage['role'],
             'text' => $lastRemoteMessage['content'][0]['text']['value']
         ]);
+    }
+
+    /**
+     * @param string $query
+     * @return void
+     * @throws JsonException
+     */
+    public function createDescription(string $query): void
+    {
+        if (!$this->description) {
+            $api = OpenAI::factory();
+            $model = ChatModel::GPT3;
+            $messages = [
+                [
+                    'role' => 'user',
+                    'content' => $query
+                ],
+            ];
+            $temperature = 0.7;
+            $tools = [
+                [
+                    'type' => 'function',
+                    'function' => [
+                        'name' => 'generate_short_description',
+                        'description' => 'Generates a short description (maximum three words) for a given text',
+                        'parameters' => [
+                            'type' => 'object',
+                            'properties' => [
+                                'input_text' => [
+                                    'type' => 'string',
+                                    'description' => 'The input text for which a short description will be generated'
+                                ],
+                            ],
+                            'required' => ['input_text'],
+                        ],
+                        'examples' => [
+                            'Array Methods',
+                            'Docker Info'
+                        ],
+                    ]
+                ]
+            ];
+            $response = $api->chat()->create($model, $messages, $temperature, $tools);
+            $result = $api->chat()->getFunctions($response);
+            $this->description = $result->input_text;
+            $this->save();
+        }
     }
 }

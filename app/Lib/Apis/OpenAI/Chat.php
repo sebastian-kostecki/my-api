@@ -29,29 +29,36 @@ class Chat
      * @param array $messages
      * @param float $temperature
      * @param array $functions
-     * @return void
+     * @return stdClass
      * @throws JsonException
      */
-    public function create(ChatModel $model, array $messages, float $temperature = 0.5, array $functions = []): void
+    public function create(ChatModel $model, array $messages, float $temperature = 0.5, array $tools = []): stdClass
     {
         $url = $this->url . '/completions';
         $params['model'] = $model->value;
         $params['temperature'] = $temperature;
         $params['messages'] = $messages;
-        if (!empty($functions)) {
-            $params['functions'] = $functions;
+        if (!empty($tools)) {
+            $params['tools'] = $tools;
+            $params['tool_choice'] = [
+                'type' => 'function',
+                'function' => [
+                    'name' => $tools[0]['function']['name']
+                ]
+            ];
         }
         $result = $this->request->post($url, $params);
-        $this->response = json_decode($result->body(), false, 512, JSON_THROW_ON_ERROR);
+        return json_decode($result->body(), false, 512, JSON_THROW_ON_ERROR);
     }
 
     /**
+     * @param stdClass $response
      * @return stdClass
      * @throws JsonException
      */
-    public function getFunctions(): stdClass
+    public function getFunctions(stdClass $response): stdClass
     {
-        return json_decode($this->response->choices[0]->message->function_call->arguments, false, 512, JSON_THROW_ON_ERROR);
+        return json_decode($response->choices[0]->message->tool_calls[0]->function->arguments, false, 512, JSON_THROW_ON_ERROR);
     }
 
     /**

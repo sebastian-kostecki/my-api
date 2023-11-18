@@ -18,12 +18,16 @@ class DefaultAssistant extends AbstractAction implements AssistantInterface
 
     /**
      * @param Assistant $assistant
+     * @throws JsonException
      */
     public function __construct(Assistant $assistant)
     {
         $this->assistant = $assistant;
         $this->action = Action::type(static::class)->first();
         $this->thread = $this->action->assistant->getOrCreateThread($this->assistant->getThreadId());
+        if (!$this->assistant->getThreadId()) {
+            $this->thread->createDescription($this->assistant->getQuery());
+        }
     }
 
     /**
