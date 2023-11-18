@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands\Sync;
 
+use App\Enums\Assistant\ChatModel;
 use App\Lib\Interfaces\AssistantInterface;
 use App\Models\Action;
 use App\Models\Assistant;
@@ -121,6 +122,7 @@ class SyncActions extends Command
             'type' => $actionClass,
             'name' => $params['name'],
             'icon' => $params['icon'] ?? null,
+            'model' => $params['model'] ?? ChatModel::GPT3,
             'shortcut' => $params['shortcut'] ?? null,
             'instructions' => $params['instructions'] ?? null,
             'enabled' => true,

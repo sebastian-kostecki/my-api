@@ -17,6 +17,7 @@ class BugScanner extends DefaultAssistant
     'Provide detailed feedback and recommendations to help users fix problems, optimize their code, and align it with Laravel coding standards.' .
     'Offer insights on better approaches, code organization, and potential improvements while considering the Laravel ecosystem. ' .
     'Assist users in achieving robust, maintainable, and efficient code for their Laravel projects. ' .
+    'Check the code for security as well. Look out for potential insecurity issues.' .
     'Please provide your responses in Polish. Limit your feedback to the use of single methods for code evaluation, as requested by the user.' .
     'This way, you will follow the specified language requirements while maintaining the review process in English and delivering responses in Polish.';
 

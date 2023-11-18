@@ -37,7 +37,7 @@ class Assistant
         $data = [
             'model' => $params['model'],
             'name' => $params['name'],
-            'instructions' => $params['system_prompt'],
+            'instructions' => $params['instructions'],
             'tools' => [
                 ['type' => 'code_interpreter']
             ]

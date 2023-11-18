@@ -36,7 +36,7 @@ class ActionController extends Controller
             'icon' => 'string|required',
             'shortcut' => 'string|nullable',
             'model' => 'string|required',
-            'system_prompt' => 'string|required',
+            'instructions' => 'string|required',
             'enabled' => 'boolean|required'
         ]);
 

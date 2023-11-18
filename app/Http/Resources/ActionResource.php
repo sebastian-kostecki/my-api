@@ -13,7 +13,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
  * @property string $icon
  * @property string $model
  * @property string $shortcut
- * @property string $system_prompt
+ * @property string $instructions
  * @property boolean $enabled
  */
 class ActionResource extends JsonResource
@@ -32,8 +32,8 @@ class ActionResource extends JsonResource
             'icon' => $this->icon,
             'model' => $this->model,
             'shortcut' => $this->shortcut,
-            'has_system_prompt' => isset($this->type::$systemPrompt),
-            'instructions' => $this->system_prompt,
+            'has_system_prompt' => isset($this->type::$instuctions),
+            'instructions' => $this->instructions,
             'enabled' => $this->enabled,
             'custom' => $this->type === DefaultAssistant::class,
             'config_fields' => $this->type::getConfigFields()

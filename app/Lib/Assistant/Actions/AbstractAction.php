@@ -12,7 +12,7 @@ abstract class AbstractAction implements ActionInterface
     public const ICON = null;
     public const MODEL = ChatModel::GPT4;
     public const SHORTCUT = null;
-    public const SYSTEM_PROMPT = null;
+    public const INSTRUCTIONS = null;
     public const HIDDEN = false;
 
     /**
@@ -22,7 +22,7 @@ abstract class AbstractAction implements ActionInterface
      *     icon: string|null,
      *     model: ChatModel,
      *     shortcut: string|null,
-     *     system_prompt: string|null,
+     *     instructions: string|null,
      *     enabled: bool,
      *     hidden: bool,
      *     assistant: bool
@@ -36,7 +36,7 @@ abstract class AbstractAction implements ActionInterface
             'icon' => static::ICON,
             'model' => static::MODEL,
             'shortcut' => static::SHORTCUT,
-            'system_prompt' => static::SYSTEM_PROMPT,
+            'instructions' => static::INSTRUCTIONS,
             'enabled' => true,
             'hidden' => static::HIDDEN ?? false,
             'assistant' => in_array(AssistantInterface::class, class_implements(static::class), true)
