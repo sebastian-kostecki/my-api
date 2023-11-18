@@ -3,9 +3,11 @@
 namespace App\Lib\Assistant\Actions;
 
 use App\Lib\Assistant\Assistant;
+use App\Lib\Exceptions\ConnectionException;
 use App\Lib\Interfaces\AssistantInterface;
 use App\Models\Action;
 use App\Models\Thread;
+use JsonException;
 
 class DefaultAssistant extends AbstractAction implements AssistantInterface
 {
@@ -26,6 +28,8 @@ class DefaultAssistant extends AbstractAction implements AssistantInterface
 
     /**
      * @return void
+     * @throws ConnectionException
+     * @throws JsonException
      */
     public function execute(): void
     {
@@ -34,5 +38,6 @@ class DefaultAssistant extends AbstractAction implements AssistantInterface
         $response = $this->thread->getLastMessage();
         $this->assistant->setResponse($response->text);
         $this->assistant->setThread($this->thread->id);
+        $this->assistant->saveResponseToVectorDatabase();
     }
 }

@@ -5,7 +5,10 @@ namespace App\Lib\Assistant;
 use App\Lib\Apis\OpenAI;
 use App\Lib\Assistant\Actions\Query;
 use App\Lib\Connections\Qdrant;
+use App\Lib\Exceptions\ConnectionException;
 use App\Models\Action;
+use Illuminate\Support\Str;
+use JsonException;
 
 class Assistant
 {
@@ -28,6 +31,8 @@ class Assistant
 
     /**
      * @return void
+     * @throws ConnectionException
+     * @throws JsonException
      */
     public function execute(): void
     {
@@ -97,5 +102,24 @@ class Assistant
     public function setResponse(string $response): void
     {
         $this->response = $response;
+    }
+
+    /**
+     * @return void
+     * @throws JsonException
+     * @throws ConnectionException
+     */
+    public function saveResponseToVectorDatabase(): void
+    {
+        $embeddings = $this->api->embeddings()->create($this->response);
+        $point = [
+            "id" => Str::uuid()->toString(),
+            "vector" => $embeddings,
+            "payload" => [
+                "text" => $this->response,
+                'category' => 'conversation'
+            ]
+        ];
+        $this->vectorDatabase->points()->upsertPoint($point);
     }
 }
