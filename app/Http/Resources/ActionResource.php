@@ -33,9 +33,10 @@ class ActionResource extends JsonResource
             'model' => $this->model,
             'shortcut' => $this->shortcut,
             'has_system_prompt' => isset($this->type::$systemPrompt),
-            'system_prompt' => $this->system_prompt,
+            'instructions' => $this->system_prompt,
             'enabled' => $this->enabled,
-            'custom' => $this->type === DefaultAssistant::class
+            'custom' => $this->type === DefaultAssistant::class,
+            'config_fields' => $this->type::getConfigFields()
         ];
     }
 }

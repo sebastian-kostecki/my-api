@@ -15,9 +15,9 @@ class Assistant
     public OpenAI $api;
     public Qdrant $vectorDatabase;
 
-    private string $query;
-    private int $threadId;
-    private ?Action $action;
+    private string $query = "";
+    private int $threadId = 0;
+    private ?Action $action = null;
 
     private string $response;
 

@@ -12,7 +12,7 @@ use Illuminate\Support\Collection;
 use JsonException;
 use stdClass;
 
-class AddWorkTask extends AbstractAction implements ActionInterface
+class AddWorkTask extends AbstractAction
 {
     public const NAME = 'New Task';
     public const ICON = 'fa-solid fa-check';

@@ -9,7 +9,7 @@ use DeepL\DeepLException;
 use DeepL\Translator;
 use LanguageDetection\Language;
 
-class Translate extends AbstractAction implements ActionInterface
+class Translate extends AbstractAction
 {
     public const NAME = 'Translate';
     public const ICON = 'fa-solid fa-language';
