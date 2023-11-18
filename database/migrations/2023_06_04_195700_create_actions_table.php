@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('icon')->nullable();
             $table->string('model');
             $table->string('shortcut')->nullable();
-            $table->text('system_prompt')->nullable();
+            $table->text('instructions')->nullable();
             $table->boolean('enabled')->default(1);
             $table->boolean('hidden')->default(0);
             $table->timestamps();

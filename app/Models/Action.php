@@ -30,7 +30,7 @@ class Action extends Model
         'icon',
         'shortcut',
         'model',
-        'system_prompt',
+        'instructions',
         'enabled',
         'hidden'
     ];
