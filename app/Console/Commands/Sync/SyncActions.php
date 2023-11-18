@@ -67,7 +67,7 @@ class SyncActions extends Command
      */
     protected function createOrIgnore(string $actionClass): void
     {
-        $initActionData = array_map(function ($value) {
+        $initActionData = array_map(static function ($value) {
             return $value['default'];
         }, $actionClass::getConfigFields());
 
