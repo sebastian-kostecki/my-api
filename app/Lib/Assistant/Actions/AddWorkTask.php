@@ -3,7 +3,6 @@
 namespace App\Lib\Assistant\Actions;
 
 use App\Enums\Assistant\ChatModel as Model;
-use App\Lib\Assistant\Actions\AbstractActions\AbstractAction;
 use App\Lib\Assistant\Assistant;
 use App\Lib\Connections\Notion\PanelAlphaIssuesTable;
 use App\Lib\Connections\Notion\PanelAlphaTasksTable;
@@ -13,12 +12,39 @@ use Illuminate\Support\Collection;
 use JsonException;
 use stdClass;
 
-class AddWorkTask extends AbstractAction implements ActionInterface
+class AddWorkTask extends AbstractAction
 {
-    protected Assistant $assistant;
+    public const NAME = 'New Task';
+    public const ICON = 'fa-solid fa-check';
+    public const MODEL = Model::GPT3;
 
+    protected Assistant $assistant;
     protected Collection $issues;
     protected stdClass $task;
+
+    /**
+     * @var array
+     */
+    public static array $configFields = [
+        'name' => [
+            'name' => 'name',
+            'label' => 'Name',
+            'type' => 'text',
+            'default' => self::NAME
+        ],
+        'icon' => [
+            'name' => 'icon',
+            'label' => 'Icon',
+            'type' => 'text',
+            'default' => self::ICON
+        ],
+        'model' => [
+            'name' => 'model',
+            'label' => 'Model',
+            'type' => 'model',
+            'default' => self::MODEL
+        ]
+    ];
 
 
     public function __construct(Assistant $assistant)
@@ -26,9 +52,12 @@ class AddWorkTask extends AbstractAction implements ActionInterface
         $this->assistant = $assistant;
     }
 
+
+
     public static function getInitAction(): array
     {
         return [
+            'type' => self::class,
             'name' => 'New Task',
             'icon' => 'fa-solid fa-check',
             'shortcut' => 'CommandOrControl+Shift+Q',
@@ -73,7 +102,7 @@ class AddWorkTask extends AbstractAction implements ActionInterface
             ],
             [
                 'role' => 'user',
-                'content' => $this->assistant->query
+                'content' => $this->assistant->getQuery()
             ]
         ];
         $temperature = 0.1;

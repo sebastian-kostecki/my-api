@@ -32,15 +32,16 @@ Route::post('/login', function (Request $request) {
 Route::post('/slack/message', [\App\Http\Controllers\Assistant\AssistantController::class, 'getMessage']);
 
 Route::get('/test', function () {
-//    $request = new \App\Lib\Apis\OpenAI\Request();
-//    $request->setMessages([
-//        [
-//            'role' => 'user',
-//            'content' => 'Hello!'
-//        ]
-//    ]);
-//    $request->chat();
-//    dd($request->getContent());
+    $result = "That's fine";
 
+    $api = new \App\Lib\Apis\OpenAI();
+    $result = $api->assistant()->message()->list('thread_LFkvaI8IcobmuSpjb9Hcoy6S');
+    //$result = $api->assistant()->messages()->create('thread_LFkvaI8IcobmuSpjb9Hcoy6S', 'Co to jest docker?');
+    //$result = $api->assistant()->run()->retrieve('thread_LFkvaI8IcobmuSpjb9Hcoy6S', 'run_ptWd6WuCXta1bH3Ce7JnDhdy');
+
+
+
+
+    dd($result);
 });
 

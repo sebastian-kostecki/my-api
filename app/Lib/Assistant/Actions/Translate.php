@@ -3,20 +3,36 @@
 namespace App\Lib\Assistant\Actions;
 
 use App\Enums\Assistant\ChatModel as Model;
-use App\Lib\Assistant\Actions\AbstractActions\AbstractAction;
 use App\Lib\Assistant\Assistant;
 use App\Lib\Interfaces\ActionInterface;
 use DeepL\DeepLException;
 use DeepL\Translator;
 use LanguageDetection\Language;
 
-class Translate extends AbstractAction implements ActionInterface
+class Translate extends AbstractAction
 {
-    public Assistant $assistant;
+    public const NAME = 'Translate';
+    public const ICON = 'fa-solid fa-language';
 
+    public Assistant $assistant;
     protected Translator $translator;
 
     protected string $text;
+
+    public static array $configFields = [
+        'name' => [
+            'name' => 'name',
+            'label' => 'Name',
+            'type' => 'text',
+            'default' => self::NAME
+        ],
+        'icon' => [
+            'name' => 'icon',
+            'label' => 'Icon',
+            'type' => 'text',
+            'default' => self::ICON
+        ],
+    ];
 
     /**
      * @param Assistant $assistant
@@ -26,24 +42,6 @@ class Translate extends AbstractAction implements ActionInterface
     {
         $this->assistant = $assistant;
         $this->translator = new Translator(env('DEEPL_TOKEN'));
-    }
-
-    /**
-     * @return array{
-     *     name: string,
-     *     icon: string,
-     *     shortcut: string,
-     *     model: Model
-     * }
-     */
-    public static function getInitAction(): array
-    {
-        return [
-            'name' => 'Translate',
-            'icon' => 'fa-solid fa-language',
-            'shortcut' => '',
-            'model' => Model::GPT3
-        ];
     }
 
     /**
@@ -67,7 +65,7 @@ class Translate extends AbstractAction implements ActionInterface
     public function detectLanguage(): string
     {
         $detector = new Language();
-        $result = $detector->detect($this->assistant->query)->bestResults()->close();
+        $result = $detector->detect($this->assistant->getQuery())->bestResults()->close();
         return key($result);
     }
 
@@ -77,7 +75,7 @@ class Translate extends AbstractAction implements ActionInterface
      */
     protected function translateFromPolishToEnglish(): string
     {
-        return $this->translator->translateText($this->assistant->query, 'pl', 'en-GB')->text;
+        return $this->translator->translateText($this->assistant->getQuery(), 'pl', 'en-GB')->text;
     }
 
     /**
@@ -86,6 +84,6 @@ class Translate extends AbstractAction implements ActionInterface
      */
     protected function translateFromEnglishToPolish(): string
     {
-        return $this->translator->translateText($this->assistant->query, null, 'pl')->text;
+        return $this->translator->translateText($this->assistant->getQuery(), null, 'pl')->text;
     }
 }
