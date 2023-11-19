@@ -2,6 +2,7 @@
 
 namespace App\Lib\Apis\OpenAI;
 
+use App\Enums\Assistant\ChatModel;
 use Illuminate\Support\Facades\Http;
 use OpenAI\Laravel\Facades\OpenAI;
 use OpenAI\Responses\Chat\CreateResponse;
@@ -11,7 +12,7 @@ class Request
 {
     protected array $messages;
     protected string $input;
-    protected string $model = 'gpt-3.5-turbo';
+    protected string $model = ChatModel::GPT3->value;
     protected float $temperature = 0.5;
     protected CreateResponse|CreateResponseEmbedding $response;
 

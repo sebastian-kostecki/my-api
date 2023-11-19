@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Action;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -11,9 +12,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('notes', function (Blueprint $table) {
+        Schema::create('assistants', function (Blueprint $table) {
             $table->id();
-            $table->text('content');
+            $table->foreignIdFor(Action::class);
+            $table->string('assistant_remote_id');
+            $table->timestamps();
         });
     }
 
@@ -22,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('notes');
+        Schema::dropIfExists('assistants');
     }
 };

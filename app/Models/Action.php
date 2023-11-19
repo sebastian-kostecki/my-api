@@ -5,8 +5,12 @@ namespace App\Models;
 use App\Enums\Assistant\ChatModel;
 use App\Lib\Assistant\Assistant;
 use App\Lib\Interfaces\ActionInterface;
+use App\Models\Assistant as AssistantModel;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 
 /**
@@ -26,36 +30,55 @@ class Action extends Model
         'icon',
         'shortcut',
         'model',
-        'system_prompt',
-        'enabled'
+        'instructions',
+        'enabled',
+        'hidden'
     ];
 
+    /**
+     * @var array
+     */
     protected $casts = [
         'enabled' => 'boolean',
         'model' => ChatModel::class
     ];
 
-    public static function scan(): array
+    /**
+     * The model's default values for attributes.
+     *
+     * @var array
+     */
+    protected $attributes = [
+        'enabled' => true,
+        'hidden' => false,
+    ];
+
+    /**
+     * @return HasOne
+     */
+    public function assistant(): HasOne
     {
-        $namespace = 'App\Lib\Assistant\Actions';
+        return $this->hasOne(AssistantModel::class);
+    }
+
+    /**
+     * @return Collection
+     */
+    public static function scan(): Collection
+    {
         $dir = app_path() . '/Lib/Assistant/Actions';
-        $files = scandir($dir);
+        $files = File::allFiles($dir);
 
-        $actions = [];
-
-        foreach ($files as $file) {
-            if (!Str::endsWith($file, '.php')) {
-                continue;
-            }
-            if (Str::endsWith($file, 'CustomPromptAction.php')) {
-                continue;
-            }
-            $name = Str::beforeLast($file, '.php');
-            $classname = $namespace . '\\' . $name;
-            $actions[] = $classname;
-        }
-
-        return $actions;
+        return collect($files)->filter(function ($file) {
+            return !(Str::startsWith($file->getBasename(),'Default')
+                || Str::startsWith($file->getBasename(),'Abstract'));
+        })->map(function ($file) {
+            $namespace = 'App\Lib\Assistant\Actions';
+            $endClass = $file->getRelativePathname();
+            $endClass = Str::beforeLast($endClass, '.php');
+            $endClass = Str::replace('/', '\\', $endClass);
+            return $namespace . '\\' . $endClass;
+        })->values();
     }
 
     /**

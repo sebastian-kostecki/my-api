@@ -2,6 +2,7 @@
 
 namespace App\Lib\Apis;
 
+use App\Lib\Apis\OpenAI\Assistant;
 use App\Lib\Apis\OpenAI\Chat;
 use App\Lib\Apis\OpenAI\Embedding;
 use Illuminate\Http\Client\PendingRequest;
@@ -12,14 +13,18 @@ class OpenAI
     public const BASEURL = 'https://api.openai.com/v1/';
 
     public PendingRequest $request;
-    protected Chat $chat;
-    protected Embedding $embedding;
 
     public function __construct()
     {
-        $this->request = Http::withToken(config('openai.api_key'));
-        $this->chat = new Chat($this);
-        $this->embedding = new Embedding($this);
+        $this->request = Http::withToken(config('services.open_ai.api_key'));
+    }
+
+    /**
+     * @return OpenAI
+     */
+    public static function factory(): OpenAI
+    {
+        return new self();
     }
 
     /**
@@ -27,9 +32,6 @@ class OpenAI
      */
     public function chat(): Chat
     {
-        if ($this->chat) {
-            return $this->chat;
-        }
         return new Chat($this);
     }
 
@@ -38,9 +40,14 @@ class OpenAI
      */
     public function embeddings(): Embedding
     {
-        if ($this->embedding) {
-            return $this->embedding;
-        }
         return new Embedding($this);
+    }
+
+    /**
+     * @return Assistant
+     */
+    public function assistant(): Assistant
+    {
+        return new Assistant($this);
     }
 }

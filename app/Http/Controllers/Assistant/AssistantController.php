@@ -28,12 +28,15 @@ class AssistantController extends Controller
         $params = $request->validated();
 
         $this->assistant->setQuery($params['query']);
+        if (!empty($params['thread'])) {
+            $this->assistant->setThread($params['thread']);
+        }
         $this->assistant->setAction($params['action']);
-        $this->assistant->setType();
         $this->assistant->execute();
 
         return new JsonResponse([
-            'data' => $this->assistant->getResponse()
+            'message' => $this->assistant->getResponse(),
+            'thread' => $this->assistant->getThreadId()
         ]);
     }
 }

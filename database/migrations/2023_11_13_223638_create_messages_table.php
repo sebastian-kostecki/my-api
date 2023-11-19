@@ -11,12 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('conversations', function (Blueprint $table) {
+        Schema::create('messages', function (Blueprint $table) {
             $table->id();
-            $table->text('question');
-            $table->text('answer')->nullable();
-            $table->boolean('system_prompt')->nullable();
+            $table->foreignIdFor(\App\Models\Thread::class)->index();
+            $table->string('remote_id')->index();
+            $table->enum('role', ['user', 'assistant']);
+            $table->text('text');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
@@ -25,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('conversations');
+        Schema::dropIfExists('messages');
     }
 };

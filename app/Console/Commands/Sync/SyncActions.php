@@ -2,7 +2,10 @@
 
 namespace App\Console\Commands\Sync;
 
+use App\Enums\Assistant\ChatModel;
+use App\Lib\Interfaces\AssistantInterface;
 use App\Models\Action;
+use App\Models\Assistant;
 use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\Collection;
 
@@ -20,77 +23,139 @@ class SyncActions extends Command
      *
      * @var string
      */
-    protected $description = 'Command description';
+    protected $description = 'Synchronize actions';
+
+    private \Illuminate\Support\Collection $actions;
+    private Collection $actionsInDatabase;
+
 
     /**
      * Execute the console command.
      */
     public function handle(): void
     {
-        $this->info("Scanning files...");
+        $this->getActions();
+        $this->getActionsInDatabase();
 
-        $actions = Action::scan();
-        $this->info("Found " . count($actions) . " actions");
-
-        $actionsInDatabase = Action::get()->keyBy('type');
-
-        foreach ($actions as $actionClass) {
-            $initData = $actionClass::getInitAction();
-
-            $this->output->write($initData['name'] . ": ");
-            if ($this->isIntegrationInDatabase($actionsInDatabase, $actionClass)) {
-                continue;
-            }
-            $this->createIntegration($actionClass, $initData);
-        }
-
-        $this->removeOldRecords($actionsInDatabase);
+        $this->actions->each(function ($action) {
+            $this->createOrIgnore($action);
+        });
+        $this->removeOldRecords();
         $this->info("Finished synchronizing actions.");
     }
 
     /**
-     * @param Collection $integrationsInDatabase
-     * @param string $integrationClass
+     * @return void
+     */
+    protected function getActions(): void
+    {
+        $this->info("Scanning files...");
+        $this->actions = Action::scan();
+        $this->info("Found " . $this->actions->count() . " actions");
+    }
+
+    /**
+     * @return void
+     */
+    protected function getActionsInDatabase(): void
+    {
+        $this->actionsInDatabase = Action::get()->keyBy('type');
+    }
+
+    /**
+     * @param string $actionClass
+     * @return void
+     */
+    protected function createOrIgnore(string $actionClass): void
+    {
+        $initActionData = array_map(static function ($value) {
+            return $value['default'];
+        }, $actionClass::getConfigFields());
+
+        $this->output->write($initActionData['name'] . ": ");
+        if ($this->isIntegrationInDatabase($actionClass)) {
+            $this->syncModel($actionClass, $initActionData);
+            return;
+        }
+        $this->createIntegration($actionClass, $initActionData);
+    }
+
+
+    /**
+     * @param string $actionClass
      * @return bool
      */
-    protected function isIntegrationInDatabase(Collection $integrationsInDatabase, string $integrationClass): bool
+    protected function isIntegrationInDatabase(string $actionClass): bool
     {
-        if ($integrationsInDatabase->has($integrationClass)) {
+        if ($this->actionsInDatabase->has($actionClass)) {
             $this->info("already in database");
-            $integrationsInDatabase->forget($integrationClass);
+            $this->actionsInDatabase->forget($actionClass);
             return true;
         }
         return false;
     }
 
     /**
-     * @param string $class
-     * @param array $data
+     * @param string $actionClass
+     * @param array $params
      * @return void
      */
-    protected function createIntegration(string $class, array $data): void
+    protected function syncModel(string $actionClass, array $params): void
     {
-        Action::create([
-            'name' => $data['name'],
-            'type' => $class,
-            'icon' => $data['icon'],
-            'shortcut' => $data['shortcut'],
-            'model' => $data['model'],
-            'system_prompt' => $data['system_prompt'] ?? null,
-            'enabled' => true
+        $action = Action::where('type', $actionClass)->first();
+        try {
+            $action->model;
+        } catch (\Throwable $throwable) {
+            $action->model = $params['model'];
+            $action->save();
+        }
+    }
+
+    /**
+     * @param string $actionClass
+     * @param array $params
+     * @return void
+     */
+    protected function createIntegration(string $actionClass, array $params): void
+    {
+        $newAction = Action::create([
+            'type' => $actionClass,
+            'name' => $params['name'],
+            'icon' => $params['icon'] ?? null,
+            'model' => $params['model'] ?? ChatModel::GPT3,
+            'shortcut' => $params['shortcut'] ?? null,
+            'instructions' => $params['instructions'] ?? null,
+            'enabled' => true,
+            'hidden' => $params['hidden'] ?? false
         ]);
+
+        if ($this->isAssistant($actionClass)) {
+            $assistant = new Assistant();
+            $assistant->create($params);
+            $newAction->assistant()->save($assistant);
+            $newAction->save();
+        }
+
         $this->info("added to database");
     }
 
     /**
-     * @param Collection $integrationsInDatabase
      * @return void
      */
-    protected function removeOldRecords(Collection $integrationsInDatabase): void
+    protected function removeOldRecords(): void
     {
-        if ($oldRecords = count($integrationsInDatabase)) {
-            $integrationsInDatabase->map->delete();
+        if ($oldRecords = count($this->actionsInDatabase)) {
+            $this->actionsInDatabase->map->delete();
             $this->info("Removed {$oldRecords} old records from database");
         }
+    }
+
+    /**
+     * @param string $actionClass
+     * @return bool
+     */
+    protected function isAssistant(string $actionClass): bool
+    {
+        return in_array(AssistantInterface::class, class_implements($actionClass), true);
     }
 }
