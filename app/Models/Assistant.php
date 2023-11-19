@@ -46,11 +46,23 @@ class Assistant extends Model
      */
     public function create(array $params): void
     {
-        $api = new OpenAI();
-        $assistant = $api->assistant()->assistant()->create($params);
+        $assistant = $this->getOrCreateRemote($params);
         $this->action_id = 0;
         $this->assistant_remote_id = $assistant['id'];
         $this->save();
+    }
+
+    public function getOrCreateRemote(array $params)
+    {
+        $list = OpenAI::factory()->assistant()->assistant()->list();
+        if (!empty($list['data'])) {
+            foreach ($list['data'] as $remoteAssistant) {
+                if ($remoteAssistant['name'] === $params['name']) {
+                    return $remoteAssistant;
+                }
+            }
+        }
+        return OpenAI::factory()->assistant()->assistant()->create($params);
     }
 
     /**
