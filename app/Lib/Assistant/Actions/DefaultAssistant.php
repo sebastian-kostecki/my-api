@@ -2,8 +2,9 @@
 
 namespace App\Lib\Assistant\Actions;
 
+use App\Jobs\AssistantRun;
+use App\Lib\Apis\OpenAI;
 use App\Lib\Assistant\Assistant;
-use App\Lib\Exceptions\ConnectionException;
 use App\Lib\Interfaces\AssistantInterface;
 use App\Models\Action;
 use App\Models\Thread;
@@ -32,16 +33,12 @@ class DefaultAssistant extends AbstractAction implements AssistantInterface
 
     /**
      * @return void
-     * @throws ConnectionException
-     * @throws JsonException
      */
     public function execute(): void
     {
         $this->thread->createMessage($this->assistant->getQuery());
-        $this->action->assistant->run($this->thread->remote_id);
-        $response = $this->thread->getLastMessage();
-        $this->assistant->setResponse($response->text);
-        $this->assistant->setThread($this->thread->id);
-        $this->assistant->saveResponseToVectorDatabase();
+        $startedRun = OpenAI::factory()->assistant()->run()->create($this->thread->remote_id, $this->thread->assistant->assistant_remote_id);
+        AssistantRun::dispatch($this->thread, $startedRun);
+        $this->assistant->setResponse('Myślę');
     }
 }

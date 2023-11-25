@@ -6,6 +6,7 @@ use App\Lib\Apis\OpenAI;
 use App\Enums\Assistant\ChatModel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use JsonException;
 
@@ -17,6 +18,7 @@ use JsonException;
  * @property string $remote_id
  * @property int $id
  * @property string|null $description
+ * @property Assistant $assistant
  */
 class Thread extends Model
 {
@@ -34,6 +36,14 @@ class Thread extends Model
     public function messages(): HasMany
     {
         return $this->hasMany(Message::class);
+    }
+
+    /**
+     * @return BelongsTo
+     */
+    public function assistant(): BelongsTo
+    {
+        return $this->belongsTo(Assistant::class);
     }
 
     /**
