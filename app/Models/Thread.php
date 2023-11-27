@@ -72,7 +72,8 @@ class Thread extends Model
             'thread_id' => $this->id,
             'remote_id' => $remoteMessage['id'],
             'role' => $remoteMessage['role'],
-            'text' => $query
+            'text' => $query,
+            'details' => $remoteMessage
         ]);
     }
 
@@ -87,7 +88,8 @@ class Thread extends Model
             'thread_id' => $this->id,
             'remote_id' => $lastRemoteMessage['id'],
             'role' => $lastRemoteMessage['role'],
-            'text' => $lastRemoteMessage['content'][0]['text']['value']
+            'text' => $lastRemoteMessage['content'][0]['text']['value'],
+            'details' => $lastRemoteMessage
         ]);
     }
 

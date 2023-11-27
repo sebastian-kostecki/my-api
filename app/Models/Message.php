@@ -20,6 +20,11 @@ class Message extends Model
         'thread_id',
         'remote_id',
         'role',
-        'text'
+        'text',
+        'details'
+    ];
+
+    protected $casts = [
+        'details' => 'array',
     ];
 }
