@@ -11,10 +11,11 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
 /**
- * @property string $assistant_remote_id
+ * @property string $remote_id
  * @property int $action_id
  * @property Collection $threads
  * @property int $id
+ * @property array $details
  */
 class Assistant extends Model
 {
@@ -22,7 +23,12 @@ class Assistant extends Model
 
     protected $fillable = [
         'action_id',
-        'assistant_remote_id'
+        'remote_id',
+        'details'
+    ];
+
+    protected $casts = [
+        'details' => 'array',
     ];
 
     public function action(): BelongsTo
@@ -48,7 +54,8 @@ class Assistant extends Model
     {
         $assistant = $this->getOrCreateRemote($params);
         $this->action_id = 0;
-        $this->assistant_remote_id = $assistant['id'];
+        $this->remote_id = $assistant['id'];
+        $this->details = $assistant;
         $this->save();
     }
 
@@ -87,7 +94,7 @@ class Assistant extends Model
      */
     public function run(string $remoteThreadId): void
     {
-        $startedRun = OpenAI::factory()->assistant()->run()->create($remoteThreadId, $this->assistant_remote_id);
+        $startedRun = OpenAI::factory()->assistant()->run()->create($remoteThreadId, $this->remote_id);
         do {
             sleep(2);
             $run = OpenAI::factory()->assistant()->run()->retrieve($remoteThreadId, $startedRun['id']);

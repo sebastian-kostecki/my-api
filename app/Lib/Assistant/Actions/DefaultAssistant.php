@@ -37,7 +37,7 @@ class DefaultAssistant extends AbstractAction implements AssistantInterface
     public function execute(): void
     {
         $this->thread->createMessage($this->assistant->getQuery());
-        $startedRun = OpenAI::factory()->assistant()->run()->create($this->thread->remote_id, $this->thread->assistant->assistant_remote_id);
+        $startedRun = OpenAI::factory()->assistant()->run()->create($this->thread->remote_id, $this->thread->assistant->remote_id);
         AssistantRun::dispatch($this->thread, $startedRun);
         $this->assistant->setResponse('Myślę');
     }
