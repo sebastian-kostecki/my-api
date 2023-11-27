@@ -4,7 +4,6 @@ namespace App\Jobs;
 
 use App\Events\SendResponse;
 use App\Lib\Apis\OpenAI;
-use App\Lib\Assistant\Assistant;
 use App\Models\Thread;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -18,8 +17,6 @@ class AssistantRun implements ShouldQueue
 
     private Thread $thread;
     private array $startedRun;
-
-    //private Assistant $assistant;
 
     /**
      * Create a new job instance.
@@ -36,18 +33,20 @@ class AssistantRun implements ShouldQueue
     public function handle(): void
     {
         $run = OpenAI::factory()->assistant()->run()->retrieve($this->thread->remote_id, $this->startedRun['id']);
+
+        if ($run['last_error']){
+            SendResponse::dispatch('error', $run['last_error'],);
+            return;
+        }
+
         if ($run['status'] !== 'completed') {
-            SendResponse::dispatch("");
+            SendResponse::dispatch('in_progress', "");
             $this->reschedule();
             return;
         }
 
         $response = $this->thread->getLastMessage();
-        SendResponse::dispatch($response->text);
-
-//        $this->assistant->setResponse($response->text);
-//        $this->assistant->setThread($this->thread->id);
-//        $this->assistant->saveResponseToVectorDatabase();
+        SendResponse::dispatch('completed', $response->text);
     }
 
     /**

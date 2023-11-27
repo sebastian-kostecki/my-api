@@ -13,13 +13,15 @@ class SendResponse implements ShouldBroadcast
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     public string $message;
+    public string $type;
 
     /**
      * Create a new event instance.
      */
-    public function __construct(string $message)
+    public function __construct(string $type, string $message)
     {
         $this->message = $message;
+        $this->type = $type;
     }
 
     /**
