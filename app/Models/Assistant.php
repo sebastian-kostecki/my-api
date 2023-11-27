@@ -84,7 +84,8 @@ class Assistant extends Model
         $remoteThread = Thread::remoteCreate();
         return Thread::create([
             'assistant_id' => $this->id,
-            'remote_id' => $remoteThread['id']
+            'remote_id' => $remoteThread['id'],
+            'details' => $remoteThread
         ]);
     }
 

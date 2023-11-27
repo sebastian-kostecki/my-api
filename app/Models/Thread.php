@@ -27,7 +27,12 @@ class Thread extends Model
     protected $fillable = [
         'assistant_id',
         'remote_id',
-        'description'
+        'description',
+        'details'
+    ];
+
+    protected $casts = [
+        'details' => 'array',
     ];
 
     /**
