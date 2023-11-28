@@ -29,7 +29,6 @@ class Assistant
 
     /**
      * @return void
-     * @throws ConnectionException
      * @throws JsonException
      */
     public function execute(): void

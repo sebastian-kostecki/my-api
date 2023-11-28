@@ -56,7 +56,7 @@ class Action extends Model
     /**
      * @return HasOne
      */
-    public function assistant(): HasOne
+    public function remoteAssistant(): HasOne
     {
         return $this->hasOne(AssistantModel::class);
     }

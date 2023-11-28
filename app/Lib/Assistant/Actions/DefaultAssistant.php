@@ -25,10 +25,7 @@ class DefaultAssistant extends AbstractAction implements AssistantInterface
     {
         $this->assistant = $assistant;
         $this->action = Action::type(static::class)->first();
-        $this->thread = $this->action->assistant->getOrCreateThread($this->assistant->getThreadId());
-        if (!$this->assistant->getThreadId()) {
-            $this->thread->createDescription($this->assistant->getQuery());
-        }
+        $this->thread = $this->action->remoteAssistant->getOrCreateThread($this->assistant->getThreadId(), $this->assistant->getQuery());
     }
 
     /**

@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use JsonException;
 
 /**
  * @property string $remote_id
@@ -74,20 +75,44 @@ class Assistant extends Model
 
     /**
      * @param int|null $threadId
+     * @param string $query
      * @return Thread
+     * @throws JsonException
      */
-    public function getOrCreateThread(?int $threadId): Thread
+    public function getOrCreateThread(?int $threadId, string $query): Thread
     {
-        if ($thread = $this->threads->where('id', $threadId)->where('assistant_id', $this->id)->first()) {
+        if ($thread = $this->getThread($threadId)) {
             return $thread;
         }
+        return $this->createThread($query);
+    }
+
+    /**
+     * @param int|null $threadId
+     * @return Thread|null
+     */
+    public function getThread(?int $threadId): ?Thread
+    {
+        return $this->threads->where('id', $threadId)->first();
+    }
+
+    /**
+     * @param string $query
+     * @return Thread
+     * @throws JsonException
+     */
+    public function createThread(string $query): Thread
+    {
         $remoteThread = Thread::remoteCreate();
+        $description = Thread::createDescription($query);
         return Thread::create([
             'assistant_id' => $this->id,
             'remote_id' => $remoteThread['id'],
+            'description' => $description,
             'details' => $remoteThread
         ]);
     }
+
 
     /**
      * @param string $remoteThreadId
@@ -99,6 +124,6 @@ class Assistant extends Model
         do {
             sleep(2);
             $run = OpenAI::factory()->assistant()->run()->retrieve($remoteThreadId, $startedRun['id']);
-        } while($run['status'] !== 'completed');
+        } while ($run['status'] !== 'completed');
     }
 }

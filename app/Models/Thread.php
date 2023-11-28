@@ -95,48 +95,44 @@ class Thread extends Model
 
     /**
      * @param string $query
-     * @return void
+     * @return string
      * @throws JsonException
      */
-    public function createDescription(string $query): void
+    public static function createDescription(string $query): string
     {
-        if (!$this->description) {
-            $api = OpenAI::factory();
-            $model = ChatModel::GPT3;
-            $messages = [
-                [
-                    'role' => 'user',
-                    'content' => $query
-                ],
-            ];
-            $temperature = 0.7;
-            $tools = [
-                [
-                    'type' => 'function',
-                    'function' => [
-                        'name' => 'generate_short_description',
-                        'description' => 'Generates a short description (maximum three words) for a given text',
-                        'parameters' => [
-                            'type' => 'object',
-                            'properties' => [
-                                'input_text' => [
-                                    'type' => 'string',
-                                    'description' => 'The input text for which a short description will be generated'
-                                ],
+        $api = OpenAI::factory();
+        $model = ChatModel::GPT3;
+        $messages = [
+            [
+                'role' => 'user',
+                'content' => $query
+            ],
+        ];
+        $temperature = 0.5;
+        $tools = [
+            [
+                'type' => 'function',
+                'function' => [
+                    'name' => 'generate_short_description',
+                    'description' => 'Generates a short description (maximum three words) for a given text',
+                    'parameters' => [
+                        'type' => 'object',
+                        'properties' => [
+                            'input_text' => [
+                                'type' => 'string',
+                                'description' => 'The input text for which a short description will be generated'
                             ],
-                            'required' => ['input_text'],
                         ],
-                        'examples' => [
-                            'Array Methods',
-                            'Docker Info'
-                        ],
-                    ]
+                        'required' => ['input_text'],
+                    ],
+                    'examples' => [
+                        'Array Methods',
+                        'Docker Info'
+                    ],
                 ]
-            ];
-            $response = $api->chat()->create($model, $messages, $temperature, $tools);
-            $result = $api->chat()->getFunctions($response);
-            $this->description = $result->input_text;
-            $this->save();
-        }
+            ]
+        ];
+        $response = $api->chat()->create($model, $messages, $temperature, $tools);
+        return $api->chat()->getFunctions($response)->input_text;
     }
 }
