@@ -21,7 +21,9 @@ class Message extends Model
         'remote_id',
         'role',
         'text',
-        'details'
+        'status',
+        'details',
+        'completed_at'
     ];
 
     protected $casts = [

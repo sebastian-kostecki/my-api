@@ -12,7 +12,11 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('messages', function (Blueprint $table) {
+            $table->text('text')->nullable()->change();
+            $table->string('remote_id')->nullable()->change();
             $table->json('details')->after('text')->nullable();
+            $table->string('status')->after('text');
+            $table->timestamp('completed_at')->after('created_at')->nullable();
         });
     }
 
@@ -23,6 +27,10 @@ return new class extends Migration
     {
         Schema::table('messages', function (Blueprint $table) {
             $table->dropColumn('details');
+            $table->dropColumn('status');
+            $table->dropColumn('completed_at');
+            $table->text('text')->change();
+            $table->string('remote_id')->index();
         });
     }
 };
