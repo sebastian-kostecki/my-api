@@ -7,6 +7,8 @@ use App\Lib\Apis\OpenAI;
 use App\Lib\Assistant\Assistant;
 use App\Lib\Interfaces\AssistantInterface;
 use App\Models\Action;
+use App\Models\Message;
+use App\Models\Run;
 use App\Models\Thread;
 use JsonException;
 
@@ -33,8 +35,10 @@ class DefaultAssistant extends AbstractAction implements AssistantInterface
      */
     public function execute(): void
     {
-        $this->thread->createMessage($this->assistant->getQuery());
-        $startedRun = OpenAI::factory()->assistant()->run()->create($this->thread->remote_id, $this->thread->assistant->remote_id);
+        Message::createUserMessage($this->thread, $this->assistant->getQuery());
+        $startedRun = Run::createRun($this->thread);
+
+
         AssistantRun::dispatch($this->thread, $startedRun);
         $this->assistant->setResponse('Myślę');
     }

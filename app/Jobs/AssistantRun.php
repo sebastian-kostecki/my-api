@@ -4,6 +4,7 @@ namespace App\Jobs;
 
 use App\Events\SendResponse;
 use App\Lib\Apis\OpenAI;
+use App\Models\Run;
 use App\Models\Thread;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -18,13 +19,14 @@ class AssistantRun implements ShouldQueue
     private Thread $thread;
     private array $startedRun;
 
+    private Run $run;
+
     /**
      * Create a new job instance.
      */
-    public function __construct(Thread $thread, array $startedRun)
+    public function __construct(Run $run)
     {
-        $this->thread = $thread;
-        $this->startedRun = $startedRun;
+        $this->run = $run;
     }
 
     /**

@@ -11,7 +11,12 @@ class Run
         $this->assistant = $assistant;
     }
 
-    public function create(string $threadId, string $assistantId)
+    /**
+     * @param string $threadId
+     * @param string $assistantId
+     * @return array
+     */
+    public function create(string $threadId, string $assistantId): array
     {
         $url = $this->assistant->api::BASEURL . 'threads/' . $threadId . '/runs';
         $params = [

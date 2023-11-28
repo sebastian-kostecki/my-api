@@ -2,9 +2,16 @@
 
 namespace App\Models;
 
+use App\Lib\Apis\OpenAI;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * @property Thread $thread
+ * @property string $remote_id
+ */
 class Run extends Model
 {
     use HasFactory;
@@ -21,4 +28,36 @@ class Run extends Model
     protected $casts = [
         'details' => 'array',
     ];
+
+    /**
+     * @return BelongsTo
+     */
+    public function thread(): BelongsTo
+    {
+        return $this->belongsTo(Thread::class);
+    }
+
+    /**
+     * @param Thread $thread
+     * @return Run
+     */
+    public static function createRun(Thread $thread): Run
+    {
+        $remoteRun = OpenAI::factory()->assistant()->run()->create($thread->remote_id, $thread->assistant->remote_id);
+        return self::create([
+            'thread_id' => $thread->id,
+            'remote_id' => $remoteRun['id'],
+            'status' => 'started',
+            'started_at' => Carbon::now(),
+            'details' => $remoteRun
+        ]);
+    }
+
+    /**
+     * @return void
+     */
+    public function retrieve(): void
+    {
+        $remoteRun = OpenAI::factory()->assistant()->run()->retrieve($this->thread->remote_id, $this->remote_id);
+    }
 }

@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Lib\Apis\OpenAI;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -29,4 +31,18 @@ class Message extends Model
     protected $casts = [
         'details' => 'array',
     ];
+
+    public static function createUserMessage(Thread $thread, string $query)
+    {
+        $remoteMessage = OpenAI::factory()->assistant()->message()->create($thread->remote_id, $query);
+        return self::create([
+            'thread_id' => $thread->id,
+            'remote_id' => $remoteMessage['id'],
+            'role' => $remoteMessage['role'],
+            'text' => $query,
+            'status' => 'complete',
+            'details' => $remoteMessage,
+            'completed_at' => Carbon::now()
+        ]);
+    }
 }
