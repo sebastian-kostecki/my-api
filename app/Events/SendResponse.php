@@ -2,6 +2,7 @@
 
 namespace App\Events;
 
+use App\Models\Message;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
@@ -12,16 +13,14 @@ class SendResponse implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public string $message;
-    public string $type;
+    public Message $message;
 
     /**
      * Create a new event instance.
      */
-    public function __construct(string $type, string $message)
+    public function __construct(Message $message)
     {
         $this->message = $message;
-        $this->type = $type;
     }
 
     /**

@@ -4,6 +4,7 @@ namespace App\Jobs;
 
 use App\Events\SendResponse;
 use App\Lib\Apis\OpenAI;
+use App\Models\Message;
 use App\Models\Run;
 use App\Models\Thread;
 use Illuminate\Bus\Queueable;
@@ -16,16 +17,15 @@ class AssistantRun implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    private Thread $thread;
-    private array $startedRun;
-
     private Run $run;
+    private Message $message;
 
     /**
      * Create a new job instance.
      */
-    public function __construct(Run $run)
+    public function __construct(Message $message, Run $run)
     {
+        $this->message = $message;
         $this->run = $run;
     }
 
@@ -34,21 +34,23 @@ class AssistantRun implements ShouldQueue
      */
     public function handle(): void
     {
-        $run = OpenAI::factory()->assistant()->run()->retrieve($this->thread->remote_id, $this->startedRun['id']);
+        $run = $this->run->retrieve();
 
-        if ($run['last_error']){
-            SendResponse::dispatch('error', $run['last_error'],);
+        if ($run->status === 'failed') {
+            $this->message->markAsFailed($run);
+            SendResponse::dispatch($this->message);
             return;
         }
 
-        if ($run['status'] !== 'completed') {
-            SendResponse::dispatch('in_progress', "");
+        if ($run->status === 'in_progress') {
+            $this->message->markAsInProgress();
+            SendResponse::dispatch($this->message);
             $this->reschedule();
             return;
         }
 
-        $response = $this->thread->getLastMessage();
-        SendResponse::dispatch('completed', $response->text);
+        $this->message->markAsCompleted();
+        SendResponse::dispatch($this->message);
     }
 
     /**
@@ -56,6 +58,6 @@ class AssistantRun implements ShouldQueue
      */
     public function reschedule(): void
     {
-        self::dispatch($this->thread, $this->startedRun)->delay(now()->addSeconds(4));
+        self::dispatch($this->message, $this->run)->delay(now()->addSeconds(4));
     }
 }

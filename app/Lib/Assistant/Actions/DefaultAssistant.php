@@ -37,9 +37,9 @@ class DefaultAssistant extends AbstractAction implements AssistantInterface
     {
         Message::createUserMessage($this->thread, $this->assistant->getQuery());
         $startedRun = Run::createRun($this->thread);
+        $assistantMessage = Message::createAssistantMessage($this->thread);
+        AssistantRun::dispatch($assistantMessage, $startedRun);
 
-
-        AssistantRun::dispatch($this->thread, $startedRun);
         $this->assistant->setResponse('Myślę');
     }
 }

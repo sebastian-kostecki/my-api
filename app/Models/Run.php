@@ -11,6 +11,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 /**
  * @property Thread $thread
  * @property string $remote_id
+ * @property string $status
+ * @property array $details
  */
 class Run extends Model
 {
@@ -53,11 +55,37 @@ class Run extends Model
         ]);
     }
 
+
     /**
-     * @return void
+     * @return $this
      */
-    public function retrieve(): void
+    public function retrieve(): Run
     {
         $remoteRun = OpenAI::factory()->assistant()->run()->retrieve($this->thread->remote_id, $this->remote_id);
+
+        if (!empty($remoteRun['last_error'])) {
+            $this->update([
+                'status' => 'failed',
+                'completed_at' => Carbon::now(),
+                'details' => $remoteRun
+            ]);
+            return $this;
+        }
+
+        if ($remoteRun['status'] !== 'completed') {
+            $this->update([
+                'status' => 'in_progress',
+                'details' => $remoteRun
+            ]);
+            return $this;
+        }
+
+        $this->update([
+            'status' => 'completed',
+            'completed_at' => Carbon::now(),
+            'details' => $remoteRun
+        ]);
+        return $this;
     }
+
 }

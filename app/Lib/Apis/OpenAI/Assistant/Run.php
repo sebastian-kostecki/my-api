@@ -27,7 +27,12 @@ class Run
         return json_decode($response, true);
     }
 
-    public function retrieve(string $threadId, string $runId)
+    /**
+     * @param string $threadId
+     * @param string $runId
+     * @return array
+     */
+    public function retrieve(string $threadId, string $runId): array
     {
         $url = $this->assistant->api::BASEURL . 'threads/' . $threadId . '/runs/' . $runId;
         $response = $this->assistant->request->get($url);
