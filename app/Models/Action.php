@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\Assistant\ChatModel;
+use App\Lib\Apis\OpenAI;
 use App\Lib\Assistant\Assistant;
 use App\Lib\Interfaces\ActionInterface;
 use App\Models\Assistant as AssistantModel;
@@ -21,6 +22,10 @@ use Illuminate\Support\Str;
  * @method static get()
  * @method static create(array $array)
  * @property string $type
+ * @property AssistantModel $remoteAssistant
+ * @property ChatModel $model
+ * @property string $name
+ * @property string $instructions
  */
 class Action extends Model
 {
@@ -98,5 +103,15 @@ class Action extends Model
     public function factory(Assistant $assistant): ActionInterface
     {
         return new $this->type($assistant);
+    }
+
+    /**
+     * @return void
+     */
+    public function syncAssistant(): void
+    {
+        if ($this->remoteAssistant) {
+            OpenAI::factory()->assistant()->assistant()->modify($this);
+        }
     }
 }

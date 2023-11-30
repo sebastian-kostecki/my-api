@@ -56,13 +56,15 @@ class ActionController extends Controller
         $params = $request->validate([
             'name' => 'string|required',
             'icon' => 'string|required',
-            'shortcut' => 'string|nullable',
-            'model' => 'string|required',
+            'shortcut' => 'sometimes|string|nullable',
+            'model' => 'sometimes|string|nullable',
+            'instructions' => 'sometimes|string|nullable',
             'enabled' => 'boolean|required'
         ]);
 
         $action = Action::findOrFail($id);
         $action->update($params);
+        $action->syncAssistant();
 
         return new ActionResource($action);
     }

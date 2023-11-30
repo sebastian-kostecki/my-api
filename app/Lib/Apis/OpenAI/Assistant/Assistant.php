@@ -2,6 +2,8 @@
 
 namespace App\Lib\Apis\OpenAI\Assistant;
 
+use App\Models\Action;
+
 class Assistant
 {
     private \App\Lib\Apis\OpenAI\Assistant $assistant;
@@ -32,7 +34,11 @@ class Assistant
         return json_decode($result->body(), true);
     }
 
-    public function create(array $params)
+    /**
+     * @param array $params
+     * @return array
+     */
+    public function create(array $params): array
     {
         $data = [
             'model' => $params['model'],
@@ -43,6 +49,23 @@ class Assistant
             ]
         ];
         $url = $this->assistant->api::BASEURL . 'assistants';
+        $result = $this->assistant->request->post($url, $data);
+        return json_decode($result->body(), true);
+    }
+
+    /**
+     * @param string $assistantId
+     * @param array $params
+     * @return array
+     */
+    public function modify(Action $action): array
+    {
+        $data = [
+            'model' => $action->model,
+            'name' => $action->name,
+            'instructions' => $action->instructions
+        ];
+        $url = $this->assistant->api::BASEURL . 'assistants/' . $action->remoteAssistant->remote_id;
         $result = $this->assistant->request->post($url, $data);
         return json_decode($result->body(), true);
     }
