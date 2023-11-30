@@ -132,7 +132,7 @@ class SyncActions extends Command
         if ($this->isAssistant($actionClass)) {
             $assistant = new Assistant();
             $assistant->create($params);
-            $newAction->assistant()->save($assistant);
+            $newAction->remoteAssistant()->save($assistant);
             $newAction->save();
         }
 
