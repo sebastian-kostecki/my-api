@@ -54,8 +54,7 @@ class Assistant
     }
 
     /**
-     * @param string $assistantId
-     * @param array $params
+     * @param Action $action
      * @return array
      */
     public function modify(Action $action): array
@@ -68,5 +67,15 @@ class Assistant
         $url = $this->assistant->api::BASEURL . 'assistants/' . $action->remoteAssistant->remote_id;
         $result = $this->assistant->request->post($url, $data);
         return json_decode($result->body(), true);
+    }
+
+    /**
+     * @param Action $action
+     * @return void
+     */
+    public function delete(Action $action): void
+    {
+        $url = $this->assistant->api::BASEURL . 'assistants/' . $action->remoteAssistant->remote_id;
+        $this->assistant->request->delete($url);
     }
 }

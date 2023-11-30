@@ -20,7 +20,6 @@ class AssistantController extends Controller
     /**
      * @param AssistantRequest $request
      * @return JsonResponse
-     * @throws ConnectionException
      * @throws JsonException
      */
     public function query(AssistantRequest $request): JsonResponse

@@ -108,10 +108,20 @@ class Action extends Model
     /**
      * @return void
      */
-    public function syncAssistant(): void
+    public function syncRemote(): void
     {
         if ($this->remoteAssistant) {
             OpenAI::factory()->assistant()->assistant()->modify($this);
+        }
+    }
+
+    /**
+     * @return void
+     */
+    public function deleteRemote(): void
+    {
+        if ($this->remoteAssistant) {
+            OpenAI::factory()->assistant()->assistant()->delete($this);
         }
     }
 }

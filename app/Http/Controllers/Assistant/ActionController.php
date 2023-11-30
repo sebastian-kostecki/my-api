@@ -64,7 +64,7 @@ class ActionController extends Controller
 
         $action = Action::findOrFail($id);
         $action->update($params);
-        $action->syncAssistant();
+        $action->syncRemote();
 
         return new ActionResource($action);
     }
@@ -76,6 +76,7 @@ class ActionController extends Controller
     public function destroy(int $id): JsonResponse
     {
         $action = Action::findOrFail($id);
+        $action->deleteRemote();
         $action->delete();
 
         return new JsonResponse([
