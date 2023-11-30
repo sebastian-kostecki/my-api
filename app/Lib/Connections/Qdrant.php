@@ -11,10 +11,22 @@ class Qdrant
     public Api $api;
     public string $databaseName;
 
-    public function __construct(string $databaseName)
+    public function __construct(?string $databaseName = "")
     {
         $this->api = new Api();
-        $this->databaseName = $databaseName;
+        if ($databaseName) {
+            $this->databaseName = $databaseName;
+        } else {
+            $this->databaseName = config('services.qdrant.database_name');
+        }
+    }
+
+    /**
+     * @return Qdrant
+     */
+    public static function factory(): Qdrant
+    {
+        return new self();
     }
 
     /**

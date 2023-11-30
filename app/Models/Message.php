@@ -3,10 +3,14 @@
 namespace App\Models;
 
 use App\Lib\Apis\OpenAI;
+use App\Lib\Connections\Qdrant;
+use App\Lib\Exceptions\ConnectionException;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Str;
+use JsonException;
 
 /**
  * @property int $thread_id
@@ -113,5 +117,25 @@ class Message extends Model
             'details' => $lastRemoteMessage,
             'completed_at' => Carbon::now()
         ]);
+    }
+
+    /**
+     * @param string $category
+     * @return void
+     * @throws ConnectionException
+     * @throws JsonException
+     */
+    public function saveToVectorDatabase(string $category = 'conversation'): void
+    {
+        $embeddings = OpenAI::factory()->embeddings()->create($this->text);
+        $point = [
+            "id" => Str::uuid()->toString(),
+            "vector" => $embeddings,
+            "payload" => [
+                "text" => $this->text,
+                'category' => $category
+            ]
+        ];
+        Qdrant::factory()->points()->upsertPoint($point);
     }
 }

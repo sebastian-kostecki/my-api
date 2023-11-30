@@ -50,6 +50,7 @@ class AssistantRun implements ShouldQueue
         }
 
         $this->message->markAsCompleted();
+        $this->message->saveToVectorDatabase();
         SendResponse::dispatch($this->message);
     }
 
