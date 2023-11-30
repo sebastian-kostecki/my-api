@@ -16,7 +16,6 @@ class AddWorkTask extends AbstractAction
 {
     public const NAME = 'New Task';
     public const ICON = 'fa-solid fa-check';
-    public const MODEL = Model::GPT3;
 
     protected Assistant $assistant;
     protected Collection $issues;
@@ -38,12 +37,6 @@ class AddWorkTask extends AbstractAction
             'type' => 'text',
             'default' => self::ICON
         ],
-        'model' => [
-            'name' => 'model',
-            'label' => 'Model',
-            'type' => 'model',
-            'default' => self::MODEL
-        ]
     ];
 
 
