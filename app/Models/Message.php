@@ -75,6 +75,7 @@ class Message extends Model
             'thread_id' => $thread->id,
             'remote_id' => 0,
             'role' => 'assistant',
+            'text' => '',
             'status' => 'started'
         ]);
     }
