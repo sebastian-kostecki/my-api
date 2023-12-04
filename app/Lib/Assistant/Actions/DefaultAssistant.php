@@ -2,8 +2,8 @@
 
 namespace App\Lib\Assistant\Actions;
 
+use App\Jobs\AssistantRun;
 use App\Lib\Assistant\Assistant;
-use App\Lib\Exceptions\ConnectionException;
 use App\Lib\Interfaces\AssistantInterface;
 use App\Models\Action;
 use App\Models\Message;
@@ -31,32 +31,13 @@ class DefaultAssistant extends AbstractAction implements AssistantInterface
 
     /**
      * @return void
-     * @throws JsonException
-     * @throws ConnectionException
      */
     public function execute(): void
     {
         Message::createUserMessage($this->thread, $this->assistant->getQuery());
         $run = Run::createRun($this->thread);
-        $message = Message::createAssistantMessage($this->thread);
-
-        do {
-            sleep(3);
-            $run->retrieve();
-
-            if ($run->status === 'failed') {
-                $message->markAsFailed($run);
-                $this->assistant->setResponse($message->text);
-                return;
-            }
-
-            if ($run->status === 'in_progress') {
-                $message->markAsInProgress();
-            }
-        } while ($run->status === 'in_progress');
-
-        $message->markAsCompleted();
-        $message->saveToVectorDatabase();
-        $this->assistant->setResponse($message->text);
+        $assistantMessage = Message::createAssistantMessage($this->thread);
+        AssistantRun::dispatch($assistantMessage, $run);
+        $this->assistant->setResponse("Myślę");
     }
 }
