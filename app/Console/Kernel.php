@@ -14,7 +14,7 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule): void
     {
-        $schedule->command('email:report-daily-tasks')->dailyAt('16:00');
+        $schedule->command('email:report-daily-tasks')->dailyAt('19:00');
         $schedule->command('email:manage-panelalpha-mailbox')->daily();
         $schedule->command(CleanPanelalphaMailbox::class)->daily();
         $schedule->command(CleanModulesGardenMailbox::class)->daily();
