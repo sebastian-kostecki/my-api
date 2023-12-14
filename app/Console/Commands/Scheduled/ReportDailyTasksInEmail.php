@@ -71,21 +71,20 @@ class ReportDailyTasksInEmail extends Command
             ->asCollection();
 
         $tasks =  $result->map(function ($item) {
-            $taskName = $item->getRawResponse()['properties']['Name']['title'][0]['text']['content'];
-            $taskStatus = $item->getRawResponse()['properties']['Status']['select']['name'];
-            if ($taskStatus == 'In progress') {
-                $taskStatus = '<strong class="in-progress chip">In progress</strong>';
-            } else {
-                $taskStatus = '<strong class="done chip">Done</strong>';
-            }
+            $task = [];
+            $task['name'] =  $item->getRawResponse()['properties']['Name']['title'][0]['text']['content'];
+            $task['status']['name'] = $item->getRawResponse()['properties']['Status']['select']['name'];
+            $task['status']['color'] = $item->getRawResponse()['properties']['Status']['select']['color'];
             if (!empty($item->getRawResponse()['properties']['Issue']['relation'])) {
                 $issuePageId = $item->getRawResponse()['properties']['Issue']['relation'][0]['id'];
                 $issuePage = \Notion::pages()->find($issuePageId);
-                $issueName = $issuePage->getRawResponse()['properties']['Title']['title'][0]['text']['content'];
-                return '<strong>' . $issueName . '</strong> | ' . $taskName . " " . $taskStatus;
+                $task['issue'] = $issuePage->getRawResponse()['properties']['Title']['title'][0]['text']['content'];
+            } else {
+                $task['issue'] = '---';
             }
-           return $taskName . " " . $taskStatus;
+           return $task;
         });
+        dd($tasks);
         $this->dailyTasks = $tasks->toArray();
     }
 
@@ -120,16 +119,17 @@ class ReportDailyTasksInEmail extends Command
             ->asCollection();
 
         $tasks = $result->map(function ($item) {
-            $taskName = $item->getRawResponse()['properties']['Name']['title'][0]['text']['content'];
+            $task = [];
+            $task['name'] = $item->getRawResponse()['properties']['Name']['title'][0]['text']['content'];
             if (!empty($item->getRawResponse()['properties']['Issue']['relation'])) {
                 $issuePageId = $item->getRawResponse()['properties']['Issue']['relation'][0]['id'];
                 $issuePage = \Notion::pages()->find($issuePageId);
-                $issueName = $issuePage->getRawResponse()['properties']['Title']['title'][0]['text']['content'];
-                return "<strong>" . $issueName . "</strong> | " . $taskName;
+                $task['issue'] = $issuePage->getRawResponse()['properties']['Title']['title'][0]['text']['content'];
             }
-            return $taskName;
+            $task['priority']['name'] = $item->getRawResponse()['properties']['Priority']['select']['name'];
+            $task['priority']['color'] = $item->getRawResponse()['properties']['Priority']['select']['color'];
+            return $task;
         });
-
         $this->nextTasks = $tasks->toArray();
     }
 
