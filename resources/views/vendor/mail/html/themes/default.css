@@ -50,6 +50,9 @@ h2 {
     font-weight: bold;
     margin-top: 0;
     text-align: left;
+    background-color: #edf2f7;
+    padding: 2px 4px;
+    border-radius: 2px;
 }
 
 h3 {
@@ -134,7 +137,7 @@ img {
 .inner-body {
     -premailer-cellpadding: 0;
     -premailer-cellspacing: 0;
-    -premailer-width: 570px;
+    -premailer-width: 1024px;
     background-color: #ffffff;
     border-color: #e8e5ef;
     border-radius: 2px;
@@ -142,7 +145,7 @@ img {
     box-shadow: 0 2px 0 rgba(0, 0, 150, 0.025), 2px 4px 0 rgba(0, 0, 150, 0.015);
     margin: 0 auto;
     padding: 0;
-    width: 570px;
+    width: 1024px;
 }
 
 /* Subcopy */
@@ -186,7 +189,7 @@ img {
     -premailer-cellpadding: 0;
     -premailer-cellspacing: 0;
     -premailer-width: 100%;
-    margin: 30px auto;
+    margin: 10px auto;
     width: 100%;
 }
 
@@ -201,7 +204,7 @@ img {
     font-size: 15px;
     line-height: 18px;
     margin: 0;
-    padding: 10px 0;
+    padding: 5px 0;
 }
 
 .content-cell {
@@ -292,29 +295,34 @@ img {
 /* custom */
 
 .done {
-    font-size: 12px;
-    color: white;
     background-color: green;
 }
 
 .in-progress {
-    font-size: 12px;
-    color: white;
     background-color: #3869d4;
 }
 
 .chip {
+    font-size: 14px;
+    color: white;
     border-radius: 4px;
-    padding: 2px 8px;
+    padding: 4px 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     transition: box-shadow 0.3s ease;
-    cursor: pointer;
 }
 
-.chip:hover {
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+.blue {
+    background-color: #3869d4;
 }
 
-li {
-    margin-bottom: 4px;
+.yellow {
+    background-color: #ffbe0b;
+}
+
+.red {
+    background-color: red;
+}
+
+.green {
+    background-color: green;
 }
