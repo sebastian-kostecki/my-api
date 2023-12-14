@@ -21,6 +21,7 @@ services:
             IGNITION_LOCAL_SITES_PATH: '${PWD}'
         volumes:
             - '.:/var/www/html'
+        restart: always
         networks:
             - sail
         depends_on:
@@ -41,6 +42,7 @@ services:
         volumes:
             - 'sail-mysql:/var/lib/mysql'
             - './vendor/laravel/sail/database/mysql/create-testing-database.sh:/docker-entrypoint-initdb.d/10-create-testing-database.sh'
+        restart: always
         networks:
             - sail
         healthcheck:
@@ -57,6 +59,7 @@ services:
             - '${FORWARD_REDIS_PORT:-6379}:6379'
         volumes:
             - 'sail-redis:/data'
+        restart: always
         networks:
             - sail
         healthcheck:
@@ -71,6 +74,7 @@ services:
         ports:
             - '${FORWARD_MAILPIT_PORT:-1025}:1025'
             - '${FORWARD_MAILPIT_DASHBOARD_PORT:-8025}:8025'
+        restart: always
         networks:
             - sail
     phpmyadmin:
@@ -83,6 +87,7 @@ services:
             PMA_ARBITRARY: '0'
         depends_on:
             - mysql
+        restart: always
         networks:
             - sail
     qdrant:
@@ -91,6 +96,7 @@ services:
             - '${QDRANT_PORT:-6333}:6333'
         volumes:
             - ./storage/qdrant_storage:/qdrant/storage
+        restart: always
         networks:
             - sail
 networks:
