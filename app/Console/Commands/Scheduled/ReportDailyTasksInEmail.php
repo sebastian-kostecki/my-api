@@ -84,7 +84,6 @@ class ReportDailyTasksInEmail extends Command
             }
            return $task;
         });
-        dd($tasks);
         $this->dailyTasks = $tasks->toArray();
     }
 
