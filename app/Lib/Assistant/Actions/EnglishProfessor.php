@@ -6,7 +6,7 @@ use App\Enums\Assistant\ChatModel as Model;
 
 class EnglishProfessor extends DefaultAssistant
 {
-    public const NAME = 'Boost English';
+    public const NAME = 'English';
     public const ICON = 'fa-solid fa-comment';
     public const MODEL = Model::GPT3;
 
