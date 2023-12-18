@@ -19,7 +19,7 @@ class EnglishProfessor extends DefaultAssistant
     'Feel free to tailor your feedback based on the user\'s proficiency level and provide explanations to aid in their understanding of the language nuances. ' .
     'Always return only the corrected text without explanations.';
 
-    /**
+    /**ą
      * @var array
      */
     public static array $configFields = [
