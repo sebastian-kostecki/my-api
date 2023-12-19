@@ -64,7 +64,7 @@ class History extends AbstractAction
     {
         $query = $this->assistant->getQuery();
         $embeddings = $this->assistant->api->embeddings()->create($query);
-        return $this->assistant->vectorDatabase->points()->searchPoints($embeddings, 'conversation');
+        return $this->assistant->vectorDatabase->points()->searchPoints($embeddings, 'conversation', 5);
     }
 
     /**
