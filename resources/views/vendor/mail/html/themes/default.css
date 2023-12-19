@@ -312,17 +312,17 @@ img {
 }
 
 .blue {
-    background-color: #3869d4;
+    color: #3869d4;
 }
 
 .yellow {
-    background-color: #ffbe0b;
+    color: #ffbe0b;
 }
 
 .red {
-    background-color: red;
+    color: red;
 }
 
 .green {
-    background-color: green;
+    color: green;
 }
