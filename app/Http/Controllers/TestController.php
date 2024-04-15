@@ -29,11 +29,9 @@ class TestController extends Controller
         $openAi = OpenAI::factory();
         $result = $openAi->completion()->request('gpt-3.5-turbo', $messages);
 
-        $response = json_encode([
-            'reply' => $result,
-        ], JSON_THROW_ON_ERROR);
-
-        return response()->json($response);
+        return response()->json([
+            'result' => $result
+        ]);
 
     }
 }
