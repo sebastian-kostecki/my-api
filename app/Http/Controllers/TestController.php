@@ -30,7 +30,7 @@ class TestController extends Controller
         $result = $openAi->completion()->request('gpt-3.5-turbo', $messages);
 
         return response()->json([
-            'result' => $result
+            'reply' => $result
         ]);
 
     }
