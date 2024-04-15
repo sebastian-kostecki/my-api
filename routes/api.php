@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Assistant\ShortcutController;
+use App\Http\Controllers\TestController;
 use App\Http\Controllers\TranslationController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -30,4 +31,6 @@ Route::middleware('auth:sanctum')->group(function () {
      */
     Route::post('/shortcut/translate', [ShortcutController::class, 'translate']);
 });
+
+Route::post('/ai-devs', [TestController::class, 'request']);
 

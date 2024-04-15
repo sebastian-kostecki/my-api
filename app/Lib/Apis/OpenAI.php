@@ -4,9 +4,11 @@ namespace App\Lib\Apis;
 
 use App\Lib\Apis\OpenAI\Assistant;
 use App\Lib\Apis\OpenAI\Chat;
+use App\Lib\Apis\OpenAI\Completion;
 use App\Lib\Apis\OpenAI\Embedding;
 use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Support\Facades\Http;
+use stdClass;
 
 class OpenAI
 {
@@ -49,5 +51,13 @@ class OpenAI
     public function assistant(): Assistant
     {
         return new Assistant($this);
+    }
+
+    /**
+     * @return Completion
+     */
+    public function completion(): Completion
+    {
+        return new Completion($this);
     }
 }
