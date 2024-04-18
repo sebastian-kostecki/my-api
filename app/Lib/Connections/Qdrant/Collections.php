@@ -29,13 +29,14 @@ class Collections
     }
 
     /**
+     * @param string $name
      * @return mixed
      * @throws ConnectionException
      * @throws JsonException
      */
-    public function getInfo(): stdClass
+    public function getInfo(string $name): stdClass
     {
-        $endpoint = "collections/{$this->connection->databaseName}";
+        $endpoint = "collections/{$name}";
         return $this->connection->api->call('GET', $endpoint)->result;
     }
 
