@@ -112,4 +112,28 @@ class Points
         ];
         $this->connection->api->call('POST', $endpoint, $params);
     }
+
+
+
+
+
+    public function search(string $databaseName, array $embedding): array
+    {
+        $endpoint = "collections/{$databaseName}/points/search";
+        $params = [
+            'vector' => $embedding,
+            'limit' => 2,
+            'with_payload' => true
+        ];
+        return $this->connection->api->call('POST', $endpoint, $params)->result;
+    }
+
+    public function create(string $databaseName, array $point): void
+    {
+        $endpoint = "collections/{$databaseName}/points";
+        $params = [
+            'points' => [$point]
+        ];
+        $this->connection->api->call('PUT', $endpoint, $params);
+    }
 }
