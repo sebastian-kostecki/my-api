@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Assistant\ActionController;
 use App\Http\Controllers\Assistant\AssistantController;
+use App\Http\Controllers\Assistant\ModelController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('auth:sanctum')->group(function () {
@@ -17,5 +18,5 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('action/{id}', [ActionController::class, 'destroy'])
         ->name('action.delete');
 
-    Route::get('models', [ActionController::class, 'modelIndex']);
+    Route::get('models', [ModelController::class, 'index']);
 });

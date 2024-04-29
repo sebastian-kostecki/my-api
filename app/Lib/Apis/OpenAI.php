@@ -2,12 +2,7 @@
 
 namespace App\Lib\Apis;
 
-use App\Lib\Apis\OpenAI\Assistant;
-use App\Lib\Apis\OpenAI\Chat;
-use App\Lib\Apis\OpenAI\Embedding;
 use App\Lib\Apis\OpenAI\Request;
-use Illuminate\Http\Client\PendingRequest;
-use Illuminate\Support\Facades\Http;
 
 class OpenAI
 {
