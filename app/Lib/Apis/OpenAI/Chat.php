@@ -20,7 +20,7 @@ class Chat
      */
     public function __construct(OpenAI $api)
     {
-        $this->url = $api::BASEURL . self::BASEURL;
+
         $this->request = $api->request;
     }
 

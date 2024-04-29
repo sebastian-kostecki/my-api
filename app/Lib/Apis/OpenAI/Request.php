@@ -2,94 +2,25 @@
 
 namespace App\Lib\Apis\OpenAI;
 
-use App\Enums\Assistant\ChatModel;
 use Illuminate\Support\Facades\Http;
-use OpenAI\Laravel\Facades\OpenAI;
-use OpenAI\Responses\Chat\CreateResponse;
-use OpenAI\Responses\Embeddings\CreateResponse as CreateResponseEmbedding;
 
 class Request
 {
-    protected array $messages;
-    protected string $input;
-    protected string $model = ChatModel::GPT3->value;
-    protected float $temperature = 0.5;
-    protected CreateResponse|CreateResponseEmbedding $response;
+    public const BASEURL = 'https://api.openai.com/v1/';
 
     /**
-     * @return void
+     * @param string $method
+     * @param string $endpoint
+     * @param array $params
+     * @return array
      */
-    public function chat(): void
+    public function call(string $method, string $endpoint, array $params = []): array
     {
-        $this->response = OpenAI::chat()->create([
-            'model' => $this->model,
-            'temperature' => $this->temperature,
-            'messages' => $this->messages,
-        ]);
+        $url = rtrim(self::BASEURL, '/') . '/' . $endpoint;
+        $response = Http::withToken(config('services.open_ai.api_key'))->{strtolower($method)}($url, $params);
+        if (!$response->successful()) {
+            throw new \RuntimeException('Request failed with error: ' . $response->body());
+        }
+        return $response->json();
     }
-
-    public function embedding(): void
-    {
-        $this->response = OpenAI::embeddings()->create([
-            'model' => $this->model,
-            'input' => $this->input,
-        ]);
-    }
-
-    /**
-     * @param array $messages
-     * @return void
-     */
-    public function setMessages(array $messages): void
-    {
-        $this->messages = $messages;
-    }
-
-    /**
-     * @param string $input
-     * @return void
-     */
-    public function setInput(string $input): void
-    {
-        $this->input = $input;
-    }
-
-    /**
-     * @param string $model
-     * @return void
-     */
-    public function setModel(string $model): void
-    {
-        $this->model = $model;
-    }
-
-    /**
-     * @param string $temperature
-     * @return void
-     */
-    public function setTemperature(string $temperature): void
-    {
-        $this->temperature = $temperature;
-    }
-
-    /**
-     * @return string
-     */
-    public function getContent(): string
-    {
-        return $this->response->choices[0]->message->content;
-    }
-
-    public function getEmbedding()
-    {
-        return $this->response->toArray()['data'][0]['embedding'];
-    }
-
-
-    public function call()
-    {
-        //Http::withToken(config('openai.'))
-    }
-
-
 }
