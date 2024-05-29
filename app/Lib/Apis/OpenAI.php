@@ -28,14 +28,23 @@ class OpenAI
      */
     public function models(): array
     {
-        $result = $this->request->call('GET', 'models');
-        return array_map(static function ($model) {
-            return [
-                'name' => $model['id'],
-                'type' => 'open_ai'
-            ];
-        }, $result['data']);
+        return $this->request->call('GET', 'models');
     }
 
+    public function completion(string $model, array $messages, array $params = [])
+    {
+        $apiParams = [
+            'model' => $model,
+            'messages' => $messages
+        ];
+        if (!empty($params['temperature'])) {
+            $apiParams['temperature'] = $params['temperature'];
+        }
+        if (!empty($params['tools'])) {
+            $apiParams['tools'] = $params['tools'];
+        }
 
+        $result = $this->request->call('POST', 'chat/completions', $apiParams);
+        dd($result);
+    }
 }

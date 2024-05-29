@@ -2,19 +2,18 @@
 
 namespace App\Models;
 
-use App\Lib\Apis\OpenAI;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
-use JsonException;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Str;
 
 /**
  * @property string $remote_id
  * @property int $action_id
- * @property Collection $threads
  * @property int $id
  * @property array $details
  */
@@ -23,14 +22,13 @@ class Assistant extends Model
     use HasFactory;
 
     protected $fillable = [
-        'action_id',
-        'remote_id',
-        'details'
+        'type',
+        'name',
+        'description',
+        'instructions',
+        'model'
     ];
 
-    protected $casts = [
-        'details' => 'array',
-    ];
 
     public function action(): BelongsTo
     {
@@ -47,83 +45,102 @@ class Assistant extends Model
         return $this->hasOne(Thread::class)->latestOfMany();
     }
 
+//    /**
+//     * @param array $params
+//     * @return void
+//     */
+//    public function create(array $params): void
+//    {
+//        $assistant = $this->getOrCreateRemote($params);
+//        $this->action_id = 0;
+//        $this->remote_id = $assistant['id'];
+//        $this->details = $assistant;
+//        $this->save();
+//    }
+//
+//    public function getOrCreateRemote(array $params)
+//    {
+//        $list = OpenAI::factory()->assistant()->assistant()->list();
+//        if (!empty($list['data'])) {
+//            foreach ($list['data'] as $remoteAssistant) {
+//                if ($remoteAssistant['name'] === $params['name']) {
+//                    return $remoteAssistant;
+//                }
+//            }
+//        }
+//        return OpenAI::factory()->assistant()->assistant()->create($params);
+//    }
+//
+//    /**
+//     * @param int|null $threadId
+//     * @param string $query
+//     * @return Thread
+//     * @throws JsonException
+//     */
+//    public function getOrCreateThread(?int $threadId, string $query): Thread
+//    {
+//        if ($thread = $this->getThread($threadId)) {
+//            return $thread;
+//        }
+//        return $this->createThread($query);
+//    }
+//
+//    /**
+//     * @param int|null $threadId
+//     * @return Thread|null
+//     */
+//    public function getThread(?int $threadId): ?Thread
+//    {
+//        return $this->threads->where('id', $threadId)->first();
+//    }
+//
+//    /**
+//     * @param string $query
+//     * @return Thread
+//     * @throws JsonException
+//     */
+//    public function createThread(string $query): Thread
+//    {
+//        $remoteThread = Thread::remoteCreate();
+//        $description = Thread::createDescription($query);
+//        return Thread::create([
+//            'assistant_id' => $this->id,
+//            'remote_id' => $remoteThread['id'],
+//            'description' => $description,
+//            'details' => $remoteThread
+//        ]);
+//    }
+//
+//
+//    /**
+//     * @param string $remoteThreadId
+//     * @return void
+//     */
+//    public function run(string $remoteThreadId): void
+//    {
+//        $startedRun = OpenAI::factory()->assistant()->run()->create($remoteThreadId, $this->remote_id);
+//        do {
+//            sleep(2);
+//            $run = OpenAI::factory()->assistant()->run()->retrieve($remoteThreadId, $startedRun['id']);
+//        } while ($run['status'] !== 'completed');
+//    }
+
     /**
-     * @param array $params
-     * @return void
+     * @return Collection
      */
-    public function create(array $params): void
+    public static function scan(): Collection
     {
-        $assistant = $this->getOrCreateRemote($params);
-        $this->action_id = 0;
-        $this->remote_id = $assistant['id'];
-        $this->details = $assistant;
-        $this->save();
-    }
+        $dir = app_path() . '/Lib/Assistants';
+        $files = File::allFiles($dir);
 
-    public function getOrCreateRemote(array $params)
-    {
-        $list = OpenAI::factory()->assistant()->assistant()->list();
-        if (!empty($list['data'])) {
-            foreach ($list['data'] as $remoteAssistant) {
-                if ($remoteAssistant['name'] === $params['name']) {
-                    return $remoteAssistant;
-                }
-            }
-        }
-        return OpenAI::factory()->assistant()->assistant()->create($params);
-    }
-
-    /**
-     * @param int|null $threadId
-     * @param string $query
-     * @return Thread
-     * @throws JsonException
-     */
-    public function getOrCreateThread(?int $threadId, string $query): Thread
-    {
-        if ($thread = $this->getThread($threadId)) {
-            return $thread;
-        }
-        return $this->createThread($query);
-    }
-
-    /**
-     * @param int|null $threadId
-     * @return Thread|null
-     */
-    public function getThread(?int $threadId): ?Thread
-    {
-        return $this->threads->where('id', $threadId)->first();
-    }
-
-    /**
-     * @param string $query
-     * @return Thread
-     * @throws JsonException
-     */
-    public function createThread(string $query): Thread
-    {
-        $remoteThread = Thread::remoteCreate();
-        $description = Thread::createDescription($query);
-        return Thread::create([
-            'assistant_id' => $this->id,
-            'remote_id' => $remoteThread['id'],
-            'description' => $description,
-            'details' => $remoteThread
-        ]);
-    }
-
-
-    /**
-     * @param string $remoteThreadId
-     * @return void
-     */
-    public function run(string $remoteThreadId): void
-    {
-        $startedRun = OpenAI::factory()->assistant()->run()->create($remoteThreadId, $this->remote_id);
-        do {
-            sleep(2);
-            $run = OpenAI::factory()->assistant()->run()->retrieve($remoteThreadId, $startedRun['id']);
-        } while ($run['status'] !== 'completed');
+        return collect($files)->filter(function ($file) {
+            return !Str::startsWith($file->getBasename(), 'Abstract');
+        })->map(function ($file) {
+            $namespace = 'App\Lib\Assistants';
+            $endClass = $file->getRelativePathname();
+            $endClass = Str::beforeLast($endClass, '.php');
+            $endClass = Str::replace('/', '\\', $endClass);
+            return $namespace . '\\' . $endClass;
+        })->values();
     }
 }

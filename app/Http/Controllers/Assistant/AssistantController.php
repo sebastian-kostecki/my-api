@@ -4,10 +4,13 @@ namespace App\Http\Controllers\Assistant;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\AssistantRequest;
-use App\Lib\Assistant\Assistant;
+use App\Http\Resources\AssistantResource;
 use App\Lib\Exceptions\ConnectionException;
+use App\Models\Assistant;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use JsonException;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class AssistantController extends Controller
 {
@@ -15,6 +18,27 @@ class AssistantController extends Controller
         protected Assistant $assistant
     )
     {
+    }
+
+    /**
+     * @return AnonymousResourceCollection
+     */
+    public function index(): AnonymousResourceCollection
+    {
+        $assistants = Assistant::all();
+        return AssistantResource::collection($assistants);
+    }
+
+    /**
+     * @param int $assistantId
+     * @return BinaryFileResponse
+     */
+    public function getAvatarUrl(int $assistantId): BinaryFileResponse
+    {
+        $assistant = Assistant::findOrFail($assistantId);
+        $path = resource_path("/img/assistants/{$assistant->name}.jpg");
+
+        return response()->file($path);
     }
 
     /**

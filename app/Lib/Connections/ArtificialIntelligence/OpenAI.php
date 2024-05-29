@@ -14,6 +14,11 @@ class OpenAI implements ArtificialIntelligenceInterface
         $this->api = new Api();
     }
 
+    public static function factory(): OpenAI
+    {
+        return new self();
+    }
+
     /**
      * @return array{
      *     name: string,
@@ -22,6 +27,20 @@ class OpenAI implements ArtificialIntelligenceInterface
      */
     public function getModels(): array
     {
-        return $this->api->models();
+        $result = $this->api->models();
+        $models = collect($result['data']);
+        return $models
+            ->sortByDesc('created')
+            ->map(function ($model) {
+                return [
+                    'name' => $model['id'],
+                    'type' => 'open_ai'
+                ];
+            })->values()->toArray();
+    }
+
+    public function chat(string $model, array $messages, array $params)
+    {
+        $result = $this->api->completion($model, $messages, $params);
     }
 }
