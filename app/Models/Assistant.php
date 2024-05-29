@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Lib\Interfaces\AssistantInterface;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -12,10 +13,12 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 
 /**
- * @property string $remote_id
- * @property int $action_id
- * @property int $id
- * @property array $details
+ * @property class-string<AssistantInterface> $type
+ * @property string $name
+ * @property string $description
+ * @property string $instructions
+ * @property string $model
+ * @method static findOrFail(int $assistantId)
  */
 class Assistant extends Model
 {
@@ -142,5 +145,15 @@ class Assistant extends Model
             $endClass = Str::replace('/', '\\', $endClass);
             return $namespace . '\\' . $endClass;
         })->values();
+    }
+
+    /**
+     * @param string $model
+     * @return void
+     */
+    public function setModel(string $model): void
+    {
+        $this->model = $model;
+        $this->save();
     }
 }

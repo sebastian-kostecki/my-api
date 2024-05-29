@@ -42,6 +42,21 @@ class AssistantController extends Controller
     }
 
     /**
+     * @param int $assistantId
+     * @param AssistantRequest $request
+     * @return AssistantResource
+     */
+    public function updateModel(int $assistantId, AssistantRequest $request): AssistantResource
+    {
+        $params = $request->validated();
+
+        $assistant = Assistant::findOrFail($assistantId);
+        $assistant->setModel($params['model']);
+
+        return new AssistantResource($assistant);
+    }
+
+    /**
      * @param AssistantRequest $request
      * @return JsonResponse
      * @throws JsonException
