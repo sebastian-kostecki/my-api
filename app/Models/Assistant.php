@@ -4,7 +4,7 @@ namespace App\Models;
 
 use App\Lib\Interfaces\AssistantInterface;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Model as EloquentModel;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
@@ -20,17 +20,28 @@ use Illuminate\Support\Str;
  * @property string $model
  * @method static findOrFail(int $assistantId)
  */
-class Assistant extends Model
+class Assistant extends EloquentModel
 {
     use HasFactory;
 
     protected $fillable = [
+        'model_id',
         'type',
         'name',
         'description',
         'instructions',
-        'model'
     ];
+
+    /**
+     * @return BelongsTo
+     */
+    public function model(): BelongsTo
+    {
+        return $this->belongsTo(Model::class);
+    }
+
+
+
 
 
     public function action(): BelongsTo

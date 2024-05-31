@@ -8,6 +8,9 @@ use Illuminate\Support\Facades\Route;
 Route::get('/assistant/{id}/avatar', [AssistantController::class, 'getAvatarUrl'])
     ->name('assistant.avatar');
 
+Route::get('/assistants', [AssistantController::class, 'index'])
+    ->name('assistant.list');
+
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/', [AssistantController::class, 'query'])
         ->name('assistant_chat');
@@ -24,8 +27,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/models', [ModelController::class, 'index'])
         ->name('model.list');
 
-    Route::get('/assistants', [AssistantController::class, 'index'])
-        ->name('assistant.list');
+
     Route::patch('/assistant/{id}/model', [AssistantController::class, 'updateModel'])
         ->name('assistant.model.update');
 });

@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Models\Model;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -9,7 +10,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
  * @property int $id
  * @property string $name
  * @property string $description
- * @property string $model
+ * @property Model $model
  */
 class AssistantResource extends JsonResource
 {
@@ -24,7 +25,7 @@ class AssistantResource extends JsonResource
             'id' => $this->id,
             'title' => $this->name,
             'subtitle' => $this->description,
-            'model' => $this->model
+            'model' => new ModelResource($this->model),
         ];
     }
 }

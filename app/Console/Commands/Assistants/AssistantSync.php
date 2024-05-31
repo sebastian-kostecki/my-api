@@ -2,9 +2,9 @@
 
 namespace App\Console\Commands\Assistants;
 
-use App\Lib\Connections\ArtificialIntelligence\OpenAI;
 use App\Lib\Interfaces\AssistantInterface;
 use App\Models\Assistant;
+use App\Models\Model;
 use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Support\Collection;
@@ -95,13 +95,15 @@ class AssistantSync extends Command
      */
     private function createAssistant(string $assistantClass): void
     {
+        $firstModel = Model::first();
+
         /** @var AssistantInterface $assistantClass */
         Assistant::create([
+            'model_id' => $firstModel->id,
             'type' => $assistantClass,
             'name' => $assistantClass::getName(),
             'description' => $assistantClass::getDescription(),
-            'instructions' => $assistantClass::getInstructions(),
-            'model' => OpenAI::factory()->getModels()[0]['name']
+            'instructions' => $assistantClass::getInstructions()
         ]);
 
         $this->info("added to database");
