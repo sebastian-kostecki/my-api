@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model as EloquentModel;
 /**
  * @property string $name
  * @method static create(array $array)
+ * @method static where(string $column, array|string $value)
  */
 class Model extends EloquentModel
 {
