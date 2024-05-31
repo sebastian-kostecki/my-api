@@ -34,7 +34,7 @@ class OpenAI implements ArtificialIntelligenceInterface
             ->map(function ($model) {
                 return [
                     'name' => $model['id'],
-                    'type' => 'open_ai'
+                    'type' => self::class
                 ];
             })->values()->toArray();
     }
