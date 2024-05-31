@@ -3,20 +3,19 @@
 namespace App\Http\Controllers\Assistant;
 
 use App\Http\Controllers\Controller;
-use App\Lib\Connections\ArtificialIntelligence\OpenAI;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
+use App\Http\Resources\ModelResource;
+use App\Repository\ModelRepository;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class ModelController extends Controller
 {
     /**
-     * @param OpenAI $openAI
-     * @return JsonResponse
+     * @param ModelRepository $repository
+     * @return AnonymousResourceCollection
      */
-    public function index(OpenAI $openAI): JsonResponse
+    public function index(ModelRepository $repository): AnonymousResourceCollection
     {
-        return new JsonResponse([
-            'data' => $openAI->getModels()
-        ]);
+        $models = $repository->getModels();
+        return ModelResource::collection($models);
     }
 }
