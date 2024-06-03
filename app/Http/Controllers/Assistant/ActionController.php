@@ -8,6 +8,7 @@ use App\Http\Resources\ActionResource;
 use App\Lib\Assistant\Actions\DefaultAssistant;
 use App\Lib\Assistant\Actions\Query;
 use App\Models\Action;
+use App\Repository\ActionRepository;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
@@ -15,13 +16,12 @@ use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 class ActionController extends Controller
 {
     /**
+     * @param ActionRepository $actionRepository
      * @return AnonymousResourceCollection
      */
-    public function index(): AnonymousResourceCollection
+    public function index(ActionRepository $actionRepository): AnonymousResourceCollection
     {
-        $actions = Action::all()->filter(function ($action) {
-            return !$action->hidden;
-        });
+        $actions = $actionRepository->all();
         return ActionResource::collection($actions);
     }
 

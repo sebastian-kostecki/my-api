@@ -51,7 +51,7 @@ class AssistantController extends Controller
         $params = $request->validated();
 
         $assistant = Assistant::findOrFail($assistantId);
-        $assistant->setModel($params['model']);
+        $assistant->setModel($params['model_id']);
 
         return new AssistantResource($assistant);
     }

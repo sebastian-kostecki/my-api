@@ -17,7 +17,7 @@ use Illuminate\Support\Str;
  * @property string $name
  * @property string $description
  * @property string $instructions
- * @property string $model
+ * @property int $model_id
  * @method static findOrFail(int $assistantId)
  */
 class Assistant extends EloquentModel
@@ -159,12 +159,12 @@ class Assistant extends EloquentModel
     }
 
     /**
-     * @param string $model
+     * @param int $model_id
      * @return void
      */
-    public function setModel(string $model): void
+    public function setModel(int $model_id): void
     {
-        $this->model = $model;
+        $this->model_id = $model_id;
         $this->save();
     }
 }

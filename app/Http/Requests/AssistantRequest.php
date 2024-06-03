@@ -24,7 +24,7 @@ class AssistantRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'model' => ['string', new ModelRule],
+            'model_id' => ['int', 'required', 'exists:models,id'],
         ];
     }
 }
