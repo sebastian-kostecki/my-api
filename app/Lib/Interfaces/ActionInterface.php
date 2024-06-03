@@ -2,18 +2,20 @@
 
 namespace App\Lib\Interfaces;
 
-use App\Enums\Assistant\ChatModel;
-use App\Lib\Assistant\Assistant;
-
 interface ActionInterface
 {
     /**
-     * @param Assistant $assistant
+     * @return string
      */
-    public function __construct(Assistant $assistant);
+    public static function getName(): string;
 
     /**
-     * @return void
+     * @return string
      */
-    public function execute(): void;
+    public static function getIcon(): string;
+
+    /**
+     * @return string|null
+     */
+    public static function getShortcut(): ?string;
 }
