@@ -18,6 +18,7 @@ use Illuminate\Support\Str;
  * @property string $description
  * @property string $instructions
  * @property int $model_id
+ * @property Model $model
  * @method static findOrFail(int $assistantId)
  */
 class Assistant extends EloquentModel

@@ -23,4 +23,24 @@ class Request
         }
         return $response->json();
     }
+
+
+//    public function callStream(string $method, string $endpoint, array $params = []): ?array
+//    {
+//        $url = rtrim(self::BASEURL, '/') . '/' . $endpoint;
+//        $response = Http::withToken(config('services.open_ai.api_key'))->{strtolower($method)}($url, $params);
+//
+//        $body = $response->body();
+//        $chunks = explode("\n", $body);
+//        foreach ($chunks as $chunk) {
+//            $data = Str::after($chunk, 'data: ');
+//            dump($data);
+//        }
+//
+//
+//        if (!$response->successful()) {
+//            throw new \RuntimeException('Request failed with error: ' . $response->body());
+//        }
+//        return $response->json();
+//    }
 }

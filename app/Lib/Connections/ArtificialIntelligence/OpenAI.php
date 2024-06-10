@@ -9,6 +9,9 @@ class OpenAI implements ArtificialIntelligenceInterface
 {
     public Api $api;
 
+    private float $temperature = 0.5;
+    private bool $jsonMode = false;
+
     public function __construct()
     {
         $this->api = new Api();
@@ -39,8 +42,38 @@ class OpenAI implements ArtificialIntelligenceInterface
             })->values()->toArray();
     }
 
-    public function chat(string $model, array $messages, array $params)
+    /**
+     * @param string $model
+     * @param array $messages
+     * @return string
+     */
+    public function completion(string $model, array $messages): string
     {
-        $result = $this->api->completion($model, $messages, $params);
+        return $this->api->completion($model, $messages, $this->createParams());
+    }
+
+
+    /**
+     * setters
+     */
+    public function setJsonMode(bool $mode = true): void
+    {
+        $this->jsonMode = $mode;
+    }
+
+    /**
+     * @return array
+     */
+    private function createParams(): array
+    {
+        $params = [
+            'temperature' => $this->temperature,
+        ];
+        if ($this->jsonMode) {
+            $params['response_format'] = [
+                'type' => 'json_object'
+            ];
+        }
+        return $params;
     }
 }

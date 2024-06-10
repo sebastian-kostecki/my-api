@@ -10,5 +10,21 @@ class Query extends AbstractAction implements ActionInterface
     public const ICON = 'fa-solid fa-circle-question';
     public const SHORTCUT = null;
 
-    //some abstraction
+    public function execute(): string
+    {
+        $model = $this->assistant->model->name;
+        $messages = [
+            [
+                'role' => 'system',
+                'content' => $this->assistant->instructions
+            ],
+            ...$this->thread->getLastMessages(),
+            [
+                'role' => 'user',
+                'content' => $this->input
+            ]
+        ];
+
+        return $this->assistant->model->type::factory()->completion($model, $messages);
+    }
 }

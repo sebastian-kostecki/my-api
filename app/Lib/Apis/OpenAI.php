@@ -31,20 +31,21 @@ class OpenAI
         return $this->request->call('GET', 'models');
     }
 
-    public function completion(string $model, array $messages, array $params = [])
+    /**
+     * @param string $model
+     * @param array $messages
+     * @param array $params
+     * @return string
+     */
+    public function completion(string $model, array $messages, array $params = []): string
     {
         $apiParams = [
             'model' => $model,
-            'messages' => $messages
+            'messages' => $messages,
+            ...$params
         ];
-        if (!empty($params['temperature'])) {
-            $apiParams['temperature'] = $params['temperature'];
-        }
-        if (!empty($params['tools'])) {
-            $apiParams['tools'] = $params['tools'];
-        }
 
         $result = $this->request->call('POST', 'chat/completions', $apiParams);
-        dd($result);
+        return $result['choices'][0]['message']['content'];
     }
 }

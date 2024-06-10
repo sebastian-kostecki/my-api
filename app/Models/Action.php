@@ -12,6 +12,7 @@ use Illuminate\Support\Str;
  * @property string $name
  * @property string $icon
  * @property string $shortcut
+ * @method static findOrFail(int $id)
  */
 class Action extends Model
 {

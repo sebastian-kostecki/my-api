@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Assistant\ActionController;
 use App\Http\Controllers\Assistant\AssistantController;
+use App\Http\Controllers\Assistant\ChatController;
 use App\Http\Controllers\Assistant\ModelController;
 use Illuminate\Support\Facades\Route;
 
@@ -12,8 +13,8 @@ Route::get('/assistants', [AssistantController::class, 'index'])
     ->name('assistant.list');
 
 Route::middleware('auth:sanctum')->group(function () {
-    Route::post('/', [AssistantController::class, 'query'])
-        ->name('assistant_chat');
+    Route::post('/execute', [ChatController::class, 'store'])
+        ->name('chat');
 
     Route::get('/actions', [ActionController::class, 'index'])
         ->name('action.list');
