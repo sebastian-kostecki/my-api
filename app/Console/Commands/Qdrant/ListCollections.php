@@ -3,8 +3,9 @@
 namespace App\Console\Commands\Qdrant;
 
 use App\Lib\Apis\Qdrant;
-use App\Models\User;
+use App\Lib\Exceptions\ConnectionException;
 use Illuminate\Console\Command;
+use JsonException;
 
 class ListCollections extends Command
 {
@@ -24,6 +25,9 @@ class ListCollections extends Command
 
     /**
      * Execute the console command.
+     * @param Qdrant $api
+     * @throws ConnectionException
+     * @throws JsonException
      */
     public function handle(Qdrant $api): void
     {
