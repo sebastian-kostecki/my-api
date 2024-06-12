@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Lib\Connections\ArtificialIntelligence\OpenAI;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -37,15 +38,25 @@ class Thread extends Model
      * @param int|null $id
      * @return self
      */
-    public static function getOrCreate(?int $id): self
+    public static function getOrCreate(?int $id, string $input): self
     {
         $thread = self::find($id);
         if ($thread) {
             return $thread;
         }
-        //ToDo generate by AI
+
+        $openAI = OpenAI::factory();
+        /**@var \App\Models\Model $model */
+        $model = \App\Models\Model::getModel('gpt-3.5');
+        $result = $openAI->completion($model->name, [
+            [
+                'role' => 'user',
+                'content' => "Summarize the following text in one short sentence (maximum 250 characters) in Polish: \n" . $input
+            ]
+        ]);
+
         return self::make([
-            'description' => "some description",
+            'description' => $result,
         ]);
     }
 

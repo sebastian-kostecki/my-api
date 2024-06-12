@@ -20,7 +20,7 @@ class ChatController extends Controller
         $params = $request->validated();
 
         $assistant = Assistant::findOrFail($params['assistant_id']);
-        $thread = Thread::getOrCreate($params['thread_id']);
+        $thread = Thread::getOrCreate($params['thread_id'], $params['input']);
         /** @var Action $action */
         $action = Action::findOrFail($params['action_id']);
 

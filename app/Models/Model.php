@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Model as EloquentModel;
  * @property string $name
  * @property ArtificialIntelligenceInterface $type
  * @method static create(array $array)
- * @method static where(string $column, array|string $value)
+ * @method static where(string $column, string $param, string $value)
  */
 class Model extends EloquentModel
 {
@@ -20,4 +20,13 @@ class Model extends EloquentModel
         'name',
         'type'
     ];
+
+    /**
+     * @param string $name
+     * @return Model
+     */
+    public static function getModel(string $name): Model
+    {
+        return self::where('name', 'like', $name . '%')->first();
+    }
 }
