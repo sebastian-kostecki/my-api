@@ -46,4 +46,12 @@ class AbstractAction
     {
         return static::SHORTCUT;
     }
+
+    /**
+     * @return bool
+     */
+    public function isRequireThread(): bool
+    {
+        return false;
+    }
 }

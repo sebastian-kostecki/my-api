@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Lib\Interfaces\ActionInterface;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\File;
@@ -24,6 +25,17 @@ class Action extends Model
     ];
 
     /**
+     * @param Assistant $assistant
+     * @param Thread|null $thread
+     * @param string $input
+     * @return ActionInterface
+     */
+    public function getInstance(Assistant $assistant, ?Thread $thread, string $input): ActionInterface
+    {
+        return new $this->type($assistant, $thread, $input);
+    }
+
+    /**
      * @return Collection
      */
     public static function scan(): Collection
@@ -41,6 +53,8 @@ class Action extends Model
             return $namespace . '\\' . $endClass;
         })->values();
     }
+
+
 
 //    /**
 //     * @param Builder $query

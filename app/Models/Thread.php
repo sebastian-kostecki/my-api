@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property int $id
  * @method static find(int $id)
  * @method static create(string[] $array)
+ * @method static make(string[] $array)
  */
 class Thread extends Model
 {
@@ -43,7 +44,7 @@ class Thread extends Model
             return $thread;
         }
         //ToDo generate by AI
-        return self::create([
+        return self::make([
             'description' => "some description",
         ]);
     }

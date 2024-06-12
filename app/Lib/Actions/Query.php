@@ -3,9 +3,12 @@
 namespace App\Lib\Actions;
 
 use App\Lib\Interfaces\ActionInterface;
+use App\Lib\Traits\ShouldThread;
 
 class Query extends AbstractAction implements ActionInterface
 {
+    use ShouldThread;
+
     public const NAME = 'Query';
     public const ICON = 'fa-solid fa-circle-question';
     public const SHORTCUT = null;

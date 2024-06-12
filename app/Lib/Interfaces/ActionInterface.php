@@ -29,5 +29,13 @@ interface ActionInterface
      */
     public static function getShortcut(): ?string;
 
-    public function execute();
+    /**
+     * @return bool
+     */
+    public function isRequireThread(): bool;
+
+    /**
+     * @return mixed
+     */
+    public function execute(): string;
 }
