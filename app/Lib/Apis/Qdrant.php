@@ -39,4 +39,23 @@ class Qdrant
         $response = $this->request->call('GET', "/collections/{$name}");
         return $response['result'];
     }
+
+    /**
+     * @param string $name
+     * @param int $size
+     * @param string $distance
+     * @return void
+     * @throws ConnectionException
+     * @throws JsonException
+     */
+    public function createCollection(string $name, int $size, string $distance = "Cosine"): void
+    {
+        $params = [
+            'vectors' => [
+                'size' => $size,
+                'distance' => $distance
+            ]
+        ];
+        $this->request->call('PUT', "/collections/{$name}", $params);
+    }
 }
