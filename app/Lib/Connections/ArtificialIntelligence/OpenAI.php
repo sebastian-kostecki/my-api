@@ -4,6 +4,7 @@ namespace App\Lib\Connections\ArtificialIntelligence;
 
 use App\Lib\Apis\OpenAI as Api;
 use App\Lib\Interfaces\Connections\ArtificialIntelligenceInterface;
+use App\Models\Model;
 
 class OpenAI implements ArtificialIntelligenceInterface
 {
@@ -52,13 +53,25 @@ class OpenAI implements ArtificialIntelligenceInterface
         return $this->api->completion($model, $messages, $this->createParams());
     }
 
-
     /**
-     * setters
+     * @param string $text
+     * @return string
      */
-    public function setJsonMode(bool $mode = true): void
+    public function shortSummarize(string $text): string
     {
-        $this->jsonMode = $mode;
+        $model = Model::getModel('gpt-3.5');
+        return $this->api->completion(
+            $model->name,
+            [
+                [
+                    'role' => 'user',
+                    'content' => "Summarize the following text in one short sentence (maximum 250 characters) in Polish: \n" . $text
+                ]
+            ],
+            [
+                'temperature' => 1
+            ]
+        );
     }
 
     /**

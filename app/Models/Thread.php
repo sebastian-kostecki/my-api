@@ -38,26 +38,28 @@ class Thread extends Model
      * @param int|null $id
      * @return self
      */
-    public static function getOrCreate(?int $id, string $input): self
+    public static function getOrMake(?int $id): self
     {
         $thread = self::find($id);
         if ($thread) {
             return $thread;
         }
-
-        $openAI = OpenAI::factory();
-        /**@var \App\Models\Model $model */
-        $model = \App\Models\Model::getModel('gpt-3.5');
-        $result = $openAI->completion($model->name, [
-            [
-                'role' => 'user',
-                'content' => "Summarize the following text in one short sentence (maximum 250 characters) in Polish: \n" . $input
-            ]
-        ]);
-
         return self::make([
-            'description' => $result,
+            'description' => '',
         ]);
+    }
+
+    /**
+     * @param string $input
+     * @return void
+     */
+    public function addDescription(string $input): void
+    {
+        if (!empty($this->description)) {
+            return;
+        }
+        $this->description = OpenAI::factory()->shortSummarize($input);
+        $this->save();
     }
 
     /**

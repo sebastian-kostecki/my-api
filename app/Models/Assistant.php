@@ -20,6 +20,7 @@ use Illuminate\Support\Str;
  * @property int $model_id
  * @property Model $model
  * @method static findOrFail(int $assistantId)
+ * @method static create(array $array)
  */
 class Assistant extends EloquentModel
 {
