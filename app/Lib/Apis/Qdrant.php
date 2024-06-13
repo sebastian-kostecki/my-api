@@ -27,4 +27,16 @@ class Qdrant
         $response = $this->request->call('GET', '/collections');
         return $response['result']['collections'];
     }
+
+    /**
+     * @param string $name
+     * @return array
+     * @throws ConnectionException
+     * @throws JsonException
+     */
+    public function getCollection(string $name): array
+    {
+        $response = $this->request->call('GET', "/collections/{$name}");
+        return $response['result'];
+    }
 }
