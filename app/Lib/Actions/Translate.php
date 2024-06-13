@@ -13,7 +13,8 @@ class Translate extends AbstractAction implements ActionInterface
 {
     public const NAME = 'Translate';
     public const ICON = 'fa-solid fa-language';
-    public const SHORTCUT = null;
+    public const SHORTCUT = 'CommandOrControl+Shift+B';
+    public const CONFIG = null;
 
     private Translator $translator;
 

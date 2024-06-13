@@ -9,8 +9,11 @@ class AbstractAction
 {
     public const NAME = 'Abstract Action';
     public const ICON = 'icon';
-
     public const SHORTCUT = null;
+    public const CONFIG = [
+        'temperature' => 0.5,
+        'top_p' => 0.5
+    ];
 
     protected Assistant $assistant;
     protected ?Thread $thread;
@@ -45,6 +48,17 @@ class AbstractAction
     public static function getShortcut(): ?string
     {
         return static::SHORTCUT;
+    }
+
+    /**
+     * @return array{
+     *     temperature: float,
+     *     top_p: float
+     * }|null
+     */
+    public static function getConfig(): ?array
+    {
+        return static::CONFIG;
     }
 
     /**

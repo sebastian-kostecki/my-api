@@ -14,6 +14,7 @@ use Illuminate\Support\Str;
  * @property string $icon
  * @property string $shortcut
  * @method static findOrFail(int $id)
+ * @method static create(array $array)
  */
 class Action extends Model
 {
@@ -21,7 +22,12 @@ class Action extends Model
         'type',
         'name',
         'icon',
-        'shortcut'
+        'shortcut',
+        'config'
+    ];
+
+    protected $casts = [
+        'config' => 'array',
     ];
 
     /**

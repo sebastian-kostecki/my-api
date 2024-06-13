@@ -30,6 +30,11 @@ interface ActionInterface
     public static function getShortcut(): ?string;
 
     /**
+     * @return array
+     */
+    public static function getConfig(): ?array;
+
+    /**
      * @return bool
      */
     public function isRequireThread(): bool;

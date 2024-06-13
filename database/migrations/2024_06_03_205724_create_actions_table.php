@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('name');
             $table->string('icon');
             $table->string('shortcut')->nullable();
+            $table->json('config')->nullable();
             $table->timestamps();
         });
     }

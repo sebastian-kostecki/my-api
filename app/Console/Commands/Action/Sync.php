@@ -99,7 +99,8 @@ class Sync extends Command
             'type' => $actionClass,
             'name' => $actionClass::getName(),
             'icon' => $actionClass::getIcon(),
-            'shortcut' => $actionClass::getShortcut()
+            'shortcut' => $actionClass::getShortcut(),
+            'config' => $actionClass::getConfig()
         ]);
 
         $this->info("added to database");

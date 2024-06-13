@@ -12,6 +12,10 @@ class Query extends AbstractAction implements ActionInterface
     public const NAME = 'Query';
     public const ICON = 'fa-solid fa-circle-question';
     public const SHORTCUT = null;
+    public const CONFIG = [
+        'temperature' => 0.5,
+        'top_p' => 0.5
+    ];
 
     public function execute(): string
     {
