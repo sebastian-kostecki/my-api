@@ -24,7 +24,7 @@ class ChatController extends Controller
         /** @var Action $action */
         $action = Action::findOrFail($params['action_id']);
 
-        $operation = $action->getInstance($assistant, $thread, $params['input']);
+        $operation = $action->getInstance($assistant, $action, $thread, $params['input']);
         $result = $operation->execute();
 
         if ($operation->isRequireThread()) {

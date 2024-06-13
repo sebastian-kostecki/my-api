@@ -2,6 +2,7 @@
 
 namespace App\Lib\Interfaces;
 
+use App\Models\Action;
 use App\Models\Assistant;
 use App\Models\Thread;
 
@@ -9,10 +10,11 @@ interface ActionInterface
 {
     /**
      * @param Assistant $assistant
+     * @param Action $action
      * @param Thread $thread
      * @param string $input
      */
-    public function __construct(Assistant $assistant, Thread $thread, string $input);
+    public function __construct(Assistant $assistant, Action $action, Thread $thread, string $input);
 
     /**
      * @return string

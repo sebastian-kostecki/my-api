@@ -20,6 +20,7 @@ class Query extends AbstractAction implements ActionInterface
     public function execute(): string
     {
         $model = $this->assistant->model->name;
+        $config = $this->action->config;
         $messages = [
             [
                 'role' => 'system',
@@ -32,6 +33,6 @@ class Query extends AbstractAction implements ActionInterface
             ]
         ];
 
-        return $this->assistant->model->type::factory()->completion($model, $messages);
+        return $this->assistant->model->type::factory()->chat($model, $messages, $config['temperature'], $config['top_p']);
     }
 }

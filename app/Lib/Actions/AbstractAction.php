@@ -2,6 +2,7 @@
 
 namespace App\Lib\Actions;
 
+use App\Models\Action;
 use App\Models\Assistant;
 use App\Models\Thread;
 
@@ -16,12 +17,14 @@ class AbstractAction
     ];
 
     protected Assistant $assistant;
+    protected Action $action;
     protected ?Thread $thread;
     protected string $input;
 
-    public function __construct(Assistant $assistant, ?Thread $thread, string $input)
+    public function __construct(Assistant $assistant, Action $action, ?Thread $thread, string $input)
     {
         $this->assistant = $assistant;
+        $this->action = $action;
         $this->thread = $thread;
         $this->input = $input;
     }

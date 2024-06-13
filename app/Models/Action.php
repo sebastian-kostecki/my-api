@@ -13,6 +13,7 @@ use Illuminate\Support\Str;
  * @property string $name
  * @property string $icon
  * @property string $shortcut
+ * @property array $config
  * @method static findOrFail(int $id)
  * @method static create(array $array)
  */
@@ -32,13 +33,14 @@ class Action extends Model
 
     /**
      * @param Assistant $assistant
+     * @param Action $action
      * @param Thread|null $thread
      * @param string $input
      * @return ActionInterface
      */
-    public function getInstance(Assistant $assistant, ?Thread $thread, string $input): ActionInterface
+    public function getInstance(Assistant $assistant, Action $action, ?Thread $thread, string $input): ActionInterface
     {
-        return new $this->type($assistant, $thread, $input);
+        return new $this->type($assistant, $action, $thread, $input);
     }
 
     /**
