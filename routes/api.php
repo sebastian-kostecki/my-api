@@ -1,7 +1,5 @@
 <?php
 
-use App\Http\Controllers\Assistant\ShortcutController;
-use App\Http\Controllers\TranslationController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -20,14 +18,5 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user', function (Request $request) {
         return $request->user();
     });
-
-    Route::post('/login', function (Request $request) {
-        return;
-    })->name('login');
-
-    /**
-     * Shortcuts
-     */
-    Route::post('/shortcut/translate', [ShortcutController::class, 'translate']);
 });
 

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Assistant;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ChatRequest;
+use App\Lib\Exceptions\ConnectionException;
 use App\Models\Action;
 use App\Models\Assistant;
 use App\Models\Thread;
@@ -14,6 +15,8 @@ class ChatController extends Controller
     /**
      * @param ChatRequest $request
      * @return JsonResponse
+     * @throws ConnectionException
+     * @throws \JsonException
      */
     public function store(ChatRequest $request): JsonResponse
     {

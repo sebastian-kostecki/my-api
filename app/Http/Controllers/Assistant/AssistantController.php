@@ -5,22 +5,12 @@ namespace App\Http\Controllers\Assistant;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\AssistantRequest;
 use App\Http\Resources\AssistantResource;
-use App\Lib\Exceptions\ConnectionException;
 use App\Models\Assistant;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
-use JsonException;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class AssistantController extends Controller
 {
-    public function __construct(
-        protected Assistant $assistant
-    )
-    {
-    }
-
     /**
      * @return AnonymousResourceCollection
      */
@@ -56,28 +46,4 @@ class AssistantController extends Controller
 
         return new AssistantResource($assistant);
     }
-
-//    /**
-//     * @return JsonResponse
-//     * @throws JsonException
-//     */
-//    public function query(Request $request): JsonResponse
-//    {
-//        $params = $request->all();
-//
-//        dd($params);
-//
-//
-//        $this->assistant->setQuery($params['query']);
-//        if (!empty($params['thread'])) {
-//            $this->assistant->setThread($params['thread']);
-//        }
-//        $this->assistant->setAction($params['action']);
-//        $this->assistant->execute();
-//
-//        return new JsonResponse([
-//            'message' => $this->assistant->getResponse(),
-//            'thread' => $this->assistant->getThreadId()
-//        ]);
-//    }
 }
