@@ -3,6 +3,7 @@
 namespace App\Lib\Actions;
 
 use App\Lib\Interfaces\ActionInterface;
+use App\Models\Action;
 use App\Models\Assistant;
 use App\Models\Thread;
 use DeepL\DeepLException;
@@ -13,7 +14,7 @@ class Translate extends AbstractAction implements ActionInterface
 {
     public const NAME = 'Translate';
     public const ICON = 'fa-solid fa-language';
-    public const SHORTCUT = 'CommandOrControl+Shift+B';
+    public const SHORTCUT = 'CommandOrControl+Shift+T';
     public const CONFIG = null;
 
     private Translator $translator;
@@ -21,9 +22,9 @@ class Translate extends AbstractAction implements ActionInterface
     /**
      * @throws DeepLException
      */
-    public function __construct(Assistant $assistant, ?Thread $thread, string $input)
+    public function __construct(Assistant $assistant, Action $action, ?Thread $thread, string $input)
     {
-        parent::__construct($assistant, $thread, $input);
+        parent::__construct($assistant, $action, $thread, $input);
         $this->translator = new Translator(env('DEEPL_TOKEN'));
     }
 

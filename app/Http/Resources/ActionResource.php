@@ -10,6 +10,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
  * @property int $id
  * @property string $name
  * @property string $icon
+ * @property string $shortcut
  */
 class ActionResource extends JsonResource
 {
@@ -23,7 +24,8 @@ class ActionResource extends JsonResource
         return [
             'id' => $this->id,
             'name' => $this->name,
-            'icon' => $this->icon
+            'icon' => $this->icon,
+            'shortcut' => $this->shortcut
         ];
     }
 }
