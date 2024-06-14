@@ -34,19 +34,13 @@ Route::post('/slack/message', [\App\Http\Controllers\Assistant\AssistantControll
 Route::get('/test', function () {
     $result = "That's fine";
 
-    $api = new \App\Lib\Apis\Qdrant();
-    //$result = $api->listCollections();
-    $result = $api->getCollection('myapi');
+//    $api = new \App\Lib\Apis\Qdrant();
+//    //$result = $api->listCollections();
+//    $result = $api->getCollection('myapi');
 
-//    $model = 'gpt-3.5-turbo';
-//    $messages  = [
-//        [
-//            'role' => 'user',
-//            'content' => 'Gdzie leży Lublin. Odpowiedz jednym zdaniem'
-//        ]
-//    ];
-//
-//    $result = \App\Lib\Apis\OpenAI::factory()->completion($model, $messages);
+    $model = 'text-embedding-3-small';
+    $input = "Something goes wrong";
+    $result = \App\Lib\Apis\OpenAI::factory()->embeddings($model, $input);
 
 
 

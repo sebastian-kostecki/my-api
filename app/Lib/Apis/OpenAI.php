@@ -48,4 +48,19 @@ class OpenAI
         $result = $this->request->call('POST', 'chat/completions', $apiParams);
         return $result['choices'][0]['message']['content'];
     }
+
+    /**
+     * @param string $model
+     * @param string $input
+     * @return array
+     */
+    public function embeddings(string $model, string $input): array
+    {
+        $apiParams = [
+            'model' => $model,
+            'input' => $input
+        ];
+        $result = $this->request->call('POST', 'embeddings', $apiParams);
+        return $result['data'][0]['embedding'];
+    }
 }

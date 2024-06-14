@@ -79,6 +79,16 @@ class OpenAI implements ArtificialIntelligenceInterface
         );
     }
 
+    /**
+     * @param string $input
+     * @return array
+     */
+    public function createEmbeddings(string $input): array
+    {
+        $model = 'text-embedding-3-small';
+        return $this->api->embeddings($model, $input);
+    }
+
 //    /**
 //     * @return array
 //     */
