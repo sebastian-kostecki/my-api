@@ -8,7 +8,7 @@ class Refactoring extends DefaultAssistant
 {
     public const NAME = 'Refactor';
     public const ICON = 'fa-solid fa-file-code';
-    public const SHORTCUT = 'CommandOrControl+Shift+R';
+    public const SHORTCUT = 'CommandOrControl+Shift+';
     public const MODEL = Model::GPT3;
 
     public const INSTRUCTIONS = 'Your role is to assess whether a given piece of code has undergone proper refactoring. ' .

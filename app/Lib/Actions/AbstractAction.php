@@ -6,7 +6,7 @@ use App\Models\Action;
 use App\Models\Assistant;
 use App\Models\Thread;
 
-class AbstractAction
+abstract class AbstractAction
 {
     public const NAME = 'Abstract Action';
     public const ICON = 'icon';

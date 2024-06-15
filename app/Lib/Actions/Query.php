@@ -35,4 +35,15 @@ class Query extends AbstractAction implements ActionInterface
 
         return $this->assistant->model->type::factory()->chat($model, $messages, $config['temperature'], $config['top_p']);
     }
+
+
+    //bug scanner
+    //history
+    //refactoring
+    //code generator
+    //copywriter - hosting
+    //clean mailer
+
+
+    //panelalpha assistant - Konrad :)
 }
