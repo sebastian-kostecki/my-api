@@ -4,38 +4,46 @@ namespace App\Http\Controllers\Assistant;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\AssistantRequest;
-use App\Lib\Assistant\Assistant;
-use App\Lib\Exceptions\ConnectionException;
-use Illuminate\Http\JsonResponse;
-use JsonException;
+use App\Http\Resources\AssistantResource;
+use App\Models\Assistant;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class AssistantController extends Controller
 {
-    public function __construct(
-        protected Assistant $assistant
-    )
+    /**
+     * @return AnonymousResourceCollection
+     */
+    public function index(): AnonymousResourceCollection
     {
+        $assistants = Assistant::all();
+        return AssistantResource::collection($assistants);
     }
 
     /**
-     * @param AssistantRequest $request
-     * @return JsonResponse
-     * @throws JsonException
+     * @param int $assistantId
+     * @return BinaryFileResponse
      */
-    public function query(AssistantRequest $request): JsonResponse
+    public function getAvatarUrl(int $assistantId): BinaryFileResponse
+    {
+        $assistant = Assistant::findOrFail($assistantId);
+        $path = resource_path("/img/assistants/{$assistant->name}.jpg");
+
+        return response()->file($path);
+    }
+
+    /**
+     * @param int $assistantId
+     * @param AssistantRequest $request
+     * @return AssistantResource
+     */
+    public function updateModel(int $assistantId, AssistantRequest $request): AssistantResource
     {
         $params = $request->validated();
 
-        $this->assistant->setQuery($params['query']);
-        if (!empty($params['thread'])) {
-            $this->assistant->setThread($params['thread']);
-        }
-        $this->assistant->setAction($params['action']);
-        $this->assistant->execute();
+        $assistant = Assistant::findOrFail($assistantId);
+        $assistant->setModel($params['model_id']);
 
-        return new JsonResponse([
-            'message' => $this->assistant->getResponse(),
-            'thread' => $this->assistant->getThreadId()
-        ]);
+        return new AssistantResource($assistant);
     }
 }

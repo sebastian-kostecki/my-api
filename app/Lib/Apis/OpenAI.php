@@ -2,21 +2,17 @@
 
 namespace App\Lib\Apis;
 
-use App\Lib\Apis\OpenAI\Assistant;
-use App\Lib\Apis\OpenAI\Chat;
-use App\Lib\Apis\OpenAI\Embedding;
-use Illuminate\Http\Client\PendingRequest;
-use Illuminate\Support\Facades\Http;
+use App\Lib\Apis\OpenAI\Request;
 
 class OpenAI
 {
     public const BASEURL = 'https://api.openai.com/v1/';
 
-    public PendingRequest $request;
+    private Request $request;
 
     public function __construct()
     {
-        $this->request = Http::withToken(config('services.open_ai.api_key'));
+        $this->request = new Request();
     }
 
     /**
@@ -28,26 +24,43 @@ class OpenAI
     }
 
     /**
-     * @return Chat
+     * @return array
      */
-    public function chat(): Chat
+    public function models(): array
     {
-        return new Chat($this);
+        return $this->request->call('GET', 'models');
     }
 
     /**
-     * @return Embedding
+     * @param string $model
+     * @param array $messages
+     * @param array $params
+     * @return string
      */
-    public function embeddings(): Embedding
+    public function completion(string $model, array $messages, array $params = []): string
     {
-        return new Embedding($this);
+        $apiParams = [
+            'model' => $model,
+            'messages' => $messages,
+            ...$params
+        ];
+
+        $result = $this->request->call('POST', 'chat/completions', $apiParams);
+        return $result['choices'][0]['message']['content'];
     }
 
     /**
-     * @return Assistant
+     * @param string $model
+     * @param string $input
+     * @return array
      */
-    public function assistant(): Assistant
+    public function embeddings(string $model, string $input): array
     {
-        return new Assistant($this);
+        $apiParams = [
+            'model' => $model,
+            'input' => $input
+        ];
+        $result = $this->request->call('POST', 'embeddings', $apiParams);
+        return $result['data'][0]['embedding'];
     }
 }

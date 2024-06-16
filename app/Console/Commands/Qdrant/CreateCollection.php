@@ -2,8 +2,10 @@
 
 namespace App\Console\Commands\Qdrant;
 
-use App\Lib\Connections\Qdrant;
+use App\Lib\Apis\Qdrant;
+use App\Lib\Exceptions\ConnectionException;
 use Illuminate\Console\Command;
+use JsonException;
 
 class CreateCollection extends Command
 {
@@ -23,12 +25,14 @@ class CreateCollection extends Command
 
     /**
      * Execute the console command.
+     * @param Qdrant $api
+     * @throws ConnectionException
+     * @throws JsonException
      */
-    public function handle(): void
+    public function handle(Qdrant $api): void
     {
         $collectionName = $this->argument('name');
-        $client = new Qdrant($collectionName);
-        $client->collections()->create(1536);
+        $api->createCollection($collectionName, 1536);
         $this->info('Created collection');
     }
 }

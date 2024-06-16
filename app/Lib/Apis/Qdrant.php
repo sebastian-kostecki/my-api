@@ -2,44 +2,84 @@
 
 namespace App\Lib\Apis;
 
-use App\Lib\Curl;
+use App\Lib\Apis\Qdrant\Request;
 use App\Lib\Exceptions\ConnectionException;
-use Exception;
+use App\Models\Message;
+use Illuminate\Support\Str;
 use JsonException;
-use stdClass;
 
 class Qdrant
 {
-    protected Curl $curl;
+    private Request $request;
 
     public function __construct()
     {
-        $this->curl = new Curl();
+        $this->request = new Request();
     }
 
     /**
-     * @param string $method
-     * @param string $endpoint
-     * @param array $params
-     * @return stdClass
+     * @return array<array{
+     *   name: string
+     * }>
      * @throws ConnectionException
      * @throws JsonException
-     * @throws Exception
      */
-    public function call(string $method, string $endpoint, array $params = []): stdClass
+    public function listCollections(): array
     {
-        $url = 'qdrant:6333/' . $endpoint;
-        $options = [
-            CURLOPT_HTTPHEADER => [
-                "Content-Type: application/json"
-            ],
-        ];
-        $response = $this->curl->call($method, $url, json_encode($params, JSON_THROW_ON_ERROR), $options);
-        $result = json_decode($response, false, 512, JSON_THROW_ON_ERROR);
+        $response = $this->request->call('GET', '/collections');
+        return $response['result']['collections'];
+    }
 
-        if (isset($result->status->error) && $result->status->error) {
-            throw new Exception("Qdrant Error:" . $result->status->error);
-        }
-        return $result;
+    /**
+     * @param string $databaseName
+     * @return array
+     * @throws ConnectionException
+     * @throws JsonException
+     */
+    public function getCollection(string $databaseName): array
+    {
+        $response = $this->request->call('GET', "/collections/{$databaseName}");
+        return $response['result'];
+    }
+
+    /**
+     * @param string $databaseName
+     * @param int $size
+     * @param string $distance
+     * @return void
+     * @throws ConnectionException
+     * @throws JsonException
+     */
+    public function createCollection(string $databaseName, int $size, string $distance = "Cosine"): void
+    {
+        $params = [
+            'vectors' => [
+                'size' => $size,
+                'distance' => $distance
+            ]
+        ];
+        $this->request->call('PUT', "/collections/{$databaseName}", $params);
+    }
+
+    /**
+     * @param string $databaseName
+     * @param array $embeddings
+     * @param array $payload
+     * @return void
+     * @throws ConnectionException
+     * @throws JsonException
+     */
+    public function upsertPoint(string $databaseName, array $embeddings, array $payload): void
+    {
+        $params = [
+            'points' => [
+                [
+                    "id" => Str::uuid()->toString(),
+                    "vector" => $embeddings,
+                    "payload" => $payload
+                ]
+            ]
+        ];
+        $this->request->call('PUT', "/collections/{$databaseName}/points", $params);
     }
 }

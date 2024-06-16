@@ -3,22 +3,18 @@
 namespace App\Lib\Connections;
 
 use App\Lib\Apis\Qdrant as Api;
-use App\Lib\Connections\Qdrant\Collections;
-use App\Lib\Connections\Qdrant\Points;
+use App\Lib\Exceptions\ConnectionException;
+use JsonException;
 
 class Qdrant
 {
     public Api $api;
     public string $databaseName;
 
-    public function __construct(?string $databaseName = "")
+    public function __construct()
     {
         $this->api = new Api();
-        if ($databaseName) {
-            $this->databaseName = $databaseName;
-        } else {
-            $this->databaseName = config('services.qdrant.database_name');
-        }
+        $this->databaseName = config('services.qdrant.database_name');
     }
 
     /**
@@ -30,18 +26,14 @@ class Qdrant
     }
 
     /**
-     * @return Collections
+     * @param array $embeddings
+     * @param array $payload
+     * @return void
+     * @throws ConnectionException
+     * @throws JsonException
      */
-    public function collections(): Collections
+    public function upsertPoint(array $embeddings, array $payload): void
     {
-        return new Collections($this);
-    }
-
-    /**
-     * @return Points
-     */
-    public function points(): Points
-    {
-        return new Points($this);
+        $this->api->upsertPoint($this->databaseName, $embeddings, $payload);
     }
 }

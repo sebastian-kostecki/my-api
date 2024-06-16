@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Rules\ModelRule;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -23,9 +24,7 @@ class AssistantRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'query' => 'string',
-            'action' => 'string|nullable',
-            'thread' => 'int|nullable'
+            'model_id' => ['int', 'required', 'exists:models,id'],
         ];
     }
 }
