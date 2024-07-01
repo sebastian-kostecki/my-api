@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Crypt;
 
 /**
  * @method static create(array $array)
+ * @method static where(string $column, string $value)
  */
 class EmailAccount extends Model
 {
@@ -35,5 +36,14 @@ class EmailAccount extends Model
     public function getPasswordAttribute($value): string
     {
         return Crypt::decryptString($value);
+    }
+
+    /**
+     * @param string $address
+     * @return self
+     */
+    public static function getModel(string $address): self
+    {
+        return self::where('username', $address)->first();
     }
 }
