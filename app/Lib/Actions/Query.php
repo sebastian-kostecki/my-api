@@ -3,6 +3,7 @@
 namespace App\Lib\Actions;
 
 use App\Lib\Interfaces\ActionInterface;
+use App\Lib\Interfaces\Connections\ArtificialIntelligenceInterface;
 use App\Lib\Traits\ShouldThread;
 
 class Query extends AbstractAction implements ActionInterface
@@ -17,15 +18,15 @@ class Query extends AbstractAction implements ActionInterface
         'top_p' => 0.5
     ];
 
+    /**
+     * @return string
+     */
     public function execute(): string
     {
         $model = $this->assistant->model->name;
         $config = $this->action->config;
+        $system = $this->assistant->instructions;
         $messages = [
-            [
-                'role' => 'system',
-                'content' => $this->assistant->instructions
-            ],
             ...$this->thread->getLastMessages(),
             [
                 'role' => 'user',
@@ -33,17 +34,8 @@ class Query extends AbstractAction implements ActionInterface
             ]
         ];
 
-        return $this->assistant->model->type::factory()->chat($model, $messages, $config['temperature'], $config['top_p']);
+        /** @var ArtificialIntelligenceInterface $connection */
+        $connection = (new $this->assistant->model->type);
+        return $connection->chat($model, $messages, $system, $config['temperature'], $config['top_p']);
     }
-
-
-    //bug scanner
-    //history
-    //refactoring
-    //code generator
-    //copywriter - hosting
-    //clean mailer
-
-
-    //panelalpha assistant - Konrad :)
 }
