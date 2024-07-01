@@ -50,8 +50,21 @@ class OpenAI implements ArtificialIntelligenceInterface
      * @param float $topP
      * @return string
      */
-    public function chat(string $model, array $messages, float $temperature = 0.5, float $topP = 0.5): string
+    public function chat(
+        string  $model,
+        array   $messages,
+        ?string $system = null,
+        float   $temperature = 0.5,
+        float   $topP = 0.5
+    ): string
     {
+        if ($system) {
+            array_unshift($messages, [
+                'role' => 'system',
+                'content' => $system
+            ]);
+        }
+
         return $this->api->completion($model, $messages, [
             'temperature' => $temperature,
             'top_p' => $topP
