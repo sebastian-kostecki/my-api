@@ -2,6 +2,8 @@
 
 namespace App\Lib\Actions;
 
+use App\Lib\Interfaces\Connections\ArtificialIntelligenceInterface;
+
 abstract class AbstractChatAction extends AbstractAction
 {
     protected const INSTRUCTIONS = "Some Instructions";
@@ -13,11 +15,8 @@ abstract class AbstractChatAction extends AbstractAction
     {
         $model = $this->assistant->model->name;
         $config = $this->action->config;
+        $system = $this->assistant->instructions . "\n" . static::INSTRUCTIONS;
         $messages = [
-            [
-                'role' => 'system',
-                'content' => $this->assistant->instructions . "\n" . static::INSTRUCTIONS,
-            ],
             ...$this->thread->getLastMessages(),
             [
                 'role' => 'user',
@@ -25,6 +24,8 @@ abstract class AbstractChatAction extends AbstractAction
             ]
         ];
 
-        return $this->assistant->model->type::factory()->chat($model, $messages, $config['temperature'], $config['top_p']);
+        /** @var ArtificialIntelligenceInterface $connection */
+        $connection = (new $this->assistant->model->type);
+        return $connection->chat($model, $messages, $system, $config['temperature'], $config['top_p']);
     }
 }

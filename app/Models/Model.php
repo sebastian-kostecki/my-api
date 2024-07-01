@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Lib\Interfaces\Connections\ArtificialIntelligenceInterface;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model as EloquentModel;
 
@@ -20,6 +21,16 @@ class Model extends EloquentModel
         'name',
         'type'
     ];
+
+    /**
+     * @return Attribute
+     */
+    public function connectionName(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => class_basename($this->type),
+        );
+    }
 
     /**
      * @param string $name

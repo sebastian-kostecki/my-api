@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands\Model;
 
+use App\Lib\Connections\ArtificialIntelligence\Anthropic;
 use App\Lib\Connections\ArtificialIntelligence\OpenAI;
 use App\Lib\Interfaces\Connections\ArtificialIntelligenceInterface;
 use App\Models\Model;
@@ -29,7 +30,8 @@ class AddModel extends Command
     private array $databaseModels;
 
     private array $artificialIntelligenceClasses = [
-        OpenAI::class
+        OpenAI::class,
+        Anthropic::class
     ];
 
     /**
@@ -69,7 +71,7 @@ class AddModel extends Command
         $models = collect();
         foreach ($this->artificialIntelligenceClasses as $class) {
             /** @var class-string<ArtificialIntelligenceInterface> $class */
-            $classModels = $class::factory()->getModels();
+            $classModels = (new $class)->getModels();
             $selectedModels = collect($classModels)->filter(function ($model) {
                 if (in_array($model['name'], $this->databaseModels, true)) {
                     return false;

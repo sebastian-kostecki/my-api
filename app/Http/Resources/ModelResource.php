@@ -8,6 +8,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 /**
  * @property int $id
  * @property string $name
+ * @property string $connection_name
  */
 class ModelResource extends JsonResource
 {
@@ -20,7 +21,9 @@ class ModelResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'name' => $this->name
+            'name' => $this->name,
+            'type' => $this->connection_name
         ];
     }
+
 }
