@@ -3,10 +3,8 @@
 namespace App\Jobs;
 
 use App\Events\SendResponse;
-use App\Lib\Apis\OpenAI;
 use App\Models\Message;
 use App\Models\Run;
-use App\Models\Thread;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -18,6 +16,7 @@ class AssistantRun implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     private Run $run;
+
     private Message $message;
 
     /**
@@ -39,6 +38,7 @@ class AssistantRun implements ShouldQueue
         if ($run->status === 'failed') {
             $this->message->markAsFailed($run);
             SendResponse::dispatch($this->message);
+
             return;
         }
 
@@ -46,6 +46,7 @@ class AssistantRun implements ShouldQueue
             $this->message->markAsInProgress();
             SendResponse::dispatch($this->message);
             $this->reschedule();
+
             return;
         }
 
@@ -54,9 +55,6 @@ class AssistantRun implements ShouldQueue
         SendResponse::dispatch($this->message);
     }
 
-    /**
-     * @return void
-     */
     public function reschedule(): void
     {
         self::dispatch($this->message, $this->run)->delay(now()->addSeconds(4));

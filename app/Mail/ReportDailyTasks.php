@@ -4,7 +4,6 @@ namespace App\Mail;
 
 use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
@@ -15,6 +14,7 @@ class ReportDailyTasks extends Mailable
     use Queueable, SerializesModels;
 
     protected array $dailyTasks;
+
     protected array $nextTasks;
 
     /**
@@ -32,7 +32,7 @@ class ReportDailyTasks extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Raport: ' . Carbon::now()->format('Y-m-d'),
+            subject: 'Raport: '.Carbon::now()->format('Y-m-d'),
         );
     }
 

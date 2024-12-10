@@ -9,26 +9,21 @@ use JsonException;
 class Qdrant
 {
     public Api $api;
+
     public string $databaseName;
 
     public function __construct()
     {
-        $this->api = new Api();
+        $this->api = new Api;
         $this->databaseName = config('services.qdrant.database_name');
     }
 
-    /**
-     * @return Qdrant
-     */
     public static function factory(): Qdrant
     {
-        return new self();
+        return new self;
     }
 
     /**
-     * @param array $embeddings
-     * @param array $payload
-     * @return void
      * @throws ConnectionException
      * @throws JsonException
      */

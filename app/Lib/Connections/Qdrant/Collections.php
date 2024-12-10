@@ -17,43 +17,42 @@ class Collections
     }
 
     /**
-     * @return array
      * @throws ConnectionException
      * @throws JsonException
      */
     public function list(): array
     {
-        $endpoint = "collections";
+        $endpoint = 'collections';
         $response = $this->connection->api->call('GET', $endpoint);
+
         return $response->result->collections;
     }
 
     /**
      * @return mixed
+     *
      * @throws ConnectionException
      * @throws JsonException
      */
     public function getInfo(): stdClass
     {
         $endpoint = "collections/{$this->connection->databaseName}";
+
         return $this->connection->api->call('GET', $endpoint)->result;
     }
 
     /**
-     * @param int $size
-     * @param string $distance
-     * @return void
      * @throws ConnectionException
      * @throws JsonException
      */
-    public function create(int $size, string $distance = "Cosine"): void
+    public function create(int $size, string $distance = 'Cosine'): void
     {
         $endpoint = "collections/{$this->connection->databaseName}";
         $params = [
             'vectors' => [
                 'size' => $size,
-                'distance' => $distance
-            ]
+                'distance' => $distance,
+            ],
         ];
         $this->connection->api->call('PUT', $endpoint, $params);
     }

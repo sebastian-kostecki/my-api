@@ -18,51 +18,51 @@ class HomepageController extends Controller
                     'item' => [
                         [
                             'name' => 'PHP',
-                            'icon' => 'php'
+                            'icon' => 'php',
                         ],
                         [
                             'name' => 'Laravel',
-                            'icon' => 'laravel'
-                        ]
-                    ]
+                            'icon' => 'laravel',
+                        ],
+                    ],
                 ],
                 'javascript' => [
                     'description' => 'W pracy wykorzystuję framework Vue.js w wersji 2. Obecnie poznaję wersję 3. Tworząc aplikację mobilną wykorzystywałem framework Ionic.',
                     'item' => [
                         [
                             'name' => 'JavaScript',
-                            'icon' => 'javascript'
+                            'icon' => 'javascript',
                         ],
                         [
                             'name' => 'Vue.js',
-                            'icon' => 'vue'
+                            'icon' => 'vue',
                         ],
                         [
                             'name' => 'Ionic',
-                            'icon' => 'ionic'
+                            'icon' => 'ionic',
                         ],
-                    ]
+                    ],
                 ],
                 'database' => [
                     'description' => 'Pracuję na bazie danych MySQL.',
                     'item' => [
                         [
                             'name' => 'MySQL',
-                            'icon' => 'mysql'
+                            'icon' => 'mysql',
                         ],
-                    ]
+                    ],
                 ],
                 'tools' => [
                     'description' => 'Posługuję się systemem kontroli wersji GIT oraz korzystam z Dockera.',
                     'item' => [
                         [
                             'name' => 'GIT',
-                            'icon' => 'git'
+                            'icon' => 'git',
                         ],
                         [
                             'name' => 'Docker',
-                            'icon' => 'docker'
-                        ]
+                            'icon' => 'docker',
+                        ],
                     ],
                 ],
                 'ide' => [
@@ -70,8 +70,8 @@ class HomepageController extends Controller
                     'item' => [
                         [
                             'name' => 'PHP Storm',
-                            'icon' => 'phpstorm'
-                        ]
+                            'icon' => 'phpstorm',
+                        ],
                     ],
                 ],
             ],
@@ -83,13 +83,13 @@ class HomepageController extends Controller
                     'links' => [
                         [
                             'title' => 'Przejdź do strony',
-                            'link' => 'https://budget.sebastian-kostecki.profesjonalnyprogramista.pl/'
+                            'link' => 'https://budget.sebastian-kostecki.profesjonalnyprogramista.pl/',
                         ],
                         [
                             'title' => 'Przejdź do GitHub',
-                            'link' => 'https://github.com/sebastian-kostecki/keep-wallet'
-                        ]
-                    ]
+                            'link' => 'https://github.com/sebastian-kostecki/keep-wallet',
+                        ],
+                    ],
                 ],
                 [
                     'img' => 'o-nia-o-niego.jpg',
@@ -98,15 +98,15 @@ class HomepageController extends Controller
                     'links' => [
                         [
                             'title' => 'Przejdź do aplikacji',
-                            'link' => 'https://play.google.com/store/apps/details?id=kostecki.sebastian.oniaoniego'
+                            'link' => 'https://play.google.com/store/apps/details?id=kostecki.sebastian.oniaoniego',
                         ],
                         [
                             'title' => 'Przejdź do GitHub',
-                            'link' => 'https://github.com/sebastian-kostecki/o-nia-o-niego'
-                        ]
-                    ]
-                ]
-            ]
+                            'link' => 'https://github.com/sebastian-kostecki/o-nia-o-niego',
+                        ],
+                    ],
+                ],
+            ],
         ];
 
         return view('homepage.developer', $data);

@@ -4,10 +4,10 @@ namespace App\Console\Commands\Scheduled;
 
 use FiveamCode\LaravelNotionApi\Entities\Blocks\HeadingOne;
 use FiveamCode\LaravelNotionApi\Entities\Blocks\Paragraph;
-use Illuminate\Console\Command;
-use Gitlab\Client;
-use Illuminate\Support\Collection;
 use FiveamCode\LaravelNotionApi\Entities\Page;
+use Gitlab\Client;
+use Illuminate\Console\Command;
+use Illuminate\Support\Collection;
 
 class WatchIssues extends Command
 {
@@ -26,14 +26,15 @@ class WatchIssues extends Command
     protected $description = 'Watch issues in GitLab';
 
     protected Client $gitLabClient;
-    protected int $panelAlphaProjectId = 2860;
-    protected string $panelAlphaNotionDatabaseId = "e5f489afb035406bbcfbd57d9533147a";
 
+    protected int $panelAlphaProjectId = 2860;
+
+    protected string $panelAlphaNotionDatabaseId = 'e5f489afb035406bbcfbd57d9533147a';
 
     public function __construct()
     {
         parent::__construct();
-        $this->gitLabClient = new Client();
+        $this->gitLabClient = new Client;
         $this->gitLabClient->setUrl(env('GITLAB_HOST'));
         $this->gitLabClient->authenticate(env('GITLAB_PERSONAL_TOKEN'), Client::AUTH_HTTP_TOKEN);
     }
@@ -56,7 +57,7 @@ class WatchIssues extends Command
     protected function getGitLabIssuesAssignedToMe(): Collection
     {
         $gitlabIssues = $this->gitLabClient->issues()->all($this->panelAlphaProjectId, [
-            'scope' => 'assigned-to-me'
+            'scope' => 'assigned-to-me',
         ]);
         $gitlabIssues = array_map(function ($item) {
             return [
@@ -64,9 +65,10 @@ class WatchIssues extends Command
                 'issue_id' => $item['iid'],
                 'state' => $item['state'],
                 'url' => $item['web_url'],
-                'description' => $item['description']
+                'description' => $item['description'],
             ];
         }, $gitlabIssues);
+
         return collect($gitlabIssues);
     }
 
@@ -80,8 +82,8 @@ class WatchIssues extends Command
             return [
                 'page_id' => $item->getId(),
                 'title' => $item->getRawResponse()['properties']['Title']['title'][0]['text']['content'],
-                'state' => $item->getRawResponse()['properties']['State']['select']['name'] ?? "",
-                'url' => $item->getRawResponse()['properties']['URL']['url'] ?? ""
+                'state' => $item->getRawResponse()['properties']['State']['select']['name'] ?? '',
+                'url' => $item->getRawResponse()['properties']['URL']['url'] ?? '',
             ];
         });
     }
@@ -93,6 +95,7 @@ class WatchIssues extends Command
             if ($matchingItem) {
                 $item['page_id'] = $matchingItem['page_id'];
             }
+
             return $item;
         })->filter(function ($item) {
             return isset($item['page_id']);
@@ -102,14 +105,14 @@ class WatchIssues extends Command
     protected function getIssuesToCreate($gitlabIssues, $notionIssues): Collection
     {
         return $gitlabIssues->filter(function ($issue) use ($notionIssues) {
-            return !$notionIssues->contains('url', $issue['url']);
+            return ! $notionIssues->contains('url', $issue['url']);
         });
     }
 
     protected function update($updatedIssues): void
     {
         $updatedIssues->each(function ($issue) {
-            $page = new Page();
+            $page = new Page;
             $page->setId($issue['page_id']);
             $page->setUrl('URL', $issue['url']);
             $page->setSelect('State', $issue['state']);
@@ -121,7 +124,7 @@ class WatchIssues extends Command
     protected function create($createdIssues): void
     {
         $createdIssues->each(function ($issue) {
-            $page = new Page();
+            $page = new Page;
             $page->setTitle('Title', "#{$issue['issue_id']} {$issue['title']}");
             $page->setUrl('URL', $issue['url']);
             $page->setSelect('State', $issue['state']);

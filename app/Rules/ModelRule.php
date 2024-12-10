@@ -12,7 +12,7 @@ class ModelRule implements ValidationRule
     /**
      * Run the validation rule.
      *
-     * @param Closure(string): PotentiallyTranslatedString $fail
+     * @param  Closure(string): PotentiallyTranslatedString  $fail
      */
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
@@ -21,7 +21,7 @@ class ModelRule implements ValidationRule
             return $model['name'];
         });
 
-        if (!in_array($value, $models->toArray())) {
+        if (! in_array($value, $models->toArray())) {
             $fail('The :attribute is not a valid model.');
         }
     }

@@ -25,7 +25,7 @@ class CreateCollection extends Command
 
     /**
      * Execute the console command.
-     * @param Qdrant $api
+     *
      * @throws ConnectionException
      * @throws JsonException
      */

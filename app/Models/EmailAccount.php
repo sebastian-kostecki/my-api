@@ -17,31 +17,19 @@ class EmailAccount extends Model
     protected $fillable = [
         'hostname',
         'username',
-        'password'
+        'password',
     ];
 
-    /**
-     * @param $value
-     * @return void
-     */
     public function setPasswordAttribute($value): void
     {
         $this->attributes['password'] = Crypt::encryptString($value);
     }
 
-    /**
-     * @param $value
-     * @return string
-     */
     public function getPasswordAttribute($value): string
     {
         return Crypt::decryptString($value);
     }
 
-    /**
-     * @param string $address
-     * @return self
-     */
     public static function getModel(string $address): self
     {
         return self::where('username', $address)->first();

@@ -2,11 +2,8 @@
 
 namespace App\Console\Commands\Model;
 
-use App\Lib\Connections\ArtificialIntelligence\OpenAI;
-use App\Lib\Interfaces\Connections\ArtificialIntelligenceInterface;
 use App\Models\Model;
 use Illuminate\Console\Command;
-use Illuminate\Support\Collection;
 
 class DeleteModel extends Command
 {
@@ -40,9 +37,6 @@ class DeleteModel extends Command
         $this->info("Model {$modelName} has been deleted");
     }
 
-    /**
-     * @return array
-     */
     private function getDatabaseModels(): array
     {
         return Model::all()->map(function (Model $model) {

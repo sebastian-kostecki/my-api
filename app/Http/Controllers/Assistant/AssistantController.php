@@ -11,19 +11,13 @@ use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class AssistantController extends Controller
 {
-    /**
-     * @return AnonymousResourceCollection
-     */
     public function index(): AnonymousResourceCollection
     {
         $assistants = Assistant::all();
+
         return AssistantResource::collection($assistants);
     }
 
-    /**
-     * @param int $assistantId
-     * @return BinaryFileResponse
-     */
     public function getAvatarUrl(int $assistantId): BinaryFileResponse
     {
         $assistant = Assistant::findOrFail($assistantId);
@@ -32,11 +26,6 @@ class AssistantController extends Controller
         return response()->file($path);
     }
 
-    /**
-     * @param int $assistantId
-     * @param AssistantRequest $request
-     * @return AssistantResource
-     */
     public function updateModel(int $assistantId, AssistantRequest $request): AssistantResource
     {
         $params = $request->validated();

@@ -22,9 +22,6 @@ class PanelalphaCom
         );
     }
 
-    /**
-     * @return void
-     */
     public function moveReportsEmailToFolder(): void
     {
         if ($this->client->getImapStream()) {
@@ -34,13 +31,10 @@ class PanelalphaCom
             }
             $this->client->disconnect();
         } else {
-            die('Unable to connect to the mail server.');
+            exit('Unable to connect to the mail server.');
         }
     }
 
-    /**
-     * @return void
-     */
     public function clean(): void
     {
         $email = 'no@panelalpha.com';
@@ -53,7 +47,7 @@ class PanelalphaCom
             }
             $this->client->disconnect();
         } else {
-            die('Unable to connect to the mail server.');
+            exit('Unable to connect to the mail server.');
         }
     }
 }

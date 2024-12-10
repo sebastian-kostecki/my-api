@@ -31,7 +31,7 @@ class CreateUser extends Command
         $email = $this->ask('Enter user email:');
         $password = $this->secret('Enter user password:');
 
-        $user = new User();
+        $user = new User;
         $user->name = $name;
         $user->email = $email;
         $user->password = Hash::make($password);

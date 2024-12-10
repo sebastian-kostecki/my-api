@@ -10,7 +10,6 @@ class Curl
 
     private $lastCall;
 
-
     public $defaultOptions = [
         CURLOPT_RETURNTRANSFER => true,
         CURLOPT_FOLLOWLOCATION => true,
@@ -30,10 +29,11 @@ class Curl
     }
 
     /**
-     * @param int $seconds
+     * @param  int  $seconds
      * @return void
      */
-    public function setTimeout($seconds) {
+    public function setTimeout($seconds)
+    {
         $this->defaultOptions[CURLOPT_CONNECTTIMEOUT] = $seconds;
     }
 
@@ -43,8 +43,8 @@ class Curl
     public function enableCookieSession()
     {
         $this->defaultOptions[CURLOPT_COOKIESESSION] = true;
-        $this->defaultOptions[CURLOPT_COOKIEJAR] = "";
-        $this->defaultOptions[CURLOPT_COOKIEFILE] = "";
+        $this->defaultOptions[CURLOPT_COOKIEJAR] = '';
+        $this->defaultOptions[CURLOPT_COOKIEFILE] = '';
     }
 
     /**
@@ -58,6 +58,7 @@ class Curl
             [,,,,, $name, $value] = explode("\t", $cookie);
             $cookies[$name] = $value;
         }
+
         return $cookies;
     }
 
@@ -77,7 +78,6 @@ class Curl
         /** @var int */
         return $this->lastCall['curlInfo']['http_code'];
     }
-
 
     /**
      * @return void
@@ -100,14 +100,9 @@ class Curl
     }
 
     /**
-     * @param string $method
-     * @param string $url
-     * @param string|array|null $body
-     * @param array $options
-     * @return string
      * @throws ConnectionException
      */
-    public function call(string $method, string $url, string|array $body = null, array $options = []): string
+    public function call(string $method, string $url, string|array|null $body = null, array $options = []): string
     {
         $this->reset();
 
@@ -117,8 +112,7 @@ class Curl
         curl_setopt($this->handle, CURLOPT_URL, $url);
         $this->lastCall['url'] = $url;
 
-
-        if (!empty($body)) {
+        if (! empty($body)) {
             curl_setopt($this->handle, CURLOPT_POSTFIELDS, $body);
             if (is_array($body)) {
                 $this->lastCall['request'] = http_build_query($body);
@@ -138,16 +132,16 @@ class Curl
         $info = curl_getinfo($this->handle);
         $this->lastCall['curlInfo'] = $info;
 
-        if (!empty(curl_error($this->handle))) {
-            throw new ConnectionException("Connection Error: " . curl_error($this->handle));
+        if (! empty(curl_error($this->handle))) {
+            throw new ConnectionException('Connection Error: '.curl_error($this->handle));
         }
 
         if ($output === false) {
-            throw new ConnectionException("Connection Failed");
+            throw new ConnectionException('Connection Failed');
         }
 
-        $this->lastCall['requestHeaders']  = $info['request_header'] ?? '';
-        $this->lastCall['response']        = substr($output, $info['header_size']);
+        $this->lastCall['requestHeaders'] = $info['request_header'] ?? '';
+        $this->lastCall['response'] = substr($output, $info['header_size']);
         $this->lastCall['responseHeaders'] = substr($output, 0, $info['header_size']);
 
         return $this->lastCall['response'];

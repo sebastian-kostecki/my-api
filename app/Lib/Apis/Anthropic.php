@@ -10,23 +10,16 @@ class Anthropic
 
     public function __construct()
     {
-        $this->request = new Request();
+        $this->request = new Request;
     }
 
-    /**
-     * @param string $model
-     * @param array $messages
-     * @param string|null $system
-     * @param array $params
-     * @return string
-     */
     public function message(string $model, array $messages, ?string $system = null, array $params = []): string
     {
         $apiParams = [
             'model' => $model,
             'messages' => $messages,
             'max_tokens' => 4096,
-            ...$params
+            ...$params,
         ];
 
         if ($system) {
@@ -34,6 +27,7 @@ class Anthropic
         }
 
         $result = $this->request->call('POST', 'messages', $apiParams);
+
         return $result['content'][0]['text'];
     }
 }

@@ -26,7 +26,7 @@ class CleanPanelalphaMailbox extends Command
      */
     public function handle(): void
     {
-        $mailbox = new PanelalphaCom();
+        $mailbox = new PanelalphaCom;
         $mailbox->clean();
     }
 }

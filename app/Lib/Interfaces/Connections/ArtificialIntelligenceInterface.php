@@ -12,19 +12,11 @@ interface ArtificialIntelligenceInterface
      */
     public function getModels(): array;
 
-    /**
-     * @param string $model
-     * @param array $messages
-     * @param ?string $system
-     * @param float $temperature
-     * @param float $topP
-     * @return string
-     */
     public function chat(
         string $model,
-        array  $messages,
+        array $messages,
         ?string $system = null,
-        float  $temperature = 0.5,
-        float  $topP = 0.5
+        float $temperature = 0.5,
+        float $topP = 0.5
     ): string;
 }

@@ -26,6 +26,7 @@ class AssistantSync extends Command
     protected $description = 'Synchronizing assistants';
 
     private Collection $assistants;
+
     private EloquentCollection $assistantsInDatabase;
 
     /**
@@ -38,61 +39,45 @@ class AssistantSync extends Command
 
         $this->assistants->each(function ($assistantClass) {
             /** @var class-string<AssistantInterface> $assistantClass */
-            $this->output->write($assistantClass::getName() . ' (' . $assistantClass::getDescription() . '): ');
+            $this->output->write($assistantClass::getName().' ('.$assistantClass::getDescription().'): ');
             $this->createOrIgnore($assistantClass);
         });
 
         $this->removeOldRecords();
-        $this->info("Finished synchronizing actions.");
+        $this->info('Finished synchronizing actions.');
     }
 
-    /**
-     * @return void
-     */
     private function getAssistants(): void
     {
-        $this->info("Scanning files...");
+        $this->info('Scanning files...');
         $this->assistants = Assistant::scan();
-        $this->info("Found " . $this->assistants->count() . " actions");
+        $this->info('Found '.$this->assistants->count().' actions');
     }
 
-    /**
-     * @return void
-     */
     private function getAssistantsInDatabase(): void
     {
         $this->assistantsInDatabase = Assistant::all()->keyBy('type');
     }
 
-    /**
-     * @param string $assistantClass
-     * @return void
-     */
     private function createOrIgnore(string $assistantClass): void
     {
-        if (!$this->isAssistantInDatabase($assistantClass)) {
+        if (! $this->isAssistantInDatabase($assistantClass)) {
             $this->createAssistant($assistantClass);
         }
     }
 
-    /**
-     * @param string $assistantClass
-     * @return bool
-     */
     private function isAssistantInDatabase(string $assistantClass): bool
     {
         if ($this->assistantsInDatabase->has($assistantClass)) {
-            $this->info("already in database");
+            $this->info('already in database');
             $this->assistantsInDatabase->forget($assistantClass);
+
             return true;
         }
+
         return false;
     }
 
-    /**
-     * @param string $assistantClass
-     * @return void
-     */
     private function createAssistant(string $assistantClass): void
     {
         $firstModel = Model::first();
@@ -103,15 +88,12 @@ class AssistantSync extends Command
             'type' => $assistantClass,
             'name' => $assistantClass::getName(),
             'description' => $assistantClass::getDescription(),
-            'instructions' => $assistantClass::getInstructions()
+            'instructions' => $assistantClass::getInstructions(),
         ]);
 
-        $this->info("added to database");
+        $this->info('added to database');
     }
 
-    /**
-     * @return void
-     */
     private function removeOldRecords(): void
     {
         if ($oldRecords = count($this->assistantsInDatabase)) {

@@ -26,7 +26,7 @@ class ChatRequest extends FormRequest
             'assistant_id' => 'required|int|exists:assistants,id',
             'action_id' => 'required|int|exists:actions,id',
             'thread_id' => 'int|nullable|exists:threads,id',
-            'input' => 'required|string'
+            'input' => 'required|string',
         ];
     }
 }

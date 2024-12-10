@@ -26,7 +26,7 @@ class CleanModulesGardenMailbox extends Command
      */
     public function handle(): void
     {
-        $mailbox = new ModulesGardenCom();
+        $mailbox = new ModulesGardenCom;
         $mailbox->clean();
     }
 }

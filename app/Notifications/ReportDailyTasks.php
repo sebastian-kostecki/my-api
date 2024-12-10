@@ -4,7 +4,6 @@ namespace App\Notifications;
 
 use App\Mail\ReportDailyTasks as ReportDailyTasksMail;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Notification;
 
 class ReportDailyTasks extends Notification
@@ -12,6 +11,7 @@ class ReportDailyTasks extends Notification
     use Queueable;
 
     protected array $dailyTasks;
+
     protected array $nextTasks;
 
     /**
@@ -51,7 +51,7 @@ class ReportDailyTasks extends Notification
     {
         return [
             'dailyTasks' => $this->dailyTasks,
-            'nextTasks' => $this->nextTasks
+            'nextTasks' => $this->nextTasks,
         ];
     }
 }

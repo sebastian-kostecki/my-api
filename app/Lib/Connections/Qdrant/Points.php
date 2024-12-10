@@ -5,7 +5,6 @@ namespace App\Lib\Connections\Qdrant;
 use App\Lib\Connections\Qdrant;
 use App\Lib\Exceptions\ConnectionException;
 use JsonException;
-use stdClass;
 
 class Points
 {
@@ -17,10 +16,6 @@ class Points
     }
 
     /**
-     * @param array $ids
-     * @param bool $withPayload
-     * @param bool $withVector
-     * @return array
      * @throws ConnectionException
      * @throws JsonException
      */
@@ -30,16 +25,13 @@ class Points
         $params = [
             'ids' => $ids,
             'with_payload' => $withPayload,
-            'with_vector' => $withVector
+            'with_vector' => $withVector,
         ];
+
         return $this->connection->api->call('POST', $endpoint, $params)->result;
     }
 
     /**
-     * @param array $embedding
-     * @param string $category
-     * @param int $limit
-     * @return array
      * @throws ConnectionException
      * @throws JsonException
      */
@@ -53,22 +45,23 @@ class Points
                     [
                         'key' => 'category',
                         'match' => [
-                            'value' => $category
-                        ]
-                    ]
-                ]
+                            'value' => $category,
+                        ],
+                    ],
+                ],
             ],
             'limit' => $limit,
-            'with_payload' => true
+            'with_payload' => true,
         ];
+
         return $this->connection->api->call('POST', $endpoint, $params)->result;
     }
 
     /**
-     * @param array $points {
-     *     id: int, vector: array, payload: array
-     * }@param
-     * @return void
+     * @param  array  $points  {
+     *                         id: int, vector: array, payload: array
+     *                         }@param
+     *
      * @throws ConnectionException
      * @throws JsonException
      */
@@ -76,16 +69,16 @@ class Points
     {
         $endpoint = "collections/{$this->connection->databaseName}/points";
         $params = [
-            'points' => $points
+            'points' => $points,
         ];
         $this->connection->api->call('PUT', $endpoint, $params);
     }
 
     /**
-     * @param array $point {
-     *     id: int, vector: array, payload: array
-     * }@param
-     * @return void
+     * @param  array  $point  {
+     *                        id: int, vector: array, payload: array
+     *                        }@param
+     *
      * @throws ConnectionException
      * @throws JsonException
      */
@@ -93,14 +86,12 @@ class Points
     {
         $endpoint = "collections/{$this->connection->databaseName}/points";
         $params = [
-            'points' => [$point]
+            'points' => [$point],
         ];
         $this->connection->api->call('PUT', $endpoint, $params);
     }
 
     /**
-     * @param string $id
-     * @return void
      * @throws ConnectionException
      * @throws JsonException
      */
@@ -108,7 +99,7 @@ class Points
     {
         $endpoint = "collections/{$this->connection->databaseName}/points/delete";
         $params = [
-            'points' => [$id]
+            'points' => [$id],
         ];
         $this->connection->api->call('POST', $endpoint, $params);
     }

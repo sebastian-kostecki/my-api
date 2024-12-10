@@ -7,9 +7,6 @@ use Illuminate\Database\Eloquent\Collection;
 
 class ModelRepository
 {
-    /**
-     * @return Collection
-     */
     public function getModels(): Collection
     {
         return Model::all();
