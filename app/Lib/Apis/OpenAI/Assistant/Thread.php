@@ -15,17 +15,19 @@ class Thread
 
     public function create(array $messages = [])
     {
-        $url = $this->assistant->api::BASEURL . 'threads';
+        $url = $this->assistant->api::BASEURL.'threads';
         $params['messages'] = $messages;
 
         $response = $this->assistant->request->post($url, $params);
+
         return json_decode($response, true);
     }
 
     public function retrieve(string $id)
     {
-        $url = $this->assistant->api::BASEURL . 'threads/' . $id;
+        $url = $this->assistant->api::BASEURL.'threads/'.$id;
         $response = $this->assistant->request->get($url);
+
         return json_decode($response, true);
     }
 }

@@ -9,13 +9,10 @@ use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class ModelController extends Controller
 {
-    /**
-     * @param ModelRepository $repository
-     * @return AnonymousResourceCollection
-     */
     public function index(ModelRepository $repository): AnonymousResourceCollection
     {
         $models = $repository->getModels();
+
         return ModelResource::collection($models);
     }
 }

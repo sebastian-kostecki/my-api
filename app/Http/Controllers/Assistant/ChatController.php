@@ -13,8 +13,6 @@ use Illuminate\Http\JsonResponse;
 class ChatController extends Controller
 {
     /**
-     * @param ChatRequest $request
-     * @return JsonResponse
      * @throws ConnectionException
      * @throws \JsonException
      */

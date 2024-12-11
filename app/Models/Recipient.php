@@ -8,6 +8,7 @@ use Illuminate\Notifications\Notifiable;
 
 /**
  * @method static where(string $string, string $type)
+ *
  * @property mixed|string $name
  * @property mixed|string $email
  * @property mixed|string $type

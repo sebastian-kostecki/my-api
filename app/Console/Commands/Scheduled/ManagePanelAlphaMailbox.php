@@ -26,7 +26,7 @@ class ManagePanelAlphaMailbox extends Command
      */
     public function handle()
     {
-        $mailbox = new PanelalphaCom();
+        $mailbox = new PanelalphaCom;
         $mailbox->moveReportsEmailToFolder();
     }
 }

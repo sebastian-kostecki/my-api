@@ -31,7 +31,7 @@ class AddModel extends Command
 
     private array $artificialIntelligenceClasses = [
         OpenAI::class,
-        Anthropic::class
+        Anthropic::class,
     ];
 
     /**
@@ -53,9 +53,6 @@ class AddModel extends Command
         $this->info("Model {$modelName} has been added");
     }
 
-    /**
-     * @return void
-     */
     private function getDatabaseModels(): void
     {
         $this->databaseModels = Model::all()->map(function (Model $model) {
@@ -63,9 +60,6 @@ class AddModel extends Command
         })->toArray();
     }
 
-    /**
-     * @return void
-     */
     private function getModels(): void
     {
         $models = collect();
@@ -76,6 +70,7 @@ class AddModel extends Command
                 if (in_array($model['name'], $this->databaseModels, true)) {
                     return false;
                 }
+
                 return true;
             })->values()->toArray();
             $models = $models->merge($selectedModels);
@@ -83,17 +78,13 @@ class AddModel extends Command
         $this->models = $models;
     }
 
-    /**
-     * @param string $modelName
-     * @return void
-     */
     private function createModel(string $modelName): void
     {
         $selectedModel = $this->models->where('name', $modelName)->first();
 
         Model::create([
             'name' => $modelName,
-            'type' => $selectedModel['type']
+            'type' => $selectedModel['type'],
         ]);
     }
 }

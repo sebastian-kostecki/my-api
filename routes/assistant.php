@@ -28,7 +28,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/models', [ModelController::class, 'index'])
         ->name('model.list');
 
-
     Route::patch('/assistant/{id}/model', [AssistantController::class, 'updateModel'])
         ->name('assistant.model.update');
 });

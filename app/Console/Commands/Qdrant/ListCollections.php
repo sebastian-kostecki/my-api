@@ -25,7 +25,7 @@ class ListCollections extends Command
 
     /**
      * Execute the console command.
-     * @param Qdrant $api
+     *
      * @throws ConnectionException
      * @throws JsonException
      */
@@ -35,7 +35,7 @@ class ListCollections extends Command
         $collections = collect($result)->map(function ($item, $key) {
             return [
                 'No' => ++$key,
-                'Name' => $item['name']
+                'Name' => $item['name'],
             ];
         });
         $this->table(['No', 'Name'], $collections);

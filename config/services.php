@@ -32,7 +32,7 @@ return [
     ],
 
     'qdrant' => [
-        'database_name' => env('QDRANT_DATABASE_NAME', 'myapi')
+        'database_name' => env('QDRANT_DATABASE_NAME', 'myapi'),
     ],
 
     'open_ai' => [
@@ -41,6 +41,6 @@ return [
     ],
     'anthropic' => [
         'api_key' => env('ANTHROPIC_API_KEY'),
-    ]
+    ],
 
 ];

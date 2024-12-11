@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property string $role
  * @property Thread $thread
  * @property int $id
+ *
  * @method static create(array $array)
  */
 class Message extends Model
@@ -24,17 +25,14 @@ class Message extends Model
         'text',
         'status',
         'details',
-        'completed_at'
+        'completed_at',
     ];
 
     protected $casts = [
         'details' => 'array',
-        'completed_at' => 'datetime'
+        'completed_at' => 'datetime',
     ];
 
-    /**
-     * @return BelongsTo
-     */
     public function thread(): BelongsTo
     {
         return $this->belongsTo(Thread::class);

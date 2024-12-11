@@ -11,7 +11,7 @@
         "php": "^8.2",
         "beyondcode/laravel-websockets": "^1.14",
         "deeplcom/deepl-php": "^1.3",
-        "fiveam-code/laravel-notion-api": "^1.0",
+        "fiveam-code/laravel-notion-api": "^v1.2.0",
         "guzzlehttp/guzzle": "^7.2",
         "hkulekci/qdrant": "^0.1.0",
         "laravel/framework": "^10.10",

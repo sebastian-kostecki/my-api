@@ -30,24 +30,24 @@ class ModulesGardenCom
         return [
             [
                 'email' => 'git@modulesgarden.com',
-                'period' => Carbon::today()->subWeek()->format('Y-m-d')
+                'period' => Carbon::today()->subWeek()->format('Y-m-d'),
             ],
             [
                 'email' => 'git@rsstudio.net',
-                'period' => Carbon::today()->subWeek()->format('Y-m-d')
+                'period' => Carbon::today()->subWeek()->format('Y-m-d'),
             ],
             [
                 'email' => 'development@modulesgarden.com',
-                'period' => Carbon::today()->subMonth()->format('Y-m-d')
+                'period' => Carbon::today()->subMonth()->format('Y-m-d'),
             ],
             [
                 'email' => 'test@modulesgarden.tech',
-                'period' => Carbon::today()->subWeek()->format('Y-m-d')
+                'period' => Carbon::today()->subWeek()->format('Y-m-d'),
             ],
             [
                 'email' => 'system@panelalpha.com',
-                'period' => Carbon::today()->subMonth()->format('Y-m-d')
-            ]
+                'period' => Carbon::today()->subMonth()->format('Y-m-d'),
+            ],
         ];
     }
 
@@ -59,55 +59,52 @@ class ModulesGardenCom
         return [
             [
                 'email' => 'jadwiga@modulesgarden.com',
-                'folder' => 'INBOX.Firma.Jadzia'
+                'folder' => 'INBOX.Firma.Jadzia',
             ],
             [
                 'email' => 'grzegorz.so@modulesgarden.com',
-                'folder' => 'INBOX.Firma.WHMCS'
+                'folder' => 'INBOX.Firma.WHMCS',
             ],
             [
                 'email' => 'mariusz@modulesgarden.com',
-                'folder' => 'INBOX.Firma.Mariusz'
+                'folder' => 'INBOX.Firma.Mariusz',
             ],
             [
                 'email' => 'konrad.keck@inbs.software',
-                'folder' => 'INBOX.Firma.Konrad'
+                'folder' => 'INBOX.Firma.Konrad',
             ],
             [
                 'email' => 'contact@panelalpha.com',
-                'folder' => 'INBOX.Firma.Konrad'
+                'folder' => 'INBOX.Firma.Konrad',
             ],
             [
                 'email' => 'konrad@modulesgarden.com',
-                'folder' => 'INBOX.Firma.Konrad'
+                'folder' => 'INBOX.Firma.Konrad',
             ],
         ];
     }
 
-    /**
-     * @return void
-     */
     public function clean(): void
     {
         foreach ($this->emailToDelete() as $email) {
             if ($this->client->getImapStream()) {
-                $mailIds = $this->client->searchMailbox("FROM " . $email['email']. " BEFORE " . $email['period']);
+                $mailIds = $this->client->searchMailbox('FROM '.$email['email'].' BEFORE '.$email['period']);
                 foreach ($mailIds as $mailId) {
                     $this->client->deleteMail($mailId);
                 }
             } else {
-                die('Unable to connect to the mail server.');
+                exit('Unable to connect to the mail server.');
             }
         }
 
         foreach ($this->emailsToMove() as $item) {
             if ($this->client->getImapStream()) {
-                $mailIds = $this->client->searchMailbox('FROM ' . $item['email']);
+                $mailIds = $this->client->searchMailbox('FROM '.$item['email']);
                 foreach ($mailIds as $mailId) {
                     $this->client->moveMail($mailId, $item['folder']);
                 }
             } else {
-                die('Unable to connect to the mail server.');
+                exit('Unable to connect to the mail server.');
             }
         }
         $this->client->disconnect();

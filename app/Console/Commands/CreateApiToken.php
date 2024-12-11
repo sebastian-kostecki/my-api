@@ -4,7 +4,6 @@ namespace App\Console\Commands;
 
 use App\Models\User;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Hash;
 
 class CreateApiToken extends Command
 {
@@ -30,7 +29,7 @@ class CreateApiToken extends Command
         $userId = $this->argument('user');
         $user = User::findOrFail($userId);
 
-        $token = $user->createToken("Personal")->plainTextToken;
+        $token = $user->createToken('Personal')->plainTextToken;
 
         $this->info('API token created successfully!');
         $this->info('Token: '.$token);

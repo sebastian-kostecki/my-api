@@ -26,7 +26,7 @@ class GetCollection extends Command
 
     /**
      * Execute the console command.
-     * @param Qdrant $api
+     *
      * @throws ConnectionException
      * @throws JsonException
      */
@@ -36,8 +36,10 @@ class GetCollection extends Command
         $result = $api->getCollection($name);
         $data = Arr::dot($result);
 
-        foreach ($data as $key => $value) if (!empty($value)){
-            $this->line($key . ': ' . $value);
+        foreach ($data as $key => $value) {
+            if (! empty($value)) {
+                $this->line($key.': '.$value);
+            }
         }
     }
 }

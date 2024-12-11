@@ -11,16 +11,16 @@ class Query extends AbstractAction implements ActionInterface
     use ShouldThread;
 
     public const NAME = 'Query';
+
     public const ICON = 'fa-solid fa-circle-question';
+
     public const SHORTCUT = null;
+
     public const CONFIG = [
         'temperature' => 0.5,
-        'top_p' => 0.5
+        'top_p' => 0.5,
     ];
 
-    /**
-     * @return string
-     */
     public function execute(): string
     {
         $model = $this->assistant->model->name;
@@ -30,12 +30,13 @@ class Query extends AbstractAction implements ActionInterface
             ...$this->thread->getLastMessages(),
             [
                 'role' => 'user',
-                'content' => $this->input
-            ]
+                'content' => $this->input,
+            ],
         ];
 
         /** @var ArtificialIntelligenceInterface $connection */
         $connection = (new $this->assistant->model->type);
+
         return $connection->chat($model, $messages, $system, $config['temperature'], $config['top_p']);
     }
 }

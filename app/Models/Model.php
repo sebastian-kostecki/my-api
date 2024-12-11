@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Model as EloquentModel;
 /**
  * @property string $name
  * @property ArtificialIntelligenceInterface $type
+ *
  * @method static create(array $array)
  * @method static where(string $column, string $param, string $value)
  */
@@ -19,12 +20,9 @@ class Model extends EloquentModel
 
     protected $fillable = [
         'name',
-        'type'
+        'type',
     ];
 
-    /**
-     * @return Attribute
-     */
     public function connectionName(): Attribute
     {
         return Attribute::make(
@@ -32,12 +30,8 @@ class Model extends EloquentModel
         );
     }
 
-    /**
-     * @param string $name
-     * @return Model
-     */
     public static function getModel(string $name): Model
     {
-        return self::where('name', 'like', $name . '%')->first();
+        return self::where('name', 'like', $name.'%')->first();
     }
 }

@@ -5,8 +5,8 @@ namespace App\Console\Commands\Action;
 use App\Lib\Interfaces\ActionInterface;
 use App\Models\Action;
 use Illuminate\Console\Command;
-use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
+use Illuminate\Support\Collection;
 
 class Sync extends Command
 {
@@ -25,6 +25,7 @@ class Sync extends Command
     protected $description = 'Synchronize actions';
 
     private Collection $actions;
+
     private EloquentCollection $actionsInDatabase;
 
     /**
@@ -37,61 +38,45 @@ class Sync extends Command
 
         $this->actions->each(function ($actionClass) {
             /** @var class-string<ActionInterface> $actionClass */
-            $this->output->write($actionClass::getName() . ': ');
+            $this->output->write($actionClass::getName().': ');
             $this->createOrIgnore($actionClass);
         });
 
         $this->removeOldRecords();
-        $this->info("Finished synchronizing actions.");
+        $this->info('Finished synchronizing actions.');
     }
 
-    /**
-     * @return void
-     */
     private function getActions(): void
     {
-        $this->info("Scanning files...");
+        $this->info('Scanning files...');
         $this->actions = Action::scan();
-        $this->info("Found " . $this->actions->count() . " actions");
+        $this->info('Found '.$this->actions->count().' actions');
     }
 
-    /**
-     * @return void
-     */
     private function getActionsInDatabase(): void
     {
         $this->actionsInDatabase = Action::all()->keyBy('type');
     }
 
-    /**
-     * @param string $actionClass
-     * @return void
-     */
     private function createOrIgnore(string $actionClass): void
     {
-        if (!$this->isActionInDatabase($actionClass)) {
+        if (! $this->isActionInDatabase($actionClass)) {
             $this->createAssistant($actionClass);
         }
     }
 
-    /**
-     * @param string $actionClass
-     * @return bool
-     */
     private function isActionInDatabase(string $actionClass): bool
     {
         if ($this->actionsInDatabase->has($actionClass)) {
-            $this->info("already in database");
+            $this->info('already in database');
             $this->actionsInDatabase->forget($actionClass);
+
             return true;
         }
+
         return false;
     }
 
-    /**
-     * @param string $actionClass
-     * @return void
-     */
     private function createAssistant(string $actionClass): void
     {
         /** @var ActionInterface $actionClass */
@@ -100,15 +85,12 @@ class Sync extends Command
             'name' => $actionClass::getName(),
             'icon' => $actionClass::getIcon(),
             'shortcut' => $actionClass::getShortcut(),
-            'config' => $actionClass::getConfig()
+            'config' => $actionClass::getConfig(),
         ]);
 
-        $this->info("added to database");
+        $this->info('added to database');
     }
 
-    /**
-     * @return void
-     */
     private function removeOldRecords(): void
     {
         if ($oldRecords = count($this->actionsInDatabase)) {

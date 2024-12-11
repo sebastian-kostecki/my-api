@@ -13,8 +13,11 @@ use LanguageDetection\Language;
 class Translate extends AbstractAction implements ActionInterface
 {
     public const NAME = 'Translate';
+
     public const ICON = 'fa-solid fa-language';
+
     public const SHORTCUT = 'CommandOrControl+Shift+T';
+
     public const CONFIG = null;
 
     private Translator $translator;
@@ -29,7 +32,6 @@ class Translate extends AbstractAction implements ActionInterface
     }
 
     /**
-     * @return string
      * @throws DeepLException
      */
     public function execute(): string
@@ -40,21 +42,19 @@ class Translate extends AbstractAction implements ActionInterface
         } else {
             $translatedText = $this->translateFromEnglishToPolish();
         }
+
         return $translatedText;
     }
 
-    /**
-     * @return string
-     */
     private function detectLanguage(): string
     {
-        $detector = new Language();
+        $detector = new Language;
         $result = $detector->detect($this->input)->bestResults()->close();
+
         return key($result);
     }
 
     /**
-     * @return string
      * @throws DeepLException
      */
     private function translateFromPolishToEnglish(): string
@@ -63,7 +63,6 @@ class Translate extends AbstractAction implements ActionInterface
     }
 
     /**
-     * @return string
      * @throws DeepLException
      */
     private function translateFromEnglishToPolish(): string

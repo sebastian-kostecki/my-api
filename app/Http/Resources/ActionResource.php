@@ -2,7 +2,6 @@
 
 namespace App\Http\Resources;
 
-use App\Lib\Assistant\Actions\DefaultAssistant;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -25,7 +24,7 @@ class ActionResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'icon' => $this->icon,
-            'shortcut' => $this->shortcut
+            'shortcut' => $this->shortcut,
         ];
     }
 }

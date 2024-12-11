@@ -16,6 +16,7 @@ use JsonException;
  * @property string $description
  * @property Collection $messages
  * @property int $id
+ *
  * @method static find(int $id)
  * @method static create(string[] $array)
  * @method static make(string[] $array)
@@ -25,40 +26,29 @@ class Thread extends Model
     use HasFactory;
 
     protected $fillable = [
-        'description'
+        'description',
     ];
 
-
-    /**
-     * @return HasMany
-     */
     public function messages(): HasMany
     {
         return $this->hasMany(Message::class);
     }
 
-    /**
-     * @param int|null $id
-     * @return self
-     */
     public static function getOrMake(?int $id): self
     {
         $thread = self::find($id);
         if ($thread) {
             return $thread;
         }
+
         return self::make([
             'description' => '',
         ]);
     }
 
-    /**
-     * @param string $input
-     * @return void
-     */
     public function addDescription(string $input): void
     {
-        if (!empty($this->description)) {
+        if (! empty($this->description)) {
             return;
         }
         $this->description = OpenAI::factory()->shortSummarize($input);
@@ -76,15 +66,12 @@ class Thread extends Model
         return $this->messages->map(function (Message $message) {
             return [
                 'role' => $message->role,
-                'content' => $message->text
+                'content' => $message->text,
             ];
         })->toArray();
     }
 
     /**
-     * @param string $role
-     * @param string $text
-     * @return void
      * @throws ConnectionException
      * @throws JsonException
      */
@@ -95,13 +82,13 @@ class Thread extends Model
             'role' => $role,
             'text' => $text,
             'status' => 'completed',
-            'completed_at' => Carbon::now()
+            'completed_at' => Carbon::now(),
         ]);
 
         $embeddings = OpenAI::factory()->createEmbeddings($text);
         Qdrant::factory()->upsertPoint($embeddings, [
             'text' => $text,
-            'category' => 'conversation'
+            'category' => 'conversation',
         ]);
     }
 }
