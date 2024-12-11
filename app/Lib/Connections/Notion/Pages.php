@@ -100,4 +100,37 @@ class Pages
             throw new \Exception($response->json()['message']);
         }
     }
+
+    public function updatePanelalphaTaskPage(
+        string $pageId,
+        ?string $status = null,
+        ?string $milestone = null,
+        ?string $priority = null,
+    ) {
+        $params = [
+            'properties' => [
+                'Milestone' => [
+                    'rich_text' => [
+                        [
+                            'type' => 'text',
+                            'text' => [
+                                'content' => $milestone ?? '',
+                            ],
+                        ],
+                    ],
+                ],
+                'Priority' => [
+                    'select' => [
+                        'name' => $priority ?? 'Medium',
+                    ],
+                ],
+            ],
+        ];
+
+        if ($status !== null) {
+            $params['properties']['Status']['status']['name'] = $status;
+        }
+
+        $this->api->getConnection()->patch("/pages/{$pageId}", $params);
+    }
 }

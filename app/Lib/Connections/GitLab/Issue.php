@@ -35,7 +35,7 @@ class Issue
 
     private string $type;
 
-    private array $assignee;
+    private ?array $assignee;
 
     private string $web_url;
 
@@ -146,5 +146,23 @@ class Issue
         }
 
         return rtrim($fragment, '.,;:!?');
+    }
+
+    public function getAssigneeUsername(): ?string
+    {
+        if ($this->assignee === null) {
+            return null;
+        }
+
+        return $this->assignee['username'];
+    }
+
+    public function getStatus(): ?string
+    {
+        if ($this->state === 'closed') {
+            return 'Done';
+        }
+
+        return null;
     }
 }

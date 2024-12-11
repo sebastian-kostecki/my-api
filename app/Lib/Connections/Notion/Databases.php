@@ -19,6 +19,7 @@ class Databases
 
         return collect($result['results'])->mapWithKeys(function ($item) {
             return [$item['properties']['ID']['number'] => [
+                'page_id' => $item['id'],
                 'id' => $item['properties']['ID']['number'],
                 'url' => $item['properties']['URL']['url'],
             ]];

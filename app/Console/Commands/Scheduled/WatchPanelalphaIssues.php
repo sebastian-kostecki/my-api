@@ -30,13 +30,14 @@ class WatchPanelalphaIssues extends Command
         $this->notion = new Notion;
     }
 
-    public function handle()
+    public function handle(): void
     {
         $tasks = $this->notion->databases()->queryPanelalphaTasks($this->panelAlphaNotionDatabaseId);
-        $issues = $this->gitLab->getIssuesAssignedToMe();
+        $issues = $this->gitLab->getIssues();
 
-        $newIssues = $issues->diffKeys($tasks);
-        $existingTasks = $tasks->intersectByKeys($issues);
+        $newIssues = $issues->diffKeys($tasks)->filter(function (Issue $issue) {
+            return $issue->getAssigneeUsername() === 'sebastian.ko';
+        });
 
         $newIssues->each(function (Issue $issue) {
             $this->notion->pages()->createPanelalphaTaskPage(
@@ -51,14 +52,19 @@ class WatchPanelalphaIssues extends Command
             );
         });
 
-        //istniejące issues
+        $existingTasks = $tasks->intersectByKeys($issues);
 
-        //gdy już jest zakończony to powinno mu zmienić na done
-        //trzeba sprawdzać pojedynczo, bo mogą do mnie nie być już przypisane
+        $existingTasks->each(function (array $task) use ($issues) {
+            /** @var Issue $issue */
+            $issue = $issues->get($task['id']);
 
-        //zmienić milestone
-
-        //zmienić priority
+            $this->notion->pages()->updatePanelalphaTaskPage(
+                $task['page_id'],
+                $issue->getStatus(),
+                $issue->getMilestone(),
+                $issue->getPriority(),
+            );
+        });
 
     }
 }

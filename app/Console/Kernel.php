@@ -21,6 +21,10 @@ class Kernel extends ConsoleKernel
         $schedule->command('notion:watch-issues')
             ->between('8:00', '18:00')
             ->hourly();
+
+        $schedule->command('panelalpha:watch-issues')
+            ->between('8:00', '18:00')
+            ->quarterly();
     }
 
     /**
