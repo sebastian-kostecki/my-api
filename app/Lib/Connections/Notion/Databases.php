@@ -3,6 +3,7 @@
 namespace App\Lib\Connections\Notion;
 
 use App\Lib\Connections\Notion;
+use App\Lib\HttpLogger;
 use FiveamCode\LaravelNotionApi\Entities\Page;
 use FiveamCode\LaravelNotionApi\Query\Filters\Filter;
 use FiveamCode\LaravelNotionApi\Query\Filters\Operators;
@@ -14,11 +15,14 @@ class Databases
 
     public function queryPanelalphaTasks(string $databaseId): Collection
     {
-        $result = $this->api->getConnection()->post("/databases/{$databaseId}/query", [
+        $response = $this->api->getConnection()->post("/databases/{$databaseId}/query", [
             'filter' => [
                 'and' => [],
             ],
-        ])->json();
+        ]);
+
+        HttpLogger::log($response);
+        $result = $response->json();
 
         return collect($result['results'])->mapWithKeys(function ($item) {
             return [$item['properties']['ID']['number'] => [
@@ -31,7 +35,7 @@ class Databases
 
     public function queryPanelalphaTodayTasks(string $databaseId): Collection
     {
-        $result = $this->api->getConnection()->post("/databases/{$databaseId}/query", [
+        $response = $this->api->getConnection()->post("/databases/{$databaseId}/query", [
             'filter' => [
                 'or' => [
                     [
@@ -43,6 +47,9 @@ class Databases
                 ],
             ],
         ])->json();
+
+        HttpLogger::log($response);
+        $result = $response->json();
 
         return collect($result['results'])->map(function ($item) {
             return [
@@ -59,7 +66,7 @@ class Databases
 
     public function queryPanelalphaNextTasks(string $databaseId): Collection
     {
-        $result = $this->api->getConnection()->post("/databases/{$databaseId}/query", [
+        $response = $this->api->getConnection()->post("/databases/{$databaseId}/query", [
             'filter' => [
                 'or' => [
                     [
@@ -84,7 +91,10 @@ class Databases
                     'direction' => 'ascending',
                 ],
             ],
-        ])->json();
+        ]);
+
+        HttpLogger::log($response);
+        $result = $response->json();
 
         return collect($result['results'])->map(function ($item) {
             return [
