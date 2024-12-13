@@ -18,9 +18,6 @@ class Kernel extends ConsoleKernel
         $schedule->command('email:manage-panelalpha-mailbox')->daily();
         $schedule->command(CleanPanelalphaMailbox::class)->daily();
         $schedule->command(CleanModulesGardenMailbox::class)->daily();
-        $schedule->command('notion:watch-issues')
-            ->between('8:00', '18:00')
-            ->hourly();
 
         $schedule->command('panelalpha:watch-issues')
             ->between('8:00', '18:00')

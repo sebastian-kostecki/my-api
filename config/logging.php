@@ -133,6 +133,13 @@ return [
             'level' => env('LOG_LEVEL', 'debug'),
             'days' => 30,
         ],
+
+        'api_requests' => [
+            'driver' => 'single',
+            'path' => storage_path('logs/api_requests.log'),
+            'level' => 'debug',
+            'days' => 30,
+        ],
     ],
 
 ];

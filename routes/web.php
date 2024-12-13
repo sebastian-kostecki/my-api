@@ -1,7 +1,6 @@
 <?php
 
 use App\Http\Controllers\Homepage\HomepageController;
-use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -21,7 +20,3 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', [HomepageController::class, 'index']);
 
 //Route::get('logs', [\Rap2hpoutre\LaravelLogViewer\LogViewerController::class, 'index']);
-
-Route::get('/test', function () {
-    Artisan::call('panelalpha:watch-issues');
-});
