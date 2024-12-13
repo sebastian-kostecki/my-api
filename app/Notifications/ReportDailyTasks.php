@@ -10,18 +10,10 @@ class ReportDailyTasks extends Notification
 {
     use Queueable;
 
-    protected array $dailyTasks;
-
-    protected array $nextTasks;
-
     /**
      * Create a new notification instance.
      */
-    public function __construct(array $dailyTasks, array $nextTasks)
-    {
-        $this->dailyTasks = $dailyTasks;
-        $this->nextTasks = $nextTasks;
-    }
+    public function __construct(public array $dailyTasks, public array $nextTasks) {}
 
     /**
      * Get the notification's delivery channels.

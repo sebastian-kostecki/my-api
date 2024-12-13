@@ -23,5 +23,9 @@ Route::get('/', [HomepageController::class, 'index']);
 //Route::get('logs', [\Rap2hpoutre\LaravelLogViewer\LogViewerController::class, 'index']);
 
 Route::get('/test', function () {
-    Artisan::call('panelalpha:watch-issues');
+    Artisan::call('email:report-daily-tasks');
+
+    $user = \App\Models\User::first();
+    $user->notifyNow(new \App\Notifications\ReportDailyTasks([], []));
+
 });

@@ -1,27 +1,64 @@
 <x-mail::message>
-# Raport: {{$date}}
-
-Cześć,<br> przesyłam codzienny raport:
-
-## Dzisiaj
-<x-mail::table>
-    |Lp| Task | Issue | Status |
-    |:---|:------------- |:-------------| --------:|
+<div style="background-color: #f2f2f2; padding: 15px; margin-bottom: 20px; border-radius: 5px;">
+    <h2 style="margin: 0; font-size: 24px; color: #333; background-color: transparent">Raport: {{$date}}</h2>
+</div>
+<div style="background-color: #f2f2f2; padding: 10px; margin-bottom: 10px; border-radius: 5px;">
+    <h3 style="margin: 0; font-size: 20px; color: #333; background-color: transparent">Today</h3>
+</div>
+<table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
+    <tr>
+        <th style="background-color: #f2f2f2; padding: 10px; text-align: left; font-weight: bold;">No</th>
+        <th style="background-color: #f2f2f2; padding: 10px; text-align: left; font-weight: bold;">Task</th>
+        <th style="background-color: #f2f2f2; padding: 10px; text-align: center; font-weight: bold;">Milestone</th>
+        <th style="background-color: #f2f2f2; padding: 10px; text-align: center; font-weight: bold;">Status</th>
+    </tr>
     @foreach($dailyTasks as $task)
-        | {{ $loop->iteration }} | {{$task['name']}}     | {{ $task['issue'] }} | <x-mail::chip :color="$task['status']['color']">{{$task['status']['name']}}</x-mail::chip>|
+        <tr>
+            <td style="padding: 10px; border: 1px solid #ddd;">{{ $loop->iteration }}</td>
+            <td style="padding: 10px; border: 1px solid #ddd; word-wrap: break-word; max-width: 200px;">
+                <a href="{{$task['url']}}" target="_blank" style="color: #007bff; text-decoration: none;">{{$task['name']}}</a>
+            </td>
+            <td style="padding: 10px; border: 1px solid #ddd; text-align: center;">{{ $task['milestone'] }}</td>
+            <td style="padding: 10px; border: 1px solid #ddd; text-align: center;">
+  <span style="background-color: {{$task['status']['color']}}; padding: 2px 5px; border-radius: 5px; color: white; box-shadow: 1px 1px 3px rgba(0,0,0,0.1);">
+    {{$task['status']['name']}}
+  </span>
+            </td>
+        </tr>
     @endforeach
-</x-mail::table>
-
-## Następne
-<x-mail::table>
-    |Lp| Task | Issue | Priority |
-    |:---|:------------- |:-------------| --------:|
+</table>
+<div style="background-color: #f2f2f2; padding: 10px; margin-bottom: 10px; border-radius: 5px;">
+    <h3 style="margin: 0; font-size: 20px; color: #333; background-color: transparent">Next</h3>
+</div>
+<table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
+    <tr>
+        <th style="background-color: #f2f2f2; padding: 10px; text-align: left; font-weight: bold;">No</th>
+        <th style="background-color: #f2f2f2; padding: 10px; text-align: left; font-weight: bold;">Task</th>
+        <th style="background-color: #f2f2f2; padding: 10px; text-align: center; font-weight: bold;">Milestone</th>
+        <th style="background-color: #f2f2f2; padding: 10px; text-align: center; font-weight: bold;">Priority</th>
+        <th style="background-color: #f2f2f2; padding: 10px; text-align: center; font-weight: bold;">Status</th>
+    </tr>
     @foreach($nextTasks as $task)
-        | {{ $loop->iteration }} | {{$task['name']}}     | {{ $task['issue'] }} | <x-mail::chip :color="$task['priority']['color']">{{$task['priority']['name']}}</x-mail::chip>|
+        <tr>
+            <td style="padding: 10px; border: 1px solid #ddd;">{{ $loop->iteration }}</td>
+            <td style="padding: 10px; border: 1px solid #ddd; word-wrap: break-word; max-width: 200px;">
+                <a href="{{$task['url']}}" target="_blank" style="color: #007bff; text-decoration: none;">{{$task['name']}}</a>
+            </td>
+            <td style="padding: 10px; border: 1px solid #ddd; text-align: center;">{{ $task['milestone'] }}</td>
+            <td style="padding: 10px; border: 1px solid #ddd; text-align: center;">
+  <span style="background-color: {{$task['priority']['color']}}; padding: 2px 5px; border-radius: 5px; color: white; box-shadow: 1px 1px 3px rgba(0,0,0,0.1);">
+    {{$task['priority']['name']}}
+  </span>
+            </td>
+            <td style="padding: 10px; border: 1px solid #ddd; text-align: center;">
+  <span style="background-color: {{$task['status']['color']}}; padding: 2px 5px; border-radius: 5px; color: white; box-shadow: 1px 1px 3px rgba(0,0,0,0.1);">
+    {{$task['status']['name']}}
+  </span>
+            </td>
+        </tr>
     @endforeach
-</x-mail::table>
+</table>
 
-Pozdrawiam,<br>
 <div style="opacity: 0.6; padding-bottom: 20px;">
     Sebastian Kostecki - PanelAlpha Back-end Developer<br/>
     Next level WordPress automation for web hosting with <a href="https://www.panelalpha.com"
