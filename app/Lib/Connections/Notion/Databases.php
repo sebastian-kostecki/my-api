@@ -21,11 +21,11 @@ class Databases
             ],
         ]);
 
-        HttpLogger::log($response);
+        //HttpLogger::log($response);
         $result = $response->json();
 
         return collect($result['results'])->mapWithKeys(function ($item) {
-            return [$item['properties']['ID']['number'] => [
+            return [(int)$item['properties']['ID']['number'] => [
                 'page_id' => $item['id'],
                 'id' => $item['properties']['ID']['number'],
                 'url' => $item['properties']['URL']['url'],
@@ -46,9 +46,9 @@ class Databases
                     ],
                 ],
             ],
-        ])->json();
+        ]);
 
-        HttpLogger::log($response);
+        //HttpLogger::log($response);
         $result = $response->json();
 
         return collect($result['results'])->map(function ($item) {
@@ -68,11 +68,17 @@ class Databases
     {
         $response = $this->api->getConnection()->post("/databases/{$databaseId}/query", [
             'filter' => [
-                'or' => [
+                'and' => [
                     [
                         'property' => 'Status',
                         'status' => [
                             'does_not_equal' => 'Done',
+                        ],
+                    ],
+                    [
+                        'property' => 'Status',
+                        'status' => [
+                            'does_not_equal' => 'Testing',
                         ],
                     ],
                 ],
@@ -93,7 +99,7 @@ class Databases
             ],
         ]);
 
-        HttpLogger::log($response);
+        //HttpLogger::log($response);
         $result = $response->json();
 
         return collect($result['results'])->map(function ($item) {

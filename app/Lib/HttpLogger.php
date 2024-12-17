@@ -11,12 +11,11 @@ class HttpLogger
     {
         $method = $response->transferStats->getRequest()->getMethod();
         $url = $response->handlerStats()['url'];
-        $responseBody = $response->json();
-        $responseCode = $response->status();
+        //$responseBody = $response->json();
+        //$responseCode = $response->status();
 
         Log::channel('api_requests')->info('Request', [
-            'request' => "{$method} {$url}",
-            'response' => "{$responseCode} {$responseBody}",
+            'url' => "{$method} {$url}",
         ]);
     }
 }
