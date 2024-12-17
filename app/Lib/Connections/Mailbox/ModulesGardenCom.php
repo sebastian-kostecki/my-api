@@ -8,7 +8,7 @@ use PhpImap\Mailbox as MailboxClient;
 
 class ModulesGardenCom
 {
-    protected MailboxClient $client;
+    public MailboxClient $client;
 
     /**
      * @throws InvalidParameterException
@@ -48,6 +48,26 @@ class ModulesGardenCom
                 'email' => 'system@panelalpha.com',
                 'period' => Carbon::today()->subMonth()->format('Y-m-d'),
             ],
+            [
+                'email' => 'noreply@dev-alpha.cloud',
+                'period' => Carbon::today()->format('Y-m-d'),
+            ],
+            [
+                'email' => 'test@modulesgarden.com',
+                'period' => Carbon::today()->format('Y-m-d'),
+            ],
+            [
+                'email' => 'sebastian.kostecki@panelalpha.com',
+                'period' => Carbon::today()->format('Y-m-d'),
+            ],
+            [
+                'email' => 'mail@modulesgarden.dev',
+                'period' => Carbon::today()->format('Y-m-d'),
+            ],
+            [
+                'email' => 'system@system.smartsheet.com',
+                'period' => Carbon::today()->format('Y-m-d'),
+            ],
         ];
     }
 
@@ -81,6 +101,14 @@ class ModulesGardenCom
                 'email' => 'konrad@modulesgarden.com',
                 'folder' => 'INBOX.Firma.Konrad',
             ],
+            [
+                'email' => 'konrad@modulesgarden.com',
+                'folder' => 'INBOX.Firma.Konrad',
+            ],
+            [
+                'email' => 'git@modulesgarden.com',
+                'folder' => 'INBOX.PanelAlpha',
+            ]
         ];
     }
 

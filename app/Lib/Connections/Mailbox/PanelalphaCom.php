@@ -3,12 +3,14 @@
 namespace App\Lib\Connections\Mailbox;
 
 use Carbon\Carbon;
+use Exception;
+use Illuminate\Support\Facades\Log;
 use PhpImap\Exceptions\InvalidParameterException;
 use PhpImap\Mailbox as MailboxClient;
 
 class PanelalphaCom
 {
-    protected MailboxClient $client;
+    public MailboxClient $client;
 
     /**
      * @throws InvalidParameterException
@@ -22,6 +24,9 @@ class PanelalphaCom
         );
     }
 
+    /**
+     * @throws Exception
+     */
     public function moveReportsEmailToFolder(): void
     {
         if ($this->client->getImapStream()) {
@@ -31,23 +36,23 @@ class PanelalphaCom
             }
             $this->client->disconnect();
         } else {
-            exit('Unable to connect to the mail server.');
+            throw new Exception('Unable to connect to the mail server.');
         }
     }
 
-    public function clean(): void
+    /**
+     * @throws Exception
+     */
+    public function clean(string $fromEmail, ?string $beforeDate = null): void
     {
-        $email = 'no@panelalpha.com';
-        $previousDay = Carbon::today()->subDay()->format('Y-m-d');
+        $command = "FROM $fromEmail";
+        if ($beforeDate) {
+            $command .= " BEFORE $beforeDate";
+        }
 
-        if ($this->client->getImapStream()) {
-            $mailIds = $this->client->searchMailbox("FROM $email BEFORE $previousDay");
-            foreach ($mailIds as $mailId) {
-                $this->client->deleteMail($mailId);
-            }
-            $this->client->disconnect();
-        } else {
-            exit('Unable to connect to the mail server.');
+        $mailIds = $this->client->searchMailbox($command);
+        foreach ($mailIds as $mailId) {
+            $this->client->deleteMail($mailId);
         }
     }
 }

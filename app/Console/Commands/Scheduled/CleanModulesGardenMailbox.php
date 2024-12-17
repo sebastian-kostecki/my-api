@@ -3,30 +3,32 @@
 namespace App\Console\Commands\Scheduled;
 
 use App\Lib\Connections\Mailbox\ModulesGardenCom;
+use Carbon\Carbon;
+use Exception;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Log;
 
 class CleanModulesGardenMailbox extends Command
 {
-    /**
-     * The name and signature of the console command.
-     *
-     * @var string
-     */
-    protected $signature = 'email:clean-panel-alpha-mailbox';
-
-    /**
-     * The console command description.
-     *
-     * @var string
-     */
+    protected $signature = 'email:clean-modulesgarden-mailbox';
     protected $description = 'Clean sebastian.kostecki@panealpha.com from emails';
 
-    /**
-     * Execute the console command.
-     */
+    public function __construct(public ModulesGardenCom $mailbox)
+    {
+        parent::__construct();
+    }
+
     public function handle(): void
     {
-        $mailbox = new ModulesGardenCom;
-        $mailbox->clean();
+        Log::channel('tasks')->info('Task <<' . class_basename(__CLASS__) . '>> is running.');
+        try {
+            $this->mailbox->clean();
+
+            Log::channel('tasks')->info('Task <<' . class_basename(__CLASS__) . '>> has been done.');
+        } catch (Exception $exception) {
+            Log::channel('tasks')->error('Task <<' . class_basename(__CLASS__) . '>> failed with :', [
+                'exception' => $exception,
+            ]);
+        }
     }
 }
