@@ -15,13 +15,14 @@ class Databases
 
     public function queryPanelalphaTasks(string $databaseId): Collection
     {
-        $response = $this->api->getConnection()->post("/databases/{$databaseId}/query", [
+        $params = [
             'filter' => [
                 'and' => [],
             ],
-        ]);
+        ];
+        $response = $this->api->getConnection()->post("/databases/{$databaseId}/query", $params);
 
-        //HttpLogger::log($response);
+        HttpLogger::log($response, $params);
         $result = $response->json();
 
         return collect($result['results'])->mapWithKeys(function ($item) {
@@ -35,7 +36,7 @@ class Databases
 
     public function queryPanelalphaTodayTasks(string $databaseId): Collection
     {
-        $response = $this->api->getConnection()->post("/databases/{$databaseId}/query", [
+        $params = [
             'filter' => [
                 'or' => [
                     [
@@ -46,9 +47,9 @@ class Databases
                     ],
                 ],
             ],
-        ]);
-
-        //HttpLogger::log($response);
+        ];
+        $response = $this->api->getConnection()->post("/databases/{$databaseId}/query", $params);
+        HttpLogger::log($response, $params);
         $result = $response->json();
 
         return collect($result['results'])->map(function ($item) {
@@ -66,7 +67,7 @@ class Databases
 
     public function queryPanelalphaNextTasks(string $databaseId): Collection
     {
-        $response = $this->api->getConnection()->post("/databases/{$databaseId}/query", [
+        $params = [
             'filter' => [
                 'and' => [
                     [
@@ -79,6 +80,12 @@ class Databases
                         'property' => 'Status',
                         'status' => [
                             'does_not_equal' => 'Testing',
+                        ],
+                    ],
+                    [
+                        'property' => 'Status',
+                        'status' => [
+                            'does_not_equal' => 'RSS',
                         ],
                     ],
                 ],
@@ -97,9 +104,9 @@ class Databases
                     'direction' => 'ascending',
                 ],
             ],
-        ]);
-
-        //HttpLogger::log($response);
+        ];
+        $response = $this->api->getConnection()->post("/databases/{$databaseId}/query", $params);
+        HttpLogger::log($response, $params);
         $result = $response->json();
 
         return collect($result['results'])->map(function ($item) {
