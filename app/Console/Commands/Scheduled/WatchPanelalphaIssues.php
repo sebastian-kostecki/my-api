@@ -5,7 +5,9 @@ namespace App\Console\Commands\Scheduled;
 use App\Lib\Connections\GitLab;
 use App\Lib\Connections\GitLab\Issue;
 use App\Lib\Connections\Notion;
+use Exception;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Log;
 
 class WatchPanelalphaIssues extends Command
 {
@@ -32,39 +34,47 @@ class WatchPanelalphaIssues extends Command
 
     public function handle(): void
     {
-        $tasks = $this->notion->databases()->queryPanelalphaTasks($this->panelAlphaNotionDatabaseId);
-        $issues = $this->gitLab->getIssues();
+        Log::channel('tasks')->info('Task <<' . class_basename(__CLASS__) . '>> is running.');
 
-        $newIssues = $issues->diffKeys($tasks)->filter(function (Issue $issue) {
-            return $issue->getAssigneeUsername() === 'sebastian.ko';
-        });
+        try {
+            $tasks = $this->notion->databases()->queryPanelalphaTasks($this->panelAlphaNotionDatabaseId);
+            $issues = $this->gitLab->getIssues();
 
-        $newIssues->each(function (Issue $issue) {
-            $this->notion->pages()->createPanelalphaTaskPage(
-                $this->panelAlphaNotionDatabaseId,
-                $issue->getId(),
-                $issue->getName(),
-                $issue->getUrl(),
-                $issue->getMilestone(),
-                $issue->getPriority(),
-                $issue->getLabels(),
-                $issue->getDescription()
-            );
-        });
+            $newIssues = $issues->diffKeys($tasks)->filter(function (Issue $issue) {
+                return $issue->getAssigneeUsername() === 'sebastian.ko';
+            });
 
-        $existingTasks = $tasks->intersectByKeys($issues);
+            $newIssues->each(function (Issue $issue) {
+                $this->notion->pages()->createPanelalphaTaskPage(
+                    $this->panelAlphaNotionDatabaseId,
+                    $issue->getId(),
+                    $issue->getName(),
+                    $issue->getUrl(),
+                    $issue->getMilestone(),
+                    $issue->getPriority(),
+                    $issue->getLabels(),
+                    $issue->getDescription()
+                );
+            });
 
-        $existingTasks->each(function (array $task) use ($issues) {
-            /** @var Issue $issue */
-            $issue = $issues->get($task['id']);
+            $existingTasks = $tasks->intersectByKeys($issues);
 
-            $this->notion->pages()->updatePanelalphaTaskPage(
-                $task['page_id'],
-                $issue->getStatus(),
-                $issue->getMilestone(),
-                $issue->getPriority(),
-            );
-        });
+            $existingTasks->each(function (array $task) use ($issues) {
+                /** @var Issue $issue */
+                $issue = $issues->get($task['id']);
 
+                $this->notion->pages()->updatePanelalphaTaskPage(
+                    $task['page_id'],
+                    $issue->getStatus(),
+                    $issue->getMilestone(),
+                    $issue->getPriority(),
+                );
+            });
+            Log::channel('tasks')->info('Task <<' . class_basename(__CLASS__) . '>> has been done.');
+        } catch (Exception $e) {
+            Log::channel('tasks')->error('Task <<' . class_basename(__CLASS__) . '>> failed with :', [
+                'exception' => $e,
+            ]);
+        }
     }
 }

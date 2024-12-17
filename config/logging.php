@@ -135,11 +135,18 @@ return [
         ],
 
         'api_requests' => [
-            'driver' => 'single',
+            'driver' => 'daily',
             'path' => storage_path('logs/api_requests.log'),
             'level' => 'debug',
-            'days' => 30,
+            'days' => 14,
         ],
+
+        'tasks' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/tasks.log'),
+            'level' => 'debug',
+            'days' => 30,
+        ]
     ],
 
 ];
