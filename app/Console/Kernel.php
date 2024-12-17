@@ -18,7 +18,7 @@ class Kernel extends ConsoleKernel
 
         $schedule->command('panelalpha:watch-issues')
             ->between('8:00', '18:00')
-            ->quarterly();
+            ->everyFifteenMinutes();
     }
 
     protected function commands(): void
