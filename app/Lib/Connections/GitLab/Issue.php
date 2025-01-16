@@ -77,7 +77,7 @@ class Issue
 
         $title = $this->milestone['title'];
 
-        if (preg_match('/[vV]?(\d+\.\d+(\.\d+)?)/', $title, $matches)) {
+        if (preg_match('/[vV]?(\d+(\.\d+)*)/', $title, $matches)) {
             return $matches[1];
         }
 
