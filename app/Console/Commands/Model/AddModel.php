@@ -83,6 +83,7 @@ class AddModel extends Command
         $selectedModel = $this->models->where('name', $modelName)->first();
 
         Model::create([
+            'title' => $selectedModel['title'],
             'name' => $modelName,
             'type' => $selectedModel['type'],
         ]);

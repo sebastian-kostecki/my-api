@@ -19,6 +19,7 @@ class Model extends EloquentModel
     use HasFactory;
 
     protected $fillable = [
+        'title',
         'name',
         'type',
     ];

@@ -6,6 +6,7 @@ interface ArtificialIntelligenceInterface
 {
     /**
      * @return array{
+     *     title: string,
      *     name: string,
      *     type: string
      * }

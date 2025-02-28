@@ -9,10 +9,6 @@ class Anthropic implements ArtificialIntelligenceInterface
 {
     public AnthropicApi $api;
 
-    private array $models = [
-        'claude-3-5-sonnet-20240620',
-    ];
-
     public function __construct()
     {
         $this->api = new AnthropicApi;
@@ -26,12 +22,15 @@ class Anthropic implements ArtificialIntelligenceInterface
      */
     public function getModels(): array
     {
-        return array_map(static function (string $model) {
+        $models = $this->api->models();
+
+        return array_map(static function (array $model) {
             return [
-                'name' => $model,
+                'title' => $model['display_name'],
+                'name' => $model['id'],
                 'type' => self::class,
             ];
-        }, $this->models);
+        }, $models['data']);
     }
 
     public function chat(

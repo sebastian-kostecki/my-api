@@ -13,6 +13,11 @@ class Anthropic
         $this->request = new Request;
     }
 
+    public function models(): array
+    {
+        return $this->request->call('GET', 'models');
+    }
+
     public function message(string $model, array $messages, ?string $system = null, array $params = []): string
     {
         $apiParams = [

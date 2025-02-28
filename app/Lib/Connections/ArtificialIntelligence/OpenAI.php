@@ -39,6 +39,7 @@ class OpenAI implements ArtificialIntelligenceInterface
             ->sortByDesc('created')
             ->map(function ($model) {
                 return [
+                    'title' => $model['id'],
                     'name' => $model['id'],
                     'type' => self::class,
                 ];
