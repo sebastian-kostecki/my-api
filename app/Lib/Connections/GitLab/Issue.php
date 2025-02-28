@@ -76,12 +76,9 @@ class Issue
         }
 
         $title = $this->milestone['title'];
-        $parts = explode(' ', $title);
 
-        $milestone = trim($parts[0], 'v');
-
-        if (preg_match('/^[0-9.]+$/', $milestone)) {
-            return $milestone;
+        if (preg_match('/[vV]?(\d+(\.\d+)*)/', $title, $matches)) {
+            return $matches[1];
         }
 
         return 'Later';
