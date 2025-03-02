@@ -2,9 +2,7 @@
 
 namespace App\Lib\Connections\Mailbox;
 
-use Carbon\Carbon;
 use Exception;
-use Illuminate\Support\Facades\Log;
 use PhpImap\Exceptions\InvalidParameterException;
 use PhpImap\Mailbox as MailboxClient;
 

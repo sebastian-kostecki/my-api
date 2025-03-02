@@ -2,22 +2,22 @@
 
 namespace App\Lib\Actions;
 
+use App\Attributes\ActionIconAttribute;
+use App\Attributes\ActionNameAttribute;
 use App\Lib\Interfaces\ActionInterface;
 use App\Lib\Traits\ShouldThread;
 use App\Models\EmailAccount;
 use JsonException;
 
+#[ActionNameAttribute('Mail Cleaner')]
+#[ActionIconAttribute('fa-solid fa-inbox')]
 class MailCleaner extends AbstractAction implements ActionInterface
 {
     use ShouldThread;
 
-    public const NAME = 'Mail Cleaner';
-
-    public const ICON = 'fa-solid fa-inbox';
-
     public function execute(): string
     {
-        //usuń maile od pawel@panelalpha.com w skrzynce sebastian.kostecki@panelalpha.com
+        // usuń maile od pawel@panelalpha.com w skrzynce sebastian.kostecki@panelalpha.com
 
         $params = $this->getParams();
 

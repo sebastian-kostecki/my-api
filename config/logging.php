@@ -146,7 +146,7 @@ return [
             'path' => storage_path('logs/tasks.log'),
             'level' => 'debug',
             'days' => 30,
-        ]
+        ],
     ],
 
 ];

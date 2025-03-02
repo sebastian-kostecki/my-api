@@ -2,18 +2,16 @@
 
 namespace App\Lib\Actions;
 
+use App\Attributes\ActionIconAttribute;
+use App\Attributes\ActionNameAttribute;
 use App\Lib\Interfaces\ActionInterface;
 use App\Lib\Traits\ShouldThread;
 
+#[ActionNameAttribute('Copywriter')]
+#[ActionIconAttribute('fa-solid fa-pen-to-square')]
 class Copywriter extends AbstractChatAction implements ActionInterface
 {
     use ShouldThread;
-
-    public const NAME = 'Copywriter';
-
-    public const ICON = 'fa-solid fa-pen-to-square';
-
-    public const SHORTCUT = null;
 
     public const CONFIG = [
         'temperature' => 0.7,

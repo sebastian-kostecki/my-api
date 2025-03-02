@@ -2,6 +2,9 @@
 
 namespace App\Lib\Actions;
 
+use App\Attributes\ActionIconAttribute;
+use App\Attributes\ActionNameAttribute;
+use App\Attributes\ActionShortcutAttribute;
 use App\Lib\Interfaces\ActionInterface;
 use App\Models\Action;
 use App\Models\Assistant;
@@ -10,14 +13,11 @@ use DeepL\DeepLException;
 use DeepL\Translator;
 use LanguageDetection\Language;
 
+#[ActionNameAttribute('Translate')]
+#[ActionIconAttribute('fa-solid fa-language')]
+#[ActionShortcutAttribute('CommandOrControl+Shift+T')]
 class Translate extends AbstractAction implements ActionInterface
 {
-    public const NAME = 'Translate';
-
-    public const ICON = 'fa-solid fa-language';
-
-    public const SHORTCUT = 'CommandOrControl+Shift+T';
-
     public const CONFIG = null;
 
     private Translator $translator;

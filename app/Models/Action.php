@@ -41,6 +41,7 @@ class Action extends Model
     {
         $dir = app_path().'/Lib/Actions';
         $files = File::allFiles($dir);
+        // dd($files);
 
         return collect($files)->filter(function ($file) {
             return ! Str::startsWith($file->getBasename(), 'Abstract');

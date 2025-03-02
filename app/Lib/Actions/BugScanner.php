@@ -2,18 +2,18 @@
 
 namespace App\Lib\Actions;
 
+use App\Attributes\ActionIconAttribute;
+use App\Attributes\ActionNameAttribute;
+use App\Attributes\ActionShortcutAttribute;
 use App\Lib\Interfaces\ActionInterface;
 use App\Lib\Traits\ShouldThread;
 
+#[ActionNameAttribute('Bug Scanner')]
+#[ActionIconAttribute('fa-solid fa-bug')]
+#[ActionShortcutAttribute('CommandOrControl+Shift+B')]
 class BugScanner extends AbstractChatAction implements ActionInterface
 {
     use ShouldThread;
-
-    public const NAME = 'Bug Scanner';
-
-    public const ICON = 'fa-solid fa-bug';
-
-    public const SHORTCUT = 'CommandOrControl+Shift+B';
 
     public const CONFIG = [
         'temperature' => 0.3,

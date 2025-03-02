@@ -2,19 +2,17 @@
 
 namespace App\Lib\Actions;
 
+use App\Attributes\ActionIconAttribute;
+use App\Attributes\ActionNameAttribute;
 use App\Lib\Interfaces\ActionInterface;
 use App\Lib\Interfaces\Connections\ArtificialIntelligenceInterface;
 use App\Lib\Traits\ShouldThread;
 
+#[ActionNameAttribute('Query')]
+#[ActionIconAttribute('fa-solid fa-circle-question')]
 class Query extends AbstractAction implements ActionInterface
 {
     use ShouldThread;
-
-    public const NAME = 'Query';
-
-    public const ICON = 'fa-solid fa-circle-question';
-
-    public const SHORTCUT = null;
 
     public const CONFIG = [
         'temperature' => 0.5,

@@ -108,7 +108,7 @@ class ModulesGardenCom
             [
                 'email' => 'git@modulesgarden.com',
                 'folder' => 'INBOX.PanelAlpha',
-            ]
+            ],
         ];
     }
 

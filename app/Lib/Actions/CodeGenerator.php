@@ -2,18 +2,18 @@
 
 namespace App\Lib\Actions;
 
+use App\Attributes\ActionIconAttribute;
+use App\Attributes\ActionNameAttribute;
+use App\Attributes\ActionShortcutAttribute;
 use App\Lib\Interfaces\ActionInterface;
 use App\Lib\Traits\ShouldThread;
 
+#[ActionNameAttribute('Code Generator')]
+#[ActionIconAttribute('fa-solid fa-code')]
+#[ActionShortcutAttribute('CommandOrControl+Shift+C')]
 class CodeGenerator extends AbstractChatAction implements ActionInterface
 {
     use ShouldThread;
-
-    public const NAME = 'Code Generator';
-
-    public const ICON = 'fa-solid fa-code';
-
-    public const SHORTCUT = 'CommandOrControl+Shift+C';
 
     public const CONFIG = [
         'temperature' => 0.2,

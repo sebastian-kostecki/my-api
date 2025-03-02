@@ -2,7 +2,7 @@
 
 namespace App\Lib\Apis\OpenAI\Assistant;
 
-use App\Lib\Apis\OpenAI\Assistant as Assistant;
+use App\Lib\Apis\OpenAI\Assistant;
 
 class Thread
 {

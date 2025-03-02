@@ -26,7 +26,7 @@ class Databases
         $result = $response->json();
 
         return collect($result['results'])->mapWithKeys(function ($item) {
-            return [(int)$item['properties']['ID']['number'] => [
+            return [(int) $item['properties']['ID']['number'] => [
                 'page_id' => $item['id'],
                 'id' => $item['properties']['ID']['number'],
                 'url' => $item['properties']['URL']['url'],
