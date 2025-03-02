@@ -8,6 +8,7 @@ use Illuminate\Console\Command;
 class ManagePanelAlphaMailbox extends Command
 {
     protected $signature = 'email:manage-panelalpha-mailbox';
+
     protected $description = 'Manage sebastian.kostecki@panelalpha.com mailbox';
 
     /**

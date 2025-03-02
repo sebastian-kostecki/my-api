@@ -34,7 +34,7 @@ class WatchPanelalphaIssues extends Command
 
     public function handle(): void
     {
-        Log::channel('tasks')->info('Task <<' . class_basename(__CLASS__) . '>> is running.');
+        Log::channel('tasks')->info('Task <<'.class_basename(__CLASS__).'>> is running.');
 
         try {
             $tasks = $this->notion->databases()->queryPanelalphaTasks($this->panelAlphaNotionDatabaseId);
@@ -70,9 +70,9 @@ class WatchPanelalphaIssues extends Command
                     $issue->getPriority(),
                 );
             });
-            Log::channel('tasks')->info('Task <<' . class_basename(__CLASS__) . '>> has been done.');
+            Log::channel('tasks')->info('Task <<'.class_basename(__CLASS__).'>> has been done.');
         } catch (Exception $e) {
-            Log::channel('tasks')->error('Task <<' . class_basename(__CLASS__) . '>> failed with :', [
+            Log::channel('tasks')->error('Task <<'.class_basename(__CLASS__).'>> failed with :', [
                 'exception' => $e,
             ]);
         }

@@ -34,21 +34,21 @@ class ReportDailyTasksInEmail extends Command
      */
     public function handle(): void
     {
-        Log::channel('tasks')->info('Task <<' . class_basename(__CLASS__) . '>> is running.');
+        Log::channel('tasks')->info('Task <<'.class_basename(__CLASS__).'>> is running.');
 
         try {
             $todayTasks = $this->notion->databases()->queryPanelalphaTodayTasks($this->tableId)->all();
             $nextTasks = $this->notion->databases()->queryPanelalphaNextTasks($this->tableId)->take(5)->all();
 
-            if (!empty($todayTasks)) {
+            if (! empty($todayTasks)) {
                 $recipients = Recipient::where('type', 'report')->get();
                 Notification::send($recipients, new ReportDailyTasksNotification($todayTasks, $nextTasks));
                 $this->notion->databases()->clearDailyTasksStatus($this->tableId);
             }
 
-            Log::channel('tasks')->info('Task <<' . class_basename(__CLASS__) . '>> has been done.');
+            Log::channel('tasks')->info('Task <<'.class_basename(__CLASS__).'>> has been done.');
         } catch (Exception $exception) {
-            Log::channel('tasks')->error('Task <<' . class_basename(__CLASS__) . '>> failed with :', [
+            Log::channel('tasks')->error('Task <<'.class_basename(__CLASS__).'>> failed with :', [
                 'exception' => $exception,
             ]);
         }

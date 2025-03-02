@@ -5,6 +5,7 @@ namespace App\Lib\Actions;
 use App\Attributes\ActionIconAttribute;
 use App\Attributes\ActionNameAttribute;
 use App\Attributes\ActionShortcutAttribute;
+use App\Lib\Actions\AbstractActions\AbstractAction;
 use App\Lib\Interfaces\ActionInterface;
 use App\Models\Action;
 use App\Models\Assistant;

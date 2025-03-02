@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Log;
 class CleanPanelalphaMailbox extends Command
 {
     protected $signature = 'email:clean-panel-alpha-mailbox';
+
     protected $description = 'Clean sebastian.kostecki@panealpha.com from emails';
 
     public function __construct(public PanelalphaCom $mailbox)
@@ -20,7 +21,7 @@ class CleanPanelalphaMailbox extends Command
 
     public function handle(): void
     {
-        Log::channel('tasks')->info('Task <<' . class_basename(__CLASS__) . '>> is running.');
+        Log::channel('tasks')->info('Task <<'.class_basename(__CLASS__).'>> is running.');
 
         $actions = [
             [
@@ -55,9 +56,9 @@ class CleanPanelalphaMailbox extends Command
             }
             $this->mailbox->client->disconnect();
 
-            Log::channel('tasks')->info('Task <<' . class_basename(__CLASS__) . '>> has been done.');
+            Log::channel('tasks')->info('Task <<'.class_basename(__CLASS__).'>> has been done.');
         } catch (Exception $exception) {
-            Log::channel('tasks')->error('Task <<' . class_basename(__CLASS__) . '>> failed with :', [
+            Log::channel('tasks')->error('Task <<'.class_basename(__CLASS__).'>> failed with :', [
                 'exception' => $exception,
             ]);
         }

@@ -4,6 +4,7 @@ namespace App\Lib\Actions;
 
 use App\Attributes\ActionIconAttribute;
 use App\Attributes\ActionNameAttribute;
+use App\Lib\Actions\AbstractActions\AbstractAction;
 use App\Lib\Interfaces\ActionInterface;
 use App\Lib\Interfaces\Connections\ArtificialIntelligenceInterface;
 use App\Lib\Traits\ShouldThread;

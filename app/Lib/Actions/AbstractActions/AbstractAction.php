@@ -1,17 +1,19 @@
 <?php
 
-namespace App\Lib\Actions;
+namespace App\Lib\Actions\AbstractActions;
 
 use App\Attributes\ActionIconAttribute;
 use App\Attributes\ActionNameAttribute;
 use App\Attributes\ActionShortcutAttribute;
+use App\Lib\Traits\Attributable;
 use App\Models\Action;
 use App\Models\Assistant;
 use App\Models\Thread;
-use ReflectionClass;
 
 abstract class AbstractAction
 {
+    use Attributable;
+
     public const CONFIG = [
         'temperature' => 0.5,
         'top_p' => 0.5,
@@ -31,20 +33,6 @@ abstract class AbstractAction
         $this->action = $action;
         $this->thread = $thread;
         $this->input = $input;
-    }
-
-    public static function getAttribute(string $attributeClass): mixed
-    {
-        $reflection = new ReflectionClass(static::class);
-        $attributes = $reflection->getAttributes($attributeClass);
-
-        foreach ($attributes as $attribute) {
-            $values = $attribute->getArguments();
-
-            return $values[0];
-        }
-
-        return null;
     }
 
     public static function getName(): string

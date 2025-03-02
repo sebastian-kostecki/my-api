@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Lib\Actions;
+namespace App\Lib\Actions\AbstractActions;
 
 use App\Lib\Interfaces\Connections\ArtificialIntelligenceInterface;
 

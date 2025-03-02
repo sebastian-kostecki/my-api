@@ -139,6 +139,7 @@ return [
             'path' => storage_path('logs/api_requests.log'),
             'level' => 'debug',
             'days' => 14,
+            'permission' => 0777,
         ],
 
         'tasks' => [
@@ -146,6 +147,7 @@ return [
             'path' => storage_path('logs/tasks.log'),
             'level' => 'debug',
             'days' => 30,
+            'permission' => 0777,
         ],
     ],
 
