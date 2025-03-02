@@ -8,7 +8,10 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model as EloquentModel;
 
 /**
+ * @property int $id
  * @property string $name
+ * @property string $title
+ * @property string $connection_name
  * @property ArtificialIntelligenceInterface $type
  *
  * @method static create(array $array)
