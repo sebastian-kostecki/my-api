@@ -19,21 +19,12 @@ abstract class AbstractAction
         'top_p' => 0.5,
     ];
 
-    protected Assistant $assistant;
-
-    protected Action $action;
-
-    protected ?Thread $thread;
-
-    protected string $input;
-
-    public function __construct(Assistant $assistant, Action $action, ?Thread $thread, string $input)
-    {
-        $this->assistant = $assistant;
-        $this->action = $action;
-        $this->thread = $thread;
-        $this->input = $input;
-    }
+    public function __construct(
+        protected Assistant $assistant,
+        protected Action $action,
+        protected ?Thread $thread,
+        protected string $input
+    ) {}
 
     public static function getName(): string
     {

@@ -23,7 +23,7 @@ class Anthropic
         $apiParams = [
             'model' => $model,
             'messages' => $messages,
-            'max_tokens' => 4096,
+            'max_tokens' => 8192,
             ...$params,
         ];
 

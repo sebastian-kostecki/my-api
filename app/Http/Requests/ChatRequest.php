@@ -25,8 +25,9 @@ class ChatRequest extends FormRequest
         return [
             'assistant_id' => 'required|int|exists:assistants,id',
             'action_id' => 'required|int|exists:actions,id',
-            'thread_id' => 'int|nullable|exists:threads,id',
+            'thread_id' => 'int|nullable',
             'input' => 'required|string',
+            'file_code' => 'file|nullable',
         ];
     }
 }

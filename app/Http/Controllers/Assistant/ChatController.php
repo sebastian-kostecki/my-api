@@ -9,6 +9,7 @@ use App\Models\Action;
 use App\Models\Assistant;
 use App\Models\Thread;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\UploadedFile;
 
 class ChatController extends Controller
 {
@@ -25,7 +26,8 @@ class ChatController extends Controller
         /** @var Action $action */
         $action = Action::findOrFail($params['action_id']);
 
-        $operation = $action->getInstance($assistant, $action, $thread, $params['input']);
+        $input = $this->getInput($params);
+        $operation = $action->getInstance($assistant, $action, $thread, $input);
         $result = $operation->execute();
 
         if ($operation->isRequireThread()) {
@@ -39,5 +41,18 @@ class ChatController extends Controller
             'thread_id' => $thread->id ?? null,
             'message' => $result,
         ]);
+    }
+
+    private function getInput(array $params): string
+    {
+        if (empty($params['file_code'])) {
+            return $params['input'];
+        }
+
+        /** @var UploadedFile $file */
+        $file = $params['file_code'];
+        $content = $file->getContent();
+
+        return $params['input']."\n###CONTEXT\n".$content;
     }
 }
