@@ -39,24 +39,37 @@ class GitLab
         });
     }
 
-    public function getIssues(): Collection
-    {
+    public function getIssues(
+        string $scope = 'all',
+        ?string $state = null,
+        array $ids = []
+    ): Collection {
         if ($this->projectId === null) {
             throw new \Exception('Project ID is not set');
         }
 
         $page = 1;
         $perPage = 100;
-        $maxPage = 4;
+        $maxPage = 2;
 
         $items = [];
 
         do {
-            $result = $this->client->issues()->all($this->projectId, [
-                'scope' => 'all',
+            $params = [
+                'scope' => $scope,
                 'per_page' => $perPage,
                 'page' => $page,
-            ]);
+            ];
+
+            if ($state !== null) {
+                $params['state'] = $state;
+            }
+
+            if (! empty($ids)) {
+                $params['iids'] = $ids;
+            }
+
+            $result = $this->client->issues()->all($this->projectId, $params);
             $items = [...$items, ...$result];
         } while ($page++ < $maxPage);
 
@@ -68,6 +81,5 @@ class GitLab
     public function getIssue(string $id)
     {
         return $this->client->issues()->show($this->projectId, $id);
-
     }
 }

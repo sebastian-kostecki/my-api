@@ -7,6 +7,7 @@ use App\Lib\Connections\GitLab\Issue;
 use App\Lib\Connections\Notion;
 use Exception;
 use Illuminate\Console\Command;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
 
 class WatchPanelalphaIssues extends Command
@@ -38,13 +39,45 @@ class WatchPanelalphaIssues extends Command
 
         try {
             $tasks = $this->notion->databases()->queryPanelalphaTasks($this->panelAlphaNotionDatabaseId);
-            $issues = $this->gitLab->getIssues();
 
-            $newIssues = $issues->diffKeys($tasks)->filter(function (Issue $issue) {
-                return $issue->getAssigneeUsername() === 'sebastian.ko';
-            });
+            $this->updateTasks($tasks);
+            $this->addNewTasks($tasks);
 
-            $newIssues->each(function (Issue $issue) {
+            Log::channel('tasks')->info('Task <<'.class_basename(__CLASS__).'>> has been done.');
+        } catch (Exception $e) {
+            Log::channel('tasks')->error('Task <<'.class_basename(__CLASS__).'>> failed with :', [
+                'exception' => $e,
+            ]);
+        }
+    }
+
+    /**
+     * @throws Exception
+     */
+    private function updateTasks(Collection $tasks): void
+    {
+        $issues = $this->gitLab->getIssues(ids: $tasks->keys()->toArray());
+        $issues->each(function (Issue $issue) use ($tasks) {
+            $targetTask = $tasks[$issue->getId()];
+
+            $this->notion->pages()->updatePanelalphaTaskPage(
+                $targetTask['page_id'],
+                $issue->getStatus(),
+                $issue->getMilestone(),
+                $issue->getPriority(),
+                $issue->getEndDate($targetTask['end_date'])
+            );
+        });
+    }
+
+    /**
+     * @throws Exception
+     */
+    private function addNewTasks(Collection $tasks): void
+    {
+        $issuesAssignedToMe = $this->gitLab->getIssues('assigned-to-me', 'opened');
+        $issuesAssignedToMe->each(function (Issue $issue) use ($tasks) {
+            if (empty($tasks[$issue->getId()])) {
                 $this->notion->pages()->createPanelalphaTaskPage(
                     $this->panelAlphaNotionDatabaseId,
                     $issue->getId(),
@@ -55,26 +88,7 @@ class WatchPanelalphaIssues extends Command
                     $issue->getLabels(),
                     $issue->getDescription()
                 );
-            });
-
-            $existingTasks = $tasks->intersectByKeys($issues);
-
-            $existingTasks->each(function (array $task) use ($issues) {
-                /** @var Issue $issue */
-                $issue = $issues->get($task['id']);
-
-                $this->notion->pages()->updatePanelalphaTaskPage(
-                    $task['page_id'],
-                    $issue->getStatus(),
-                    $issue->getMilestone(),
-                    $issue->getPriority(),
-                );
-            });
-            Log::channel('tasks')->info('Task <<'.class_basename(__CLASS__).'>> has been done.');
-        } catch (Exception $e) {
-            Log::channel('tasks')->error('Task <<'.class_basename(__CLASS__).'>> failed with :', [
-                'exception' => $e,
-            ]);
-        }
+            }
+        });
     }
 }

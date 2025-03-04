@@ -17,7 +17,10 @@ class Databases
     {
         $params = [
             'filter' => [
-                'and' => [],
+                'property' => 'Status',
+                'status' => [
+                    'does_not_equal' => 'Done',
+                ],
             ],
         ];
         $response = $this->api->getConnection()->post("/databases/{$databaseId}/query", $params);
@@ -30,6 +33,7 @@ class Databases
                 'page_id' => $item['id'],
                 'id' => $item['properties']['ID']['number'],
                 'url' => $item['properties']['URL']['url'],
+                'end_date' => $item['properties']['End date']['date']['start'] ?? null,
             ]];
         });
     }

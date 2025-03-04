@@ -106,7 +106,8 @@ class Pages
         ?string $status = null,
         ?string $milestone = null,
         ?string $priority = null,
-    ) {
+        ?string $endDate = null,
+    ): void {
         $params = [
             'properties' => [
                 'Milestone' => [
@@ -129,6 +130,10 @@ class Pages
 
         if ($status !== null) {
             $params['properties']['Status']['status']['name'] = $status;
+        }
+
+        if ($endDate !== null) {
+            $params['properties']['End date']['date']['start'] = $endDate;
         }
 
         $this->api->getConnection()->patch("/pages/{$pageId}", $params);

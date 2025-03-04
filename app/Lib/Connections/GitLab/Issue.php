@@ -2,6 +2,7 @@
 
 namespace App\Lib\Connections\GitLab;
 
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
 use League\CommonMark\CommonMarkConverter;
 
@@ -160,6 +161,23 @@ class Issue
             return 'Done';
         }
 
+        return null;
+    }
+
+    public function getEndDate(?string $endDate): ?string
+    {
+        // issue was ended
+        if ($endDate !== null) {
+            return $endDate;
+        }
+
+        // mark issue as ended
+        $assignee = $this->getAssigneeUsername();
+        if ($assignee !== null && $assignee !== 'sebastian.ko') {
+            return Carbon::now()->format('Y-m-d');
+        }
+
+        // issue in progress
         return null;
     }
 }
